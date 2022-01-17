@@ -1,5 +1,6 @@
 package com.dain.domain.entity;
 
+import com.dain.domain.dto.ReadBoardDTO;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -27,7 +28,7 @@ public class Board extends BaseEntity{
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "category_id")
     private Category category;
 
@@ -35,7 +36,30 @@ public class Board extends BaseEntity{
         this.member = member;
     }
 
-    public void update(Long id, String title, String content, String local, int age, String sex, Member member, Category category) {
+    public void update(String title, String content, String local, int age, String gender, Member member, Category category) {
+        this.title = title;
+        this.content = content;
+        this.local = local;
+        this.age = age;
+        this.gender = gender;
+        this.member = member;
+        this.category = category;
+    }
 
+    public void addCategory(Category category) {
+        this.category = category;
+    }
+
+    public ReadBoardDTO toReadBoardDTO(){
+        return ReadBoardDTO.builder()
+                .id(this.id)
+                .title(this.title)
+                .content(this.content)
+                .local(this.local)
+                .age(this.age)
+                .gender(this.gender)
+                .member(this.member.toBoardMemberDTO())
+                .category(this.category)
+                .build();
     }
 }

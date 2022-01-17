@@ -1,11 +1,16 @@
 package com.dain.domain.entity;
 
+import com.dain.domain.dto.BoardMemberDTO;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Member extends BaseEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,11 +27,17 @@ public class Member extends BaseEntity{
 
     private int age;
 
-    private String sex;
-
-    private String phone;
+    private String gender;
 
     private String imagePath;
 
     private String role;
+
+    public BoardMemberDTO toBoardMemberDTO(){
+        return BoardMemberDTO.builder()
+                .id(this.getId())
+                .username(this.getUsername())
+                .nickname(this.getNickname())
+                .build();
+    }
 }

@@ -1,8 +1,11 @@
 package com.dain.service;
 
+import com.dain.domain.dto.ReadBoardDTO;
 import com.dain.domain.entity.Board;
+import com.dain.domain.entity.Category;
 import com.dain.domain.entity.Member;
 import com.dain.repository.BoardRepository;
+import com.dain.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -15,24 +18,36 @@ import org.springframework.transaction.annotation.Transactional;
 public class BoardService {
 
     private final BoardRepository boardRepository;
+    private final CategoryRepository categoryRepository;
 
-    public void createBoard(Member member, Board board){
+    public void createBoard(Member member, Board board, String categoryName){
 
         board.addMember(member);
 
+        Category category = categoryRepository.findByTitle(categoryName);
+
+        board.addCategory(category);
+
         Board savedBoard = boardRepository.save(board);
 
-        log.info(savedBoard);
+        log.info("savedBoard={}", savedBoard);
     }
 
-    public void updateBoard(Member member, Board board){
+    public ReadBoardDTO read_one_board(Long boardId){
 
-        Board findBoard = boardRepository.findBoardByIdAndMemberId(board.getId(), member.getId());
+        Board findBoard = boardRepository.findById(boardId).orElseThrow(IllegalArgumentException::new);
 
-        findBoard.update(board.getId(), board.getTitle(), board.getContent(), board.getLocal(),
+        return findBoard.toReadBoardDTO();
+    }
+
+    public void updateBoard(Member member, Board board, Long boardId){
+
+        Board findBoard = boardRepository.findBoardByIdAndMemberId(boardId, member.getId());
+
+        findBoard.update(board.getTitle(), board.getContent(), board.getLocal(),
                 board.getAge(), board.getGender(), board.getMember(), board.getCategory());
 
-        log.info(findBoard);
+        log.info("findBoard={}", findBoard);
     }
 
     public void deleteBoard(Member member, Board board){
@@ -41,7 +56,8 @@ public class BoardService {
 
         boardRepository.delete(findBoard);
 
-        log.info(board.getTitle() + " delete success");
+        log.info("deletedBoard={}", board.getTitle());
     }
+
 
 }
