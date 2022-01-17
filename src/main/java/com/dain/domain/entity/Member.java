@@ -33,6 +33,8 @@ public class Member extends BaseEntity{
 
     private String email;
 
+    //커밋용 주석
+
     @Builder
     public Member(Long id, String username, String nickname, String password, String local, int age, String gender,  String imagePath, String role,String email){
         this.id=id;

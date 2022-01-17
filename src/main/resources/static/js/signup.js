@@ -2,7 +2,7 @@ function checkId(){
 
     var nickname=$("#nickname").val();
 
-    console.log(nickname)
+    console.log(nickname)//커밋용 주석
 
     $.ajax({
         type:"get",

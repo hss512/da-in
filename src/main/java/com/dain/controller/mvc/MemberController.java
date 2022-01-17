@@ -13,9 +13,5 @@ public class MemberController {
 
         return "member/signup";
     }
-    @GetMapping("/test")
-    public String test(){
-
-        return "member/test";
-    }
+    //커밋용 주석
 }

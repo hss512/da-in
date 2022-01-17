@@ -19,7 +19,7 @@ public class SignupApiController {
 
     private final MemberService memberService;
 
-    @GetMapping("/signup/{nickname}/exist")
+    @GetMapping("/signup/{nickname}/exist") //커밋용 주석
     public ResponseEntity<?> existnickname(@PathVariable("nickname")String nickname){
         return memberService.checkexistnickname(nickname);
     }

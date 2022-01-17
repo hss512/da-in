@@ -56,6 +56,7 @@ public class MemberDto {
                 .imagePath(imagePath)
                 .role(role)
                 .build();
+        //커밋용 주석
 
     }
 }
