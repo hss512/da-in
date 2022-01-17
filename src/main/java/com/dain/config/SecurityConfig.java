@@ -1,5 +1,6 @@
 package com.dain.config;
 
+import com.dain.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final MemberService memberService;
 
     @Bean
     public BCryptPasswordEncoder encode(){return new BCryptPasswordEncoder();}
@@ -37,9 +40,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
-                .withUser("Super")
+                .withUser("admin")
                 .password("1234")
                 .roles("USER","MEMBER","ADMIN");
 
+        auth.userDetailsService(memberService).passwordEncoder(encode());
     }
 }
