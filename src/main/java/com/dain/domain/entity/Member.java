@@ -27,4 +27,6 @@ public class Member extends BaseEntity{
     private String phone;
 
     private String imagePath;
+
+    private String role;
 }

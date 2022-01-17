@@ -21,14 +21,21 @@ public class Board extends BaseEntity{
 
     private int age;
 
-    private String sex;
+    private String gender;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 
+    public void addMember(Member member) {
+        this.member = member;
+    }
+
+    public void update(Long id, String title, String content, String local, int age, String sex, Member member, Category category) {
+
+    }
 }
