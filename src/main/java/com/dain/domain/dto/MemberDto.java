@@ -23,14 +23,14 @@ public class MemberDto {
 
     private String gender;
 
-    private String phone;
-
     private String imagePath;
 
     private String role;
 
+    private String email;
+
     @Builder
-    public MemberDto(Long id, String username, String nickname, String password, String local, int age, String gender, String phone, String imagePath, String role){
+    public MemberDto(Long id, String username, String nickname, String password, String local, int age, String gender,  String imagePath, String role,String email){
         this.id=id;
         this.username=username;
         this.nickname=nickname;
@@ -38,21 +38,21 @@ public class MemberDto {
         this.local=local;
         this.age=age;
         this.gender = gender;
-        this.phone=phone;
         this.imagePath=imagePath;
         this.role=role;
+        this.email=email;
     }
 
     public Member toEntity(){
         return Member.builder()
                 .id(id)
+                .email(email)
                 .username(username)
                 .nickname(nickname)
                 .password(password)
                 .local(local)
                 .age(age)
                 .gender(gender)
-                .phone(phone)
                 .imagePath(imagePath)
                 .role(role)
                 .build();

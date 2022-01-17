@@ -27,14 +27,14 @@ public class Member extends BaseEntity{
 
     private String gender;
 
-    private String phone;
-
     private String imagePath;
 
     private String role;
 
+    private String email;
+
     @Builder
-    public Member(Long id, String username, String nickname, String password, String local, int age, String gender, String phone, String imagePath, String role){
+    public Member(Long id, String username, String nickname, String password, String local, int age, String gender,  String imagePath, String role,String email){
         this.id=id;
         this.username=username;
         this.nickname=nickname;
@@ -42,9 +42,9 @@ public class Member extends BaseEntity{
         this.local=local;
         this.age=age;
         this.gender = gender;
-        this.phone=phone;
         this.imagePath=imagePath;
         this.role=role;
+        this.email=email;
     }
 
     public MemberDto toDto(){
@@ -56,9 +56,9 @@ public class Member extends BaseEntity{
                 .local(local)
                 .age(age)
                 .gender(gender)
-                .phone(phone)
                 .imagePath(imagePath)
                 .role(role)
+                .email(email)
                 .build();
     }
 
