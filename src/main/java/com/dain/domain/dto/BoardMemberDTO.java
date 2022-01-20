@@ -1,6 +1,5 @@
 package com.dain.domain.dto;
 
-import com.dain.domain.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
