@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		.all{
+			display: flex;
+		}
+	</style>
+	<script>
+
+	</script>
+</head>
+<body>
+<h1>Develop Page</h1>
+	<div class="all">
+		<span>
+			<h3>정렬</h3>
+		</span>
+		<select id="sort">
+			<option value="최신순" selected>최신순</option>
+			<option value="인기순">인기순</option>
+		</select>
+	</div>
+	<th:block th:if="${userDetails} != null">
+		<span>
+			<h3>성별 조건</h3>
+		</span>
+		<select id="gender">
+			<option value="전체" selected>전체</option>
+			<option value="남성">남성</option>
+			<option value="여성">여성</option>
+		</select></br>
+		<span>
+			<h3>지역 조건</h3>
+		</span>
+		<select id="local">
+			<option value="전체" selected>전체</option>
+			<option value="내 지역">내 지역</option>
+		</select></br>
+		<span>
+			<h3>나이 조건</h3>
+		</span>
+		<select id="age">
+			<option value="전체">전체</option>
+			<option value="내 나이">내 나이</option>
+		</select>
+	</th:block>
+</body>
+<script type="text/javascript" th:src="@{/js/develop.js}"></script>
+</html>

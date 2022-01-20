@@ -29,7 +29,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .formLogin()
-                .loginPage("/signin")
+//                .loginPage("/signin")
                 .loginProcessingUrl("/signin")
                 .defaultSuccessUrl("/");
     }
@@ -38,7 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.inMemoryAuthentication()
                 .withUser("admin")
-                .password("1234")
+                .password("$2a$10$GJMsKvIHN4t8Qifnchc5e.EFCUq7m49uie3l5ZdSZwnJR6SiuC0bK")
                 .roles("USER","MEMBER","ADMIN");
 
     }
