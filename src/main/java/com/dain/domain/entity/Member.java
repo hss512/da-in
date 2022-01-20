@@ -1,7 +1,8 @@
 package com.dain.domain.entity;
 
 import com.dain.domain.dto.BoardMemberDTO;
-import lombok.AllArgsConstructor;
+import com.dain.domain.dto.MemberDto;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +10,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
 public class Member extends BaseEntity{
 
@@ -17,10 +18,13 @@ public class Member extends BaseEntity{
     @Column(name = "member_id")
     private Long id;
 
+    @Column(name = "user_email",nullable = false)
     private String username;
 
+    @Column(name = "user_nickname",nullable = false,unique = true)
     private String nickname;
 
+    @Column(name = "user_password",nullable = false)
     private String password;
 
     private String local;
@@ -32,6 +36,41 @@ public class Member extends BaseEntity{
     private String imagePath;
 
     private String role;
+
+    @Column(name = "user_email",unique = true)
+    private String email;
+
+    //커밋용 주석//커밋용주석
+
+    @Builder
+    public Member(Long id, String username, String nickname, String password, String local, int age, String gender,  String imagePath, String role,String email){
+        this.id=id;
+        this.username=username;
+        this.nickname=nickname;
+        this.password=password;
+        this.local=local;
+        this.age=age;
+        this.gender = gender;
+        this.imagePath=imagePath;
+        this.role=role;
+        this.email=email;
+    }
+
+    public MemberDto toDto(){
+        return MemberDto.builder()
+                .id(id)
+                .username(username)
+                .nickname(nickname)
+                .password(password)
+                .local(local)
+                .age(age)
+                .gender(gender)
+                .imagePath(imagePath)
+                .role(role)
+                .email(email)
+                .build();
+    }
+
 
     public BoardMemberDTO toBoardMemberDTO(){
         return BoardMemberDTO.builder()
