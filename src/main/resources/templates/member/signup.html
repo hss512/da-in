@@ -1,10 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko"
-      xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>회원가입 화면 샘플 - Bootstrap</title>
     <!-- Bootstrap CSS -->
@@ -15,61 +13,72 @@
     <script type="text/javascript" th:src="@{/js/local.js}"></script>
 </head>
 <body>
-<div class="container">
-    <div class="input-form-backgroud row">
-        <div class="input-form sibal mx-auto">
-            <h4 class="mb-3">회원가입</h4>
-            <form class="validation-form" novalidate>
-                <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <label for="nickname">닉네임</label>
-                        <input type="text" class="form-control" name="nickname" id="nickname" placeholder="사용할 닉네임을 입력해주세요" required>
-                        <div class="invalid-feedback"> 닉네임을 입력해주세요. </div>
+<form method="post" th:action="@{/member/signup}">
+    <div class="container">
+        <div class="input-form-backgroud row">
+            <div class="input-form sibal mx-auto">
+                <h4 class="mb-3">회원가입</h4>
+                <form class="validation-form" novalidate>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nickname">닉네임</label>
+                            <input type="text" class="form-control" name="nickname" id="nickname" placeholder="사용할 닉네임을 입력해주세요" required>
+                            <div class="invalid-feedback"> 닉네임을 입력해주세요. </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <button type="button" class="buttonCheckId" th:onclick="checkId()">중복 확인</button>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label for="gender">성별</label>
+                            <select class="custom-selected d-block" name="gender" id="gender"> <!--커밋용 주석-->
+                            <option value="male">남성</option><option value="female">여성</option>
+                            </select>
+                            <div class="invalid-feedback"> 성별을 선택해주세요. </div>
+                        </div>
+                        <div class="col-md-8 mb-3">
+                            <label>생년월일</label>
+                            <br>
+                            <select name="yy" class="custom-selected2" id="year"></select>년
+                            <select name="mm" class="custom-selected2" id="month"></select>월
+                            <select name="dd" class="custom-selected2" id="day"></select>일
+                            <div class="invalid-feedback"> 생년월일을 선택해주세요. </div>
+                        </div>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <button type="button" class="buttonCheckId" th:onclick="checkId()">중복 확인</button>
+                    <div class="mb-3">
+                        <label for="username">이메일</label>
+                        <input type="email" class="form-control" name="username" id="username" placeholder="you@example.com" required>
+                        <div class="invalid-feedback"> 이메일을 입력해주세요. </div>
                     </div>
-                    <div class="col-md-8 mb-3">
-                        <label for="gender">성별</label>
-                        <select class="custom-selected d-block" id="gender"> <!--커밋용 주석-->
-                            <option value="male">남성</option>
-                            <option value="female">여성</option>
-                        </select>
-                        <div class="invalid-feedback"> 가입 경로를 선택해주세요. </div>
+                    <div class="mb-3">
+                        <label for="password">비밀번호</label>
+                        <input type="password" class="form-control" name="password" id="password" onkeyup='check();' placeholder="비밀번호를 입력하세요" required>
+                        <div class="invalid-feedback"> 비밀번호를 입력해주세요. </div>
                     </div>
-                </div>
-                <div class="mb-3">
-                    <label for="username">이메일</label>
-                    <input type="email" class="form-control" id="username" placeholder="you@example.com" required>
-                    <div class="invalid-feedback"> 이메일을 입력해주세요. </div>
-                </div>
-                <div class="mb-3">
-                    <label for="password">비밀번호</label>
-                    <input type="password" class="form-control" id="password" placeholder="비밀번호를 입력하세요" required>
-                    <div class="invalid-feedback"> 비밀번호를 입력해주세요. </div>
-                </div>
-                <div class="mb-3">
-                    <label for="repassword">비밀번호 확인</label>
-                    <input type="password" class="form-control" id="repassword" placeholder="비밀번호를 입력하세요" required>
-                    <div class="invalid-feedback"> 비밀번호를 입력해주세요. </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-8 mb-3">
-                        <label>주소</label>
-                        <br>
-                        <select name="sido" class="custom-selected" id="sido">시/도 선택</select>
-                        <select name="gugun" class="custom-selected" id="gugun">구/군 선택</select>
-                        <div class="invalid-feedback"> 가입 경로를 선택해주세요. </div>
+                    <div class="mb-3">
+                        <label for="repassword">비밀번호 확인</label>
+                        <input type="password" class="form-control" name="repassword" id="repassword" onkeyup='check();' placeholder="비밀번호를 입력하세요" required>
+                        <div class="invalid-feedback"> 비밀번호확인을 입력해주세요. </div>
+                        <span id='message'></span>
                     </div>
-                </div>
-                <hr class="mb-4">
-                <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="aggrement" required>
-                    <label class="custom-control-label" for="aggrement">개인정보 수집 및 이용에 동의합니다.</label>
-                </div>
-                <div class="mb-4"></div>
-                <button class="btn btn-primary btn-lg btn-block" type="submit">가입 완료</button>
-            </form> </div> </div> <footer class="my-3 text-center text-small"> <p class="mb-1">&copy; 2021 YD</p> </footer> </div> <script> window.addEventListener('load', () => { const forms = document.getElementsByClassName('validation-form'); Array.prototype.filter.call(forms, (form) => { form.addEventListener('submit', function (event) { if (form.checkValidity() === false) { event.preventDefault(); event.stopPropagation(); } form.classList.add('was-validated'); }, false); }); }, false);
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label>주소</label>
+                            <br>
+                            <select name="sido" class="custom-selected"  id="sido">시/도 선택</select>
+                            <select name="gugun" class="custom-selected"  id="gugun">구/군 선택</select>
+                            <div class="invalid-feedback"> 가입 경로를 선택해주세요. </div>
+                        </div>
+                    </div>
+                    <hr class="mb-4">
+                    <div class="custom-control custom-checkbox">
+                        <input type="checkbox" class="custom-control-input" id="aggrement" required>
+                        <label class="custom-control-label" for="aggrement">개인정보 수집 및 이용에 동의합니다.</label>
+                    </div>
+                    <div class="mb-4"></div>
+                    <button class="btn btn-primary btn-lg btn-block" type="submit" onclick="submitCheck();">가입 완료</button>
+                </form> </div> </div> <footer class="my-3 text-center text-small"> <p class="mb-1">&copy; 2021 YD</p> </footer> </div> <script> window.addEventListener('load', () => { const forms = document.getElementsByClassName('validation-form'); Array.prototype.filter.call(forms, (form) => { form.addEventListener('submit', function (event) { if (form.checkValidity() === false) { event.preventDefault(); event.stopPropagation(); } form.classList.add('was-validated'); }, false); }); }, false);
 </script>
+</form>
 </body>
 </html>

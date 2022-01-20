@@ -29,8 +29,10 @@ public class MemberService implements UserDetailsService {
     public Long createUser (MemberDto dto) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-
+        log.info("왜안됌={}",dto.getPassword());
         dto.setRole("ROLE_USER");
+
+        log.info(dto);
         return memberRepository.save(dto.toEntity()).getId();
     }
 
