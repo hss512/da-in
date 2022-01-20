@@ -53,4 +53,4 @@ public class MemberService implements UserDetailsService {
             return new ResponseEntity<>(0, HttpStatus.OK);//커밋용 주석
         }
     }
-}
+}//커밋용주석

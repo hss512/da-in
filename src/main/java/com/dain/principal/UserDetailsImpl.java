@@ -54,5 +54,5 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }
+    }//커밋용주석
 }

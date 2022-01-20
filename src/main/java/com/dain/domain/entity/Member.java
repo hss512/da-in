@@ -40,7 +40,7 @@ public class Member extends BaseEntity{
     @Column(name = "user_email",unique = true)
     private String email;
 
-    //커밋용 주석
+    //커밋용 주석//커밋용주석
 
     @Builder
     public Member(Long id, String username, String nickname, String password, String local, int age, String gender,  String imagePath, String role,String email){

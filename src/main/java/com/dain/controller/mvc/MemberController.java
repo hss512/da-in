@@ -30,7 +30,7 @@ public class MemberController {
     public String singupForm(){
 
         return "member/signup";
-    }
+    }//커밋용주석
     @PostMapping("/signup")
     public String singup(@Validated MemberDto dto, BindingResult result){
         log.info("signup postmapping으로 들어왔습니다");
