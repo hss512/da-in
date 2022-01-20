@@ -1,7 +1,6 @@
 package com.dain.domain.entity;
 
 import com.dain.domain.dto.BoardMemberDTO;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +10,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class Member extends BaseEntity{
 
@@ -19,10 +17,13 @@ public class Member extends BaseEntity{
     @Column(name = "member_id")
     private Long id;
 
+    @Column(name = "user_email",nullable = false)
     private String username;
 
+    @Column(name = "user_nickname",nullable = false,unique = true)
     private String nickname;
 
+    @Column(name = "user_password",nullable = false)
     private String password;
 
     private String local;
@@ -34,8 +35,6 @@ public class Member extends BaseEntity{
     private String imagePath;
 
     private String role;
-
-    private String email;
 
     public BoardMemberDTO toBoardMemberDTO(){
         return BoardMemberDTO.builder()
