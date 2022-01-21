@@ -1,6 +1,7 @@
 package com.dain.domain.entity;
 
 import com.dain.domain.dto.BoardMemberDTO;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,9 +9,9 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Builder
+@Getter @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Member extends BaseEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,6 +36,8 @@ public class Member extends BaseEntity{
     private String imagePath;
 
     private String role;
+
+    private String email;
 
     public BoardMemberDTO toBoardMemberDTO(){
         return BoardMemberDTO.builder()

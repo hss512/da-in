@@ -4,10 +4,12 @@ import com.dain.domain.dto.ReadBoardDTO;
 import com.dain.domain.entity.Board;
 import com.dain.domain.entity.Category;
 import com.dain.domain.entity.Member;
-import com.dain.repository.BoardRepository;
+import com.dain.repository.board.BoardRepository;
 import com.dain.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,4 +62,17 @@ public class BoardService {
     }
 
 
+    public PageImpl<Board> getMembersBoard(Member member, String sort, String gender, String local, String age, String category, Pageable pageable) {
+
+        boardRepository.getMembersBoard(member, sort, gender, local, age, category, pageable);
+
+        return null;
+    }
+
+    public PageImpl<Board> getVisitorsBoard(String sort, String gender, String local, String age, String category, Pageable pageable) {
+
+        boardRepository.getVisitorsBoard(sort, gender, local, age, category, pageable);
+
+        return null;
+    }
 }

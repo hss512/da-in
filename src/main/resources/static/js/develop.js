@@ -11,13 +11,13 @@ function developPageLoad(){
     console.log("age =", age)
 
     $.ajax({
-        url: "api/develop?sort="+sort+"&gender="+gender+"&local="+local+"&age="+age,
+        url: "api/category/develop?sort="+sort+"&gender="+gender+"&local="+local+"&age="+age,
         type: "get",
         dataType: "json"
     }).done(res=>{
-        console.log(res)
+        console.log("res=", res)
     }).fail(error=>{
-        console.log(error)
+        console.log("error=", error)
     })
 }
 
