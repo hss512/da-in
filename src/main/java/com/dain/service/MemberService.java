@@ -43,11 +43,20 @@ public class MemberService implements UserDetailsService {
         return new UserDetailsImpl(member);
     }
 
-    @Transactional
     public ResponseEntity<?> checkexistnickname(String nickname){
         Optional<Member> findNickname = memberRepository.findByNickname(nickname);
 
         if(!findNickname.isPresent()){
+            return new ResponseEntity<>(1, HttpStatus.OK);//커밋용 주석
+        }else {
+            return new ResponseEntity<>(0, HttpStatus.OK);//커밋용 주석
+        }
+    }
+
+    public ResponseEntity<?> checkexistusername(String username) {
+        Optional<Member> findUsername = memberRepository.findByUsername(username);
+
+        if(!findUsername.isPresent()){
             return new ResponseEntity<>(1, HttpStatus.OK);//커밋용 주석
         }else {
             return new ResponseEntity<>(0, HttpStatus.OK);//커밋용 주석
