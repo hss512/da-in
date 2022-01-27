@@ -6,7 +6,6 @@ import com.dain.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
@@ -59,32 +58,27 @@ public class MemberController {
         }
     }
 
-    @GetMapping("/mail")
-    public String email(){
-
-        return "/member/email";
-    }
-
 
     @PostMapping("/mail")
     @ResponseBody
-    public void emailConfirm(String userId)throws Exception{
-        log.info("userId={}", userId);
+    public void emailConfirm(String email)throws Exception{
+        log.info("userId={}", email);
         log.info("post emailConfirm");
-        System.out.println("전달 받은 이메일 : "+userId);
-        emailService.sendSimpleMessage(userId);
+        System.out.println("전달 받은 이메일 : "+email);
+        emailService.sendSimpleMessage(email);
+        memberService.emailCheck(email);
     }
 
     @PostMapping("/verifyCode")
     @ResponseBody
-    public int verifyCode(String code) {
+    public int verifyCode(String confirm_email) {
 
         log.info("Post verifyCode");
 
         int result = 0;
-        System.out.println("code : "+code);
-        System.out.println("code match : "+ EmailService.ePw.equals(code));
-        if(EmailService.ePw.equals(code)) {
+        System.out.println("code : "+confirm_email);
+        System.out.println("code match : "+ EmailService.ePw.equals(confirm_email));
+        if(EmailService.ePw.equals(confirm_email)) {
             result =1;
         }
         return result;

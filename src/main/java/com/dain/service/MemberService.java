@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -29,10 +30,13 @@ public class MemberService implements UserDetailsService {
     public Long createUser (MemberDto dto) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-        log.info("왜안됌={}",dto.getPassword());
-        dto.setRole("ROLE_USER");
 
-        log.info(dto);
+        dto.setRole("ROLE_USER");
+        dto.setLocal(dto.getSido()+"_"+dto.getGugun());
+        dto.setAge(LocalDateTime.now().getYear()-dto.getYy()+1);
+
+
+
         return memberRepository.save(dto.toEntity()).getId();
     }
 
@@ -62,4 +66,12 @@ public class MemberService implements UserDetailsService {
             return new ResponseEntity<>(0, HttpStatus.OK);//커밋용 주석
         }
     }
-}//커밋용주석
+
+    public String emailCheck(String email){
+        if(email!=null){
+            return email;
+        }else {
+            return null;
+        }
+    }
+}

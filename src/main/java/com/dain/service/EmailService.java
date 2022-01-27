@@ -25,15 +25,16 @@ public class EmailService {
         MimeMessage  message = emailSender.createMimeMessage();
 
         message.addRecipients(RecipientType.TO, to);//보내는 대상
-        message.setSubject("Together 인증번호가 도착했습니다.");//제목
+        message.setSubject("Da-in 인증번호가 도착했습니다.");//제목
 
         st.append("<div style='margin:100px;'>");
-        st.append("<h1> 안녕하세요  Together 입니다!!! </h1>");
+        st.append("<h1> 안녕하세요 다인 입니다. </h1>");
         st.append("<br>");
         st.append("<p>아래 코드를 회원가입 창으로 돌아가 입력해주세요<p>");
         st.append("<br>");
-        st.append("<p>감사합니다!<p>");
+        st.append("<p>인증을 마치면 정상적으로 서비스가 사용가능합니다<p>");
         st.append("<br>");
+        st.append("<p>감사합니다!!<p>");
         st.append("<div>");
         st.append("<h3 style='color:blue;'>회원가입 코드입니다.</h3>");
         st.append("<div style='font-size:130%'>");
@@ -41,7 +42,7 @@ public class EmailService {
         st.append(ePw).append("</strong><div><br/> ");
         st.append("</div>");
         message.setText(st.toString(), "utf-8", "html");//내용
-        message.setFrom(new InternetAddress("0rkwhr0@gmail.com","Together"));//보내는 사람
+        message.setFrom(new InternetAddress("lsh6451217@gmail.com","Dain"));//보내는 사람
 
         return message;
     }

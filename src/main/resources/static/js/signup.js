@@ -2,7 +2,8 @@ let join_submit;
 let nicknamecheck;
 let passwordcheck;
 let idcheck;
-
+let emailcheck;
+let emailcodecheck;
 
 function checkNickname(){
 
@@ -98,21 +99,61 @@ var check = function() {
 
 }
 
+function emailSend(){
+    var email=$("#email").val();
+    $.ajax({
+        type:"post",
+        url:"/member/mail",
+        data: {
+            "email":email
+        },
+        success:function (data){
+            alert("이메일이 전송되었습니다");
+            emailcheck=1;
+        }
+    });
+}
 
-
+function confirmCode(){
+    var confirm_email=$("#confirm_email").val();
+    $.ajax({
+        type:"post",
+        url:"/member/verifyCode",
+        data: {
+            "confirm_email":confirm_email
+        },
+        dataType:"json"
+    })
+        .done(result=>{
+            if(result===1){
+                console.log(confirm_email);
+                emailcodecheck=1;
+                alert("인증코드가 정확합니다");
+            }else{
+                console.log(confirm_email);
+                console.log("안됐어요");
+            }
+        }).fail(error=>{
+            console.log(error);
+    })
+}
 
 function submitCheck(){
-    join_submit=passwordcheck+nicknamecheck+idcheck;
+    join_submit=passwordcheck+nicknamecheck+idcheck+emailcheck+emailcodecheck;
 
-    if(join_submit==3){
+    if(join_submit==5){
         alert("회원가입이 완료되었습니다")
     }else {
         if(nicknamecheck!=1){
             alert("닉네임중복 체크를 해주세요");
-        }else if(passwordcheck!=1){
-            alert("비밀번호 확인을 해주세요");
         }else if(idcheck!=1){
             alert("아이디 중복 체크를 해주세요");
+        }else if(emailcheck!=1){
+            alert("이메일 인증코드를 받아주세요");
+        }else if(emailcodecheck!=1){
+            alert("옳바른 인증코드를 입력해주세요");
+        }else if(passwordcheck!=1){
+            alert("비밀번호 확인을 해주세요");
         } else {
             alert("회원가입 필수 사항을 진행하여주세요");
         }

@@ -35,10 +35,13 @@ public class MemberDto {
 
     private String email;
 
+    private String sido;
 
+    private String gugun;
 
+    private int yy;
     @Builder
-    public MemberDto(Long id, String username, String nickname, String password, String local, int age, String gender, String imagePath, String role, String email){
+    public MemberDto(Long id, String username, String nickname, String password, String local, int age, String gender, String imagePath, String role, String email,String sido,String gugun,int yy){
         this.id=id;
         this.username=username;
         this.nickname=nickname;
@@ -49,6 +52,9 @@ public class MemberDto {
         this.imagePath=imagePath;
         this.role=role;
         this.email=email;
+        this.sido=sido;
+        this.gugun=gugun;
+        this.yy=yy;
     }
 
     public Member toEntity(){
