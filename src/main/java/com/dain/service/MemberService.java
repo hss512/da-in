@@ -30,14 +30,16 @@ public class MemberService implements UserDetailsService {
     public Long createUser (MemberDto dto) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
-
-        dto.setRole("ROLE_USER");
-        dto.setLocal(dto.getSido()+"_"+dto.getGugun());
-        dto.setAge(LocalDateTime.now().getYear()-dto.getYy()+1);
-
-
-
-        return memberRepository.save(dto.toEntity()).getId();
+        String email = emailCheck(dto.getEmail());
+        if(email != null) {
+            dto.setRole("ROLE_USER");
+            dto.setLocal(dto.getSido() + "_" + dto.getGugun());
+            dto.setAge(LocalDateTime.now().getYear() - dto.getYy() + 1);
+            return memberRepository.save(dto.toEntity()).getId();
+            }
+        else{
+            return 0L;
+        }
     }
 
     @Override
@@ -72,6 +74,16 @@ public class MemberService implements UserDetailsService {
             return email;
         }else {
             return null;
+        }
+    }
+
+    public ResponseEntity<?> checkexistemail(String email) {
+        Optional<Member> findEmail = memberRepository.findByEmail(email);
+
+        if(!findEmail.isPresent()){
+            return new ResponseEntity<>(1, HttpStatus.OK);//커밋용 주석
+        }else {
+            return new ResponseEntity<>(0, HttpStatus.OK);//커밋용 주석
         }
     }
 }

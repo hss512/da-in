@@ -26,4 +26,9 @@ public class SignupApiController {
     public ResponseEntity<?> existusername(@PathVariable("username")String username){
         return memberService.checkexistusername(username);
     }
+
+    @GetMapping("/signup/email/{email}/exist") //커밋용 주석
+    public ResponseEntity<?> existemail(@PathVariable("email")String email){
+        return memberService.checkexistemail(email);
+    }
 }

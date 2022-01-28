@@ -80,6 +80,7 @@ public class MemberController {
         System.out.println("code match : "+ EmailService.ePw.equals(confirm_email));
         if(EmailService.ePw.equals(confirm_email)) {
             result =1;
+            EmailService.ePw=EmailService.createKey();
         }
         return result;
     }

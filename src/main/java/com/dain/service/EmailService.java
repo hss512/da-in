@@ -16,7 +16,7 @@ public class EmailService {
 
     private final JavaMailSender emailSender;
 
-    public static final String ePw = createKey();
+    public static String ePw = createKey();
 
     private MimeMessage createMessage(String to) throws Exception{
         StringBuilder st = new StringBuilder();

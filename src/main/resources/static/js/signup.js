@@ -1,9 +1,10 @@
 let join_submit;
-let nicknamecheck;
-let passwordcheck;
-let idcheck;
-let emailcheck;
-let emailcodecheck;
+let nicknamecheck=-1;
+let passwordcheck=-1;
+let idcheck=-1;
+let existemailcheck=-1;
+let emailcheck=-1;
+let emailcodecheck=-1;
 
 function checkNickname(){
 
@@ -24,7 +25,7 @@ function checkNickname(){
             }else{
                 alert("이미 존재하는 닉네임입니다.")
             }
-
+            console.log(nicknamecheck);
         }).fail(error=>{
         console.log(error, "중복 api 오류")
     });
@@ -49,7 +50,7 @@ function checkId(){
             }else{
                 alert("이미 존재하는 아이디입니다.")
             }
-
+            console.log(idcheck);
         }).fail(error=>{
         console.log(error, "중복 api 오류")
     });
@@ -88,6 +89,7 @@ var check = function() {
         document.getElementById('message').innerHTML = '비밀번호가 일치합니다';
 
         passwordcheck=1;
+        console.log(passwordcheck);
 
     } else {
 
@@ -95,23 +97,53 @@ var check = function() {
 
         document.getElementById('message').innerHTML = '비밀번호가 일치하지 않습니다';
 
+        console.log(passwordcheck);
     }
 
 }
 
-function emailSend(){
+function existEmail(){
     var email=$("#email").val();
     $.ajax({
-        type:"post",
-        url:"/member/mail",
-        data: {
-            "email":email
-        },
-        success:function (data){
-            alert("이메일이 전송되었습니다");
-            emailcheck=1;
-        }
+        type:"get",
+        url:"/api/signup/email/"+email+"/exist",
+        dataType:"json"
+    })
+        .done(res=>{
+            if(res===1){
+                document.getElementById('email_message').style.color='green';
+                document.getElementById('email_message').innerHTML='사용하실 수 있는 이메일입니다';
+                existemailcheck=1;
+            }else{
+                document.getElementById('email_message').style.color='red';
+                document.getElementById('email_message').innerHTML='이미 인증에 사용하신 이메일입니다';
+                existemailcheck=2;
+            }
+            console.log(existemailcheck);
+        }).fail(error=>{
+            console.log("errorrrrrrrrrrrrrrrrrrrrrrrr");
     });
+}
+
+
+function emailSend(e){
+    var email=$("#email").val();
+    if(existemailcheck==2){
+        e.preventDefault();
+    }else {
+        $.ajax({
+            type:"post",
+            url:"/member/mail",
+            data: {
+                "email":email
+            },
+            success:function (data){
+                alert("이메일이 전송되었습니다");
+                emailcheck=1;
+                console.log(emailcheck);
+            }
+        });
+    }
 }
 
 function confirmCode(){
@@ -133,31 +165,33 @@ function confirmCode(){
                 console.log(confirm_email);
                 console.log("안됐어요");
             }
+            console.log(emailcodecheck);
         }).fail(error=>{
             console.log(error);
     })
 }
 
-function submitCheck(){
-    join_submit=passwordcheck+nicknamecheck+idcheck+emailcheck+emailcodecheck;
-
-    if(join_submit==5){
-        alert("회원가입이 완료되었습니다")
-    }else {
-        if(nicknamecheck!=1){
+document.addEventListener('submit',function (event){
+    join_submit=passwordcheck+nicknamecheck+idcheck+emailcheck+emailcodecheck+existemailcheck;
+    if (join_submit!=6){
+        if (nicknamecheck !==1) {
             alert("닉네임중복 체크를 해주세요");
-        }else if(idcheck!=1){
+        } else if (idcheck !==1) {
             alert("아이디 중복 체크를 해주세요");
-        }else if(emailcheck!=1){
+        } else if (existemailcheck !==1) {
+            alert("중복된 이메일을 사용중입니다");
+        } else if (emailcheck !==1) {
             alert("이메일 인증코드를 받아주세요");
-        }else if(emailcodecheck!=1){
+        } else if (emailcodecheck !==1) {
             alert("옳바른 인증코드를 입력해주세요");
-        }else if(passwordcheck!=1){
+        } else if (passwordcheck !==1) {
             alert("비밀번호 확인을 해주세요");
         } else {
             alert("회원가입 필수 사항을 진행하여주세요");
         }
-
+        event.preventDefault();
     }
-    //커밋용주석
-}
+    else {
+        alert("회원가입이 완료되었습니다");
+    }
+})

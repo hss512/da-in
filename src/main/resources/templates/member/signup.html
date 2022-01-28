@@ -13,12 +13,12 @@
     <script type="text/javascript" th:src="@{/js/local.js}"></script>
 </head>
 <body>
-<form method="post" th:action="@{/member/signup}">
+
     <div class="container">
         <div class="input-form-backgroud row">
             <div class="input-form sibal mx-auto">
                 <h4 class="mb-3">회원가입</h4>
-                <form class="validation-form" novalidate>
+                <form method="post" th:action="@{/member/signup}">
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="nickname">닉네임</label>
@@ -57,8 +57,9 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="email">이메일</label>
-                            <input type="text" class="form-control" name="email" id="email" placeholder="이메일을 입력해주세요" required>
+                            <input type="text" class="form-control" name="email" id="email" placeholder="이메일을 입력해주세요" onkeyup="existEmail();" required autocomplete="off">
                             <div class="invalid-feedback"> 이메일을 입력해주세요. </div>
+                            <span id='email_message'></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <button type="button" class="buttonCheckId" onclick="emailSend()">인증 코드받기</button>
@@ -67,7 +68,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="confirm_email">이메일 인증코드</label>
-                            <input type="text" class="form-control" name="confirm_email" id="confirm_email" placeholder="인증 코드 입력" required>
+                            <input type="text" class="form-control" name="confirm_email" id="confirm_email" placeholder="인증 코드 입력" required autocomplete="off">
                             <div class="invalid-feedback"> 인증코드를 입력해주세요. </div>
                         </div>
                         <div class="col-md-6 mb-3">
@@ -101,9 +102,15 @@
                         <label class="custom-control-label" for="aggrement">개인정보 수집 및 이용에 동의합니다.</label>
                     </div>
                     <div class="mb-4"></div>
-                    <button class="btn btn-primary btn-lg btn-block" type="submit" onclick="submitCheck();">가입 완료</button>
-                </form> </div> </div> <footer class="my-3 text-center text-small"> <p class="mb-1">&copy; 2022 Da-in Company</p> </footer> </div> <script> window.addEventListener('load', () => { const forms = document.getElementsByClassName('validation-form'); Array.prototype.filter.call(forms, (form) => { form.addEventListener('submit', function (event) { if (form.checkValidity() === false) { event.preventDefault(); event.stopPropagation(); } form.classList.add('was-validated'); }, false); }); }, false);
-</script>
-</form>
+                    <button class="btn btn-primary btn-lg btn-block" type="submit">가입 완료</button>
+                </form>
+            </div>
+        </div>
+        <footer class="my-3 text-center text-small">
+            <p class="mb-1">&copy; 2022 Da-in Company</p>
+        </footer>
+    </div> <!--<script> window.addEventListener('load', () => { const forms = document.getElementsByClassName('validation-form'); Array.prototype.filter.call(forms, (form) => { form.addEventListener('submit', function (event) { if (form.checkValidity() === false) { event.preventDefault() ; event.stopPropagation(); } form.classList.add('was-validated'); }, false); }); }, false);-->
+<!--</script>-->
+
 </body>
 </html>
