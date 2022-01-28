@@ -1,3 +1,27 @@
-Spring:
+spring:
   datasource:
-    url: jdbc:mariadb:/localhost:3308
+    driver-class-name: org.mariadb.jdbc.Driver
+    username: bootuser
+    password: bootuser
+    url: jdbc:mariadb://localhost:3308/dain
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        default_batch_fetch_size: 10
+        format_sql: true
+    open-in-view: true
+
+  profiles:
+    active: local
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 10MB
+
+logging:
+  level:
+    org.hibernate.SQL: debug

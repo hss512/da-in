@@ -2,7 +2,9 @@ package com.dain.repository.board;
 
 import com.dain.domain.entity.Board;
 import com.dain.domain.entity.Member;
+import com.dain.domain.entity.QMember;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 
@@ -13,7 +15,9 @@ import java.util.Objects;
 
 import static com.dain.domain.entity.QBoard.*;
 import static com.dain.domain.entity.QLikes.*;
+import static com.dain.domain.entity.QMember.*;
 
+@Log4j2
 public class BoardCustomRepositoryImpl implements BoardCustomRepository{
 
     private final JPAQueryFactory queryFactory;
@@ -41,8 +45,18 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                     .limit(pageable.getPageSize())
                     .orderBy(board.createdDate.desc())
                     .fetch();
-
-        }else {
+            log.info("최신순 쿼리");
+        }else if(Objects.equals(sort, "좋아요순")){
+            boardList = queryFactory.selectFrom(board)
+                    .where(board.category.title.eq(categoryName))
+                    .distinct()
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .orderBy(board.likeCount.desc())
+                    .orderBy(board.createdDate.desc())
+                    .fetch();
+            log.info("좋아요순 쿼리");
+        }else{
             boardList = queryFactory.selectFrom(board)
                     .where(board.category.title.eq(categoryName))
                     .leftJoin(likes).on(likes.board.category.title.eq(categoryName))
@@ -51,9 +65,8 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                     .limit(pageable.getPageSize())
                     .orderBy(likes.board.count().desc())
                     .fetch();
-
+            log.info("일단 더미");
         }
-
         return new PageImpl<>(boardList, pageable, boardList.size());
     }
 

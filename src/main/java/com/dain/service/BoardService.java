@@ -8,7 +8,7 @@ import com.dain.repository.board.BoardRepository;
 import com.dain.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,17 +62,13 @@ public class BoardService {
     }
 
 
-    public PageImpl<Board> getMembersBoard(Member member, String sort, String gender, String local, String age, String category, Pageable pageable) {
+    public Page<Board> getMembersBoard(Member member, String sort, String gender, String local, String age, String category, Pageable pageable) {
 
-        boardRepository.getMembersBoard(member, sort, gender, local, age, category, pageable);
-
-        return null;
+        return boardRepository.getMembersBoard(member, sort, gender, local, age, category, pageable);
     }
 
-    public PageImpl<Board> getVisitorsBoard(String sort, String gender, String local, String age, String category, Pageable pageable) {
+    public Page<Board> getVisitorsBoard(String sort, String gender, String local, String age, String category, Pageable pageable) {
 
-        boardRepository.getVisitorsBoard(sort, gender, local, age, category, pageable);
-
-        return null;
+        return boardRepository.getVisitorsBoard(sort, gender, local, age, category, pageable);
     }
 }
