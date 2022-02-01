@@ -39,7 +39,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
 
         if(Objects.equals(sort, "최신순")) {
             boardList = queryFactory.selectFrom(board)
-                    .where(board.category.title.eq(categoryName))
+                    .where(board.category.title.eq(categoryName).and(board.gender.eq(gender)))
                     .distinct()
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())
@@ -48,7 +48,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
             log.info("최신순 쿼리");
         }else if(Objects.equals(sort, "좋아요순")){
             boardList = queryFactory.selectFrom(board)
-                    .where(board.category.title.eq(categoryName))
+                    .where(board.category.title.eq(categoryName).and(board.gender.eq(gender)))
                     .distinct()
                     .offset(pageable.getOffset())
                     .limit(pageable.getPageSize())

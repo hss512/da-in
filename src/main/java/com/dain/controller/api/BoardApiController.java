@@ -22,8 +22,8 @@ public class BoardApiController {
 
     private final BoardService boardService;
 
-    @GetMapping("/category/{develop}")
-    public ResponseEntity<?> develop(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable("develop") String category,
+    @GetMapping("/{category}")
+    public ResponseEntity<?> develop(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable("category") String category,
                                      @PageableDefault(size = 15) Pageable pageable,
                                      @RequestParam("sort") String sort, @RequestParam("gender") String gender,
                                      @RequestParam("local") String local, @RequestParam("age") String age){
