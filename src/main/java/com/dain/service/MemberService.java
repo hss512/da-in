@@ -86,4 +86,15 @@ public class MemberService implements UserDetailsService {
             return new ResponseEntity<>(0, HttpStatus.OK);//커밋용 주석
         }
     }
+
+    @Transactional
+    public void memberUpdate(Long id,String nickname,String local){
+        log.info("서비스들어옴");
+        log.info("서비스의 ID={}",id);
+        log.info("이거슨 서비스의 닉네임={}",nickname);
+        log.info("이거슨 서비스의 지역구={}",local);
+        Member member = memberRepository.findById(id).get();
+        log.info("서비스에서 찾은 멤버입니다={}",member.getUsername());
+        member.toUpdateMember(nickname,local);
+    }
 }

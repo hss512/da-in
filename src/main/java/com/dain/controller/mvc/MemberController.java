@@ -1,11 +1,16 @@
 package com.dain.controller.mvc;
 
 import com.dain.domain.dto.MemberDto;
+import com.dain.domain.entity.Member;
+import com.dain.principal.UserDetailsImpl;
 import com.dain.service.EmailService;
 import com.dain.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
@@ -58,6 +63,32 @@ public class MemberController {
         }
     }
 
+    @GetMapping("/signin")
+    public String signinForm(){
+
+        return "/member/signin";
+    }
+
+    @GetMapping("/myprofile")
+    public String myprofileForm(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails){
+
+        model.addAttribute("userDetails",userDetails);
+
+        return "member/myprofile";
+    }
+
+    @GetMapping("/profileUpdate")
+    public String updateMyProfileForm(Model model,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        model.addAttribute("userDetails",userDetails);
+        return "member/profileUpdate";
+    }
+    @PostMapping("/profileUpdate")
+    public String updateMyProfile(@AuthenticationPrincipal UserDetailsImpl userDetails,String nickname,String local){
+        log.info("profileUpdate들어옴===================");
+
+        memberService.memberUpdate(userDetails.returnProfile().getId(),nickname,local);
+        return "redirect:/";
+    }
 
     @PostMapping("/mail")
     @ResponseBody

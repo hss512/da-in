@@ -49,5 +49,18 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
-    }//커밋용주석
+    }
+
+    public Member returnProfile(){
+        Member buildMember=Member.builder()
+                .id(this.member.getId())
+                .username(this.member.getUsername())
+                .nickname(this.member.getNickname())
+                .gender(this.member.getGender())
+                .local(this.member.getLocal())
+                .age(this.member.getAge())
+                .build();
+
+        return buildMember;
+    }
 }
