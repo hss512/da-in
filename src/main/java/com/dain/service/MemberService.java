@@ -9,6 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -102,11 +103,26 @@ public class MemberService implements UserDetailsService {
     }
 
     public ResponseEntity<?> memberDeleteForm(String password,@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Optional<Member> findPassword = memberRepository.findByPassword(password);
-        if (findPassword.equals(userDetails.getPassword())){
+        log.info("멤버 비밀번호 체크하는곳 들어옴");
+        BCryptPasswordEncoder passwordEncoder=new BCryptPasswordEncoder();
+        //String encodePassword = passwordEncoder.encode(password);
+        boolean matches = passwordEncoder.matches(password, userDetails.getPassword());
+        //Optional<Member> findPassword = memberRepository.findByPassword(encodePassword);
+        log.info("이게 넘어온 password={}",password);
+        //log.info("이게 findPassword={}",findPassword);
+        log.info("이게 현재 로그인중인사람 비밀번호={}",userDetails.getPassword());
+        //log.info("이게 현재 입력받은 인코딩된 비밀번호={}",encodePassword);
+        log.info("참인가요={}",matches);
+        if (matches){
             return new ResponseEntity<>(1,HttpStatus.OK);
         }else {
             return new ResponseEntity<>(0,HttpStatus.OK);
         }
+    }
+
+
+    public ResponseEntity<?> memberDelete(Member member) {
+        memberRepository.delete(member);
+        return new ResponseEntity<>(1,HttpStatus.OK);
     }
 }

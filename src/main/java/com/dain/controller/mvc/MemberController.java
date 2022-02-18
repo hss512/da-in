@@ -79,6 +79,7 @@ public class MemberController {
 
     @GetMapping("/profileUpdate")
     public String updateMyProfileForm(Model model,@AuthenticationPrincipal UserDetailsImpl userDetails){
+        log.info("profileUpdate들어옴===================");
         model.addAttribute("userDetails",userDetails);
         return "member/profileUpdate";
     }
@@ -89,6 +90,15 @@ public class MemberController {
         memberService.memberUpdate(userDetails.returnProfile().getId(),nickname,local);
         return "redirect:/";
     }
+
+    @GetMapping("/memberDelete")
+    public String memberDeleteForm(@AuthenticationPrincipal UserDetailsImpl userDetails,Model model){
+        log.info("memberDelete들어옴");
+        model.addAttribute("userDetails",userDetails);
+        return "member/memberDelete";
+    }
+
+
 
     @PostMapping("/mail")
     @ResponseBody
