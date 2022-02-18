@@ -26,6 +26,17 @@ button{
     max-width: 1060px;
 }
 
+.main{
+    /*margin-right: 2px;
+    margin-left: 2px;*/
+}
+
+.page_title{
+    text-align: center;
+    margin-top: 65px;
+    margin-bottom: 25px;
+}
+
 .select_container{
     /*width: 87%;
     max-width: 1060px;
@@ -180,6 +191,10 @@ button{
     width: 120px;
 }
 
-.order_gender{
+.local_selectBox{
+    width: 110px;
+}
+
+.order_select{
     padding-right: 8px;
 }

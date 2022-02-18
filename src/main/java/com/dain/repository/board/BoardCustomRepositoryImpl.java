@@ -14,8 +14,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.dain.domain.entity.QBoard.*;
-import static com.dain.domain.entity.QLikes.*;
-import static com.dain.domain.entity.QMember.*;
 
 @Log4j2
 public class BoardCustomRepositoryImpl implements BoardCustomRepository{
@@ -38,36 +36,48 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
         List<Board> boardList;
 
         if(Objects.equals(sort, "최신순")) {
-            boardList = queryFactory.selectFrom(board)
-                    .where(board.category.title.eq(categoryName).and(board.gender.eq(gender)))
-                    .distinct()
-                    .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize())
-                    .orderBy(board.createdDate.desc())
-                    .fetch();
-            log.info("최신순 쿼리");
-        }else if(Objects.equals(sort, "좋아요순")){
-            boardList = queryFactory.selectFrom(board)
-                    .where(board.category.title.eq(categoryName).and(board.gender.eq(gender)))
-                    .distinct()
-                    .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize())
-                    .orderBy(board.likeCount.desc())
-                    .orderBy(board.createdDate.desc())
-                    .fetch();
-            log.info("좋아요순 쿼리");
+            if(Objects.equals(gender, "전체")) {
+                boardList = queryFactory.selectFrom(board)
+                        .where(board.category.title.eq(categoryName))
+                        .distinct()
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .orderBy(board.createdDate.desc())
+                        .fetch();
+                log.info("최신순, 성별 전체 쿼리");
+            }else {
+                boardList = queryFactory.selectFrom(board)
+                        .where(board.category.title.eq(categoryName).and(board.gender.eq(gender)))
+                        .distinct()
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .orderBy(board.createdDate.desc())
+                        .fetch();
+                log.info("최신순 쿼리");
+            }
         }else{
-            boardList = queryFactory.selectFrom(board)
-                    .where(board.category.title.eq(categoryName))
-                    .leftJoin(likes).on(likes.board.category.title.eq(categoryName))
-                    .distinct()
-                    .offset(pageable.getOffset())
-                    .limit(pageable.getPageSize())
-                    .orderBy(likes.board.count().desc())
-                    .fetch();
-            log.info("일단 더미");
+            if(Objects.equals(gender, "전체")) {
+                boardList = queryFactory.selectFrom(board)
+                        .where(board.category.title.eq(categoryName))
+                        .distinct()
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .orderBy(board.createdDate.desc())
+                        .fetch();
+                log.info("좋아요순, 성별 전체 쿼리");
+            }else {
+                boardList = queryFactory.selectFrom(board)
+                        .where(board.category.title.eq(categoryName).and(board.gender.eq(gender)))
+                        .distinct()
+                        .offset(pageable.getOffset())
+                        .limit(pageable.getPageSize())
+                        .orderBy(board.likeCount.desc())
+                        .orderBy(board.createdDate.desc())
+                        .fetch();
+                log.info("좋아요순 쿼리");
+            }
         }
+
         return new PageImpl<>(boardList, pageable, boardList.size());
     }
-
 }

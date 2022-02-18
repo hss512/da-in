@@ -1,6 +1,8 @@
 package com.dain.controller.api;
 
+import com.dain.domain.dto.ReadBoardDTO;
 import com.dain.domain.entity.Board;
+import com.dain.domain.entity.Category;
 import com.dain.exception.ValidateDTO;
 import com.dain.principal.UserDetailsImpl;
 import com.dain.service.BoardService;
@@ -13,6 +15,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
@@ -45,7 +50,8 @@ public class BoardApiController {
             for (Board board : visitorsBoard) {
                 log.info("board={}", board.getTitle());
             }
-            return new ResponseEntity<>(new ValidateDTO<>(1, "visitorBoard", visitorsBoard), HttpStatus.OK);
+            List<ReadBoardDTO> result = visitorsBoard.stream().map(Board::toReadBoardDTO/*, Category::toCategoryDTO*/).collect(Collectors.toList());
+            return new ResponseEntity<>(new ValidateDTO<>(1, "visitorBoard", result), HttpStatus.OK);
         }
     }
 }

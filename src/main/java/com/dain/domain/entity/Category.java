@@ -1,5 +1,6 @@
 package com.dain.domain.entity;
 
+import com.dain.domain.dto.CategoryDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -19,4 +20,8 @@ public class Category extends BaseEntity{
     private Long id;
 
     private String title;
+
+    /*public CategoryDTO toCategoryDTO(){
+
+    }*/
 }
