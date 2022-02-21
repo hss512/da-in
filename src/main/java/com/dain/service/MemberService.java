@@ -9,7 +9,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,7 +16,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManagerFactory;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
@@ -92,14 +90,14 @@ public class MemberService implements UserDetailsService {
     }
 
     @Transactional
-    public void memberUpdate(Long id,String nickname,String local){
-        log.info("서비스들어옴");
-        log.info("서비스의 ID={}",id);
-        log.info("이거슨 서비스의 닉네임={}",nickname);
-        log.info("이거슨 서비스의 지역구={}",local);
-        Member member = memberRepository.findById(id).get();
-        log.info("서비스에서 찾은 멤버입니다={}",member.getUsername());
-        member.toUpdateMember(nickname,local);
+    public ResponseEntity<?> memberUpdate(Long id, String nickname, String local){
+        Member findMember = memberRepository.findById(id).get();
+        if(findMember.getId()==id){
+            findMember.toUpdateMember(nickname,local);
+            return new ResponseEntity<>(1,HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(0,HttpStatus.OK);
+        }
     }
 
     public ResponseEntity<?> memberDeleteForm(String password,@AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -120,7 +118,7 @@ public class MemberService implements UserDetailsService {
         }
     }
 
-
+    @Transactional
     public ResponseEntity<?> memberDelete(Member member) {
         memberRepository.delete(member);
         return new ResponseEntity<>(1,HttpStatus.OK);

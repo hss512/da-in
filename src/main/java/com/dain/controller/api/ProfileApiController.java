@@ -21,7 +21,14 @@ public class ProfileApiController {
         return memberService.memberDeleteForm(password,userDetails);
     }
 
-    @DeleteMapping("/profile/member/delete")
+    @GetMapping("/profile/member/update/updateMember")
+    public ResponseEntity<?> memberUpdate(@AuthenticationPrincipal UserDetailsImpl userDetails, String nickname,String local){
+        log.info("update api 호출");
+        return memberService.memberUpdate(userDetails.returnProfile().getId(), nickname,local);
+    }
+
+
+    @DeleteMapping("/profile/member/delete/deleteMember")
     public ResponseEntity<?> memberDelete(@AuthenticationPrincipal UserDetailsImpl userDetails){
 
         return memberService.memberDelete(userDetails.returnProfile());

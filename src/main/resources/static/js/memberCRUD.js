@@ -22,6 +22,17 @@ function memberDelete(){
 function deletePost(){
     console.log("post 날라감");
     $.ajax({
-        type: ""
+        type: "delete",
+        url: "/api/profile/member/delete/deleteMember",
+        dataType: "json"
+    }).done(res=>{
+        if(res===1){
+            alert("계정이삭제되었습니다.");
+            window.location.href="/member/signin";
+        }else{
+            console.log("삭제 api 실패");
+        }
+    }).fail(error=>{
+        console.log(error);
     })
 }
