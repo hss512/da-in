@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My,Profile</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script type="text/javascript" th:src="@{/js/memberCRUD.js}"></script>
+</head>
+<body>
+<div>
+    아이디 :
+    <span th:text="${userDetails.returnProfile().getUsername()}"/>
+</div>
+<div>
+    닉네임 :
+    <span th:text="${userDetails.returnProfile().getNickname() }"/>
+</div>
+<div>
+    성별 :
+    <span th:text="${userDetails.returnProfile().getGender()}"/>
+</div>
+<div>
+    나이 :
+    <span th:text="${userDetails.returnProfile().getAge()}"/>
+</div>
+<div>
+    거주지 :
+    <span th:text="${userDetails.returnProfile().getLocal()}"/>
+</div>
+
+<button type="button"><a th:href="@{/member/profileUpdate}">내 정보 수정하기</a></button>
+<button type="button"><a th:href="@{/member/memberDelete}">계정 삭제하기</a></button>
+</body>
+</html>

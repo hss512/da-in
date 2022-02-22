@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script type="text/javascript" th:src="@{/js/local.js}"></script>
+    <script type="text/javascript" th:src="@{/js/profile.js}"></script>
+</head>
+<body>
+    <div>
+    <h3>닉네임</h3>
+    <input type="text" name="nickname" id="nickname" th:value="${userDetails.returnProfile().getNickname()}">
+    </div>
+    <div>
+    <h3>주소</h3>
+    <select name="sido2"  id="sido2">시/도 선택</select>
+    <select name="gugun2" id="gugun2">구/군 선택</select>
+    </div>
+    <button type="submit" onclick="updateUser()">정보 수정 완료</button>
+</body>
+</html>

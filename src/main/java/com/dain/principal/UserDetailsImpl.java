@@ -1,37 +1,34 @@
 package com.dain.principal;
 
 import com.dain.domain.entity.Member;
-import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
-@Data
 public class UserDetailsImpl implements UserDetails {
 
-    private final Member member;
-
+    private Member member;
     public UserDetailsImpl(Member member) {
         this.member=member;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<GrantedAuthority> collection = new ArrayList<>();
-        collection.add(member::getRole);
-        return collection;
+        return Collections.singletonList(new SimpleGrantedAuthority(this.member.getRole()));
     }
 
     @Override
     public String getPassword() {
-        return member.getPassword();
+        return this.member.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return member.getUsername();
+        return this.member.getUsername();
     }
 
     @Override
@@ -52,5 +49,18 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Member returnProfile(){
+        Member buildMember=Member.builder()
+                .id(this.member.getId())
+                .username(this.member.getUsername())
+                .nickname(this.member.getNickname())
+                .gender(this.member.getGender())
+                .local(this.member.getLocal())
+                .age(this.member.getAge())
+                .build();
+
+        return buildMember;
     }
 }

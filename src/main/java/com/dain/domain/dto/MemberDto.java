@@ -1,7 +1,10 @@
 package com.dain.domain.dto;
 
 import com.dain.domain.entity.Member;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotBlank;
 
@@ -9,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class MemberDto {
 
-    private Long userId;
+    private Long id;
 
     @NotBlank
     private String username;
@@ -32,11 +35,14 @@ public class MemberDto {
 
     private String email;
 
+    private String sido;
 
+    private String gugun;
 
+    private int yy;
     @Builder
-    public MemberDto(Long id, String username, String nickname, String password, String local, int age, String gender, String imagePath, String role, String email){
-        this.userId=id;
+    public MemberDto(Long id, String username, String nickname, String password, String local, int age, String gender, String imagePath, String role, String email,String sido,String gugun,int yy){
+        this.id=id;
         this.username=username;
         this.nickname=nickname;
         this.password=password;
@@ -46,11 +52,14 @@ public class MemberDto {
         this.imagePath=imagePath;
         this.role=role;
         this.email=email;
+        this.sido=sido;
+        this.gugun=gugun;
+        this.yy=yy;
     }
 
     public Member toEntity(){
         return Member.builder()
-                .id(userId)
+                .id(id)
                 .email(email)
                 .username(username)
                 .nickname(nickname)
@@ -63,33 +72,5 @@ public class MemberDto {
                 .build();
         //커밋용 주석
 
-    }
-
-    @Getter
-    @NoArgsConstructor
-    public static class BoardMemberDTO{
-        private Long userId;
-
-        private String username;
-
-        private String nickname;
-
-        private String local;
-
-        private int age;
-
-        private String gender;
-
-        @Builder
-        public BoardMemberDTO(Long userId, String username, String nickname, String local, int age, String gender){
-            this.userId = userId;
-            this.username = username;
-            this.nickname = nickname;
-            this.local = local;
-            this.age = age;
-            this.gender = gender;
-        }
-
-        
     }
 }
