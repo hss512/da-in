@@ -24,7 +24,9 @@ public class Board extends BaseEntity{
 
     private String gender;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    private int likeCount = 0;
+
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 

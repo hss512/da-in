@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		.all{
+			display: flex;
+		}
+	</style>
+	<link rel="stylesheet" href="/css/develop.css">
+	<script>
+
+	</script>
+</head>
+<body>
+<div class="page_title">
+	<span class="title_name">
+		<h1>Develop Page</h1>
+	</span>
+</div>
+<div class="board_list">
+	<div class="main">
+		<th:block th:if="${userDetails} != null">
+			<span>
+				<h3>성별 조건</h3>
+			</span>
+			<select id="gender">
+				<option value="전체" selected>전체</option>
+				<option value="남성">남성</option>
+				<option value="여성">여성</option>
+			</select></br>
+			<span>
+				<h3>지역 조건</h3>
+			</span>
+			<select id="local">
+				<option value="전체" selected>전체</option>
+				<option value="내 지역">내 지역</option>
+			</select></br>
+			<span>
+				<h3>나이 조건</h3>
+			</span>
+			<select id="age">
+				<option value="전체">전체</option>
+				<option value="내 나이">내 나이</option>
+			</select>
+		</th:block>
+
+
+
+		<div class="select_container">
+
+			<div class="select_container_list">
+				<div class="gender_selectBox selectBox">
+					<button class="gender_order orderButton">
+						<span class="order_gender order_select">성별</span>
+						<span class="change_gender">전체</span>
+					</button>
+					<ul class="gender_optionList sort_list">
+						<li class="gender_optionItem order_option">남성</li>
+						<li class="gender_optionItem order_option">여성</li>
+					</ul>
+				</div>
+				<div class="local_selectBox selectBox">
+					<button class="local_order orderButton">지역_전체</button>
+					<ul class="local_optionList sort_list">
+						<li class="local_optionItem order_option">내_지역</li>
+					</ul>
+				</div>
+				<div class="age_selectBox selectBox">
+					<button class="age_order orderButton">나이_전체</button>
+					<ul class="age_optionList sort_list">
+						<li class="age_optionItem order_option">내_나이</li>
+					</ul>
+				</div>
+				<div class="sort_selectBox selectBox">
+					<button class="sort_order orderButton">최신순</button>
+					<ul class="sort_optionList sort_list">
+						<li class="sort_optionItem order_option">좋아요순</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/js/develop.js}"></script>
+</html>
