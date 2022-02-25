@@ -20,7 +20,9 @@ public class Board extends BaseEntity{
 
     private String local;
 
-    private int age;
+    private int ageLt;
+
+    private int ageRt;
 
     private String gender;
 
@@ -38,11 +40,12 @@ public class Board extends BaseEntity{
         this.member = member;
     }
 
-    public void update(String title, String content, String local, int age, String gender, Member member, Category category) {
+    public void update(String title, String content, String local, int ageLt, int ageRt, String gender, Member member, Category category) {
         this.title = title;
         this.content = content;
         this.local = local;
-        this.age = age;
+        this.ageLt = ageLt;
+        this.ageRt = ageRt;
         this.gender = gender;
         this.member = member;
         this.category = category;
@@ -58,7 +61,8 @@ public class Board extends BaseEntity{
                 .title(this.title)
                 .content(this.content)
                 .local(this.local)
-                .age(this.age)
+                .ageLt(this.ageLt)
+                .ageRt(this.ageRt)
                 .gender(this.gender)
                 .member(this.member.toBoardMemberDTO())
                 .category(this.category)

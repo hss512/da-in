@@ -21,7 +21,6 @@ public class BoardController {
 
         if(userDetails == null){
             log.info("visitor");
-            model.addAttribute("userDetails", userDetails);
             return "develop";
         }else{
             log.info("member");

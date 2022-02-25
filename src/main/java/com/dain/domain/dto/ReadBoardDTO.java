@@ -20,7 +20,9 @@ public class ReadBoardDTO {
 
     private String local;
 
-    private int age;
+    private int ageLt;
+
+    private int ageRt;
 
     private String gender;
 

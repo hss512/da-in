@@ -1,12 +1,11 @@
 package com.dain.domain.dto;
 
 import com.dain.domain.entity.Member;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 
 @Data
 @NoArgsConstructor
@@ -40,6 +39,22 @@ public class MemberDto {
     private String gugun;
 
     private int yy;
+
+    public Member toEntity(){
+        return Member.builder()
+                .id(id)
+                .email(email)
+                .username(username)
+                .nickname(nickname)
+                .password(password)
+                .local(local)
+                .age(age)
+                .gender(gender)
+                .imagePath(imagePath)
+                .role(role)
+                .build();
+    }
+
     @Builder
     public MemberDto(Long id, String username, String nickname, String password, String local, int age, String gender, String imagePath, String role, String email,String sido,String gugun,int yy){
         this.id=id;
@@ -57,20 +72,32 @@ public class MemberDto {
         this.yy=yy;
     }
 
-    public Member toEntity(){
-        return Member.builder()
-                .id(id)
-                .email(email)
-                .username(username)
-                .nickname(nickname)
-                .password(password)
-                .local(local)
-                .age(age)
-                .gender(gender)
-                .imagePath(imagePath)
-                .role(role)
-                .build();
-        //커밋용 주석
+
+    @Getter
+    @NoArgsConstructor
+    public static class BoardMemberDTO{
+        private Long id;
+
+        private String username;
+
+        private String nickname;
+
+        private String local;
+
+        private int age;
+
+        private String gender;
+
+        @Builder
+        public BoardMemberDTO(Long id, String username, String nickname, String local, int age, String gender){
+            this.id = id;
+            this.username = username;
+            this.nickname = nickname;
+            this.local = local;
+            this.age = age;
+            this.gender = gender;
+        }
+
 
     }
 }

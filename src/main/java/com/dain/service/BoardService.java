@@ -47,7 +47,7 @@ public class BoardService {
         Board findBoard = boardRepository.findBoardByIdAndMemberId(boardId, member.getId());
 
         findBoard.update(board.getTitle(), board.getContent(), board.getLocal(),
-                board.getAge(), board.getGender(), board.getMember(), board.getCategory());
+                board.getAgeLt(), board.getAgeRt(), board.getGender(), board.getMember(), board.getCategory());
 
         log.info("findBoard={}", findBoard);
     }

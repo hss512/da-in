@@ -11,7 +11,8 @@ import java.util.Collections;
 
 public class UserDetailsImpl implements UserDetails {
 
-    private Member member;
+    private final Member member;
+
     public UserDetailsImpl(Member member) {
         this.member=member;
     }
@@ -52,7 +53,8 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     public Member returnProfile(){
-        Member buildMember=Member.builder()
+
+        return Member.builder()
                 .id(this.member.getId())
                 .username(this.member.getUsername())
                 .nickname(this.member.getNickname())
@@ -60,7 +62,5 @@ public class UserDetailsImpl implements UserDetails {
                 .local(this.member.getLocal())
                 .age(this.member.getAge())
                 .build();
-
-        return buildMember;
     }
 }

@@ -40,11 +40,12 @@ public class BoardApiController {
         log.info("age={}", age);
 
         if(userDetails != null){
-            Page<Board> membersBoard = boardService.getMembersBoard(userDetails.getMember(), sort, gender, local, age, category, pageable);
+            Page<Board> membersBoard = boardService.getMembersBoard(userDetails.returnProfile(), sort, gender, local, age, category, pageable);
             for (Board board : membersBoard) {
                 log.info("board={}", board.getTitle());
             }
-            return new ResponseEntity<>(new ValidateDTO<>(1, "memberBoard", membersBoard), HttpStatus.OK);
+            List<ReadBoardDTO> result = membersBoard.stream().map(Board::toReadBoardDTO/*, Category::toCategoryDTO*/).collect(Collectors.toList());
+            return new ResponseEntity<>(new ValidateDTO<>(1, "memberBoard", result), HttpStatus.OK);
         }else{
             Page<Board> visitorsBoard = boardService.getVisitorsBoard(sort, gender, local, age, category, pageable);
             for (Board board : visitorsBoard) {
