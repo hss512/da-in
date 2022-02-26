@@ -1,8 +1,7 @@
 const sort_btn = $('.sort_order')
 const sort_item = $('.sort_optionItem');
 const gender_btn = $('.gender_order')
-const gender_optionItem = $('.gender_optionItem');
-const gender_list = ["전체", '남성', '여성'];
+const gender_item = $('.gender_optionItem')
 const local_btn = $('.local_order');
 const local_item = $('.local_optionItem');
 const age_btn = $('.age_order');
@@ -13,7 +12,7 @@ function developPageLoad(condition){
     console.log(condition)
     if(condition.search("sort") === -1){
         sessionStorage.clear();
-        condition = condition+"?sort=최신순&gender=전체&local=지역_전체&age=나이_전체";
+        condition = condition+"?sort=최신순&gender=성별_전체&local=지역_전체&age=나이_전체";
     }
 
     let sort = decodeURI(condition.substring(condition.search("sort=") + 5, condition.search("&g")));
@@ -21,40 +20,15 @@ function developPageLoad(condition){
     let local = decodeURI(condition.substring(condition.search("local=") + 6, condition.search("&a")));
     let age = decodeURI(condition.substr(condition.search("age=") + 4, condition.length));
 
-    sessionStorage.setItem("gender", gender);
-
-    $('.change_gender').html(gender);
-    let gender_item = gender_list.filter(item => item !== gender);
-    gender_optionItem.each(function (i){
-        $(this).html(gender_item[i]);
-    })
-
-    /*if(local === '지역_전체'){
-        local = '지역 전체'
-    }else if(local === '내_지역'){
-        local = '내 지역'
-    }*/
     sort_btn.html(sort)
     sort_item.html(sessionStorage.sort)
     local_btn.html(local)
     local_item.html(sessionStorage.local)
     age_btn.html(age)
     age_item.html(sessionStorage.age)
+    gender_btn.html(gender)
+    gender_item.html(sessionStorage.gender)
 
-    if(gender === '전체'){
-        gender = '전체'
-    }else if(gender === '남성'){
-        gender = '남성'
-    }else{
-        gender = '여성'
-    }
-
-
-    /*if(local === '지역 전체'){
-        local = '지역_전체'
-    }else if(local === '내 지역'){
-        local = '내_지역'
-    }*/
     let url = "/develop?sort=" + sort + "&gender=" + gender + "&local=" + local + "&age=" + age;
 
     $.ajax({
@@ -107,6 +81,42 @@ sort_btn.on('click', function(){
         sort_btn.parent().removeClass('active');
     } else {
         sort_btn.parent().addClass('active');
+    }
+});
+
+const gender_change = function(item) {
+    let tmp = gender_btn.text();
+    gender_btn.html(item);
+
+    $('.gender_optionItem').each(function (){
+        if($(this).text() === gender_btn.text()){
+            console.log($(this).text())
+            $(this).html(tmp)
+        }
+    })
+    gender_btn.parent().removeClass('active');
+
+    sessionStorage.setItem("gender", tmp)
+
+    let url = decodeURI($(location).attr('href'));
+    console.log(url)
+    if(url.substring(url.search("gender=") + 7, url.search("&l")) === "성별_전체"){
+        url = url.replace("성별_전체", '내_성별')
+    }else if(url.substring(url.search("gender=") + 7, url.search("&l")) === "내_성별"){
+        url = url.replace("내_성별", "성별_전체")
+    }
+    developPageLoad(url)
+}
+gender_item.each(function(){
+    $(this).on('click', function (){
+        gender_change($(this).text())
+    })
+})
+gender_btn.on('click', function(){
+    if(gender_btn.parent().hasClass('active')) {
+        gender_btn.parent().removeClass('active');
+    } else {
+        gender_btn.parent().addClass('active');
     }
 });
 
@@ -179,42 +189,5 @@ age_btn.on('click', function(){
         age_btn.parent().removeClass('active');
     } else {
         age_btn.parent().addClass('active');
-    }
-});
-
-const gender_change = function(item) {
-    let change_gender = $('.change_gender');
-    let tmp_gender = change_gender.text();
-    change_gender.html(item);
-
-    gender_optionItem.each(function (){
-        if($(this).text() === change_gender.text()){
-            console.log($(this).text())
-            $(this).html(tmp_gender)
-        }
-    })
-    gender_btn.parent().removeClass('active');
-
-    sessionStorage.setItem("gender", tmp_gender)
-
-    let url = decodeURI($(location).attr('href'));
-
-    url = url.replace(url.substring(url.search("gender=") + 7, url.search("&l")), change_gender.text())
-
-    console.log(url)
-
-    developPageLoad(url);
-}
-gender_optionItem.each(function(){
-    $(this).on('click', function (){
-        gender_change($(this).text())
-    })
-})
-
-gender_btn.on('click', function(){
-    if(gender_btn.parent().hasClass('active')) {
-        gender_btn.parent().removeClass('active');
-    } else {
-        gender_btn.parent().addClass('active');
     }
 });

@@ -28,9 +28,9 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
         List<Board> boardList;
 
         if(Objects.equals(sort, "최신순")){
-            if(Objects.equals(gender, "전체")){
-                if(Objects.equals(local, "전체")){
-                    if(Objects.equals(age, "전체")){
+            if(Objects.equals(gender, "성별_전체")){
+                if(Objects.equals(local, "지역_전체")){
+                    if(Objects.equals(age, "나이_전체")){
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
                                 .distinct()
@@ -41,7 +41,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                     }else{
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
-                                .where(board.ageLt.goe(member.getAge()).and(board.ageRt.loe(member.getAge())))
+                                .where(board.ageLt.loe(member.getAge()).and(board.ageRt.goe(member.getAge())))
                                 .distinct()
                                 .offset(pageable.getOffset())
                                 .limit(pageable.getPageSize())
@@ -49,20 +49,21 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                                 .fetch();
                     }
                 }else{
-                    if(Objects.equals(age, "전체")){
+                    if(Objects.equals(age, "나이_전체")){
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
-                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("-")+1)))
+                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("_")+1)))
                                 .distinct()
                                 .offset(pageable.getOffset())
                                 .limit(pageable.getPageSize())
                                 .orderBy(board.createdDate.desc())
                                 .fetch();
+                        log.info("local_test={}", member.getLocal().substring(member.getLocal().lastIndexOf("_")+1));
                     }else{
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
-                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("-")+1)))
-                                .where(board.ageLt.goe(member.getAge()).and(board.ageRt.loe(member.getAge())))
+                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("_")+1)))
+                                .where(board.ageLt.loe(member.getAge()).and(board.ageRt.goe(member.getAge())))
                                 .distinct()
                                 .offset(pageable.getOffset())
                                 .limit(pageable.getPageSize())
@@ -71,8 +72,8 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                     }
                 }
             }else{
-                if(Objects.equals(local, "전체")){
-                    if(Objects.equals(age, "전체")){
+                if(Objects.equals(local, "지역_전체")){
+                    if(Objects.equals(age, "나이_전체")){
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
                                 .where(board.gender.eq(member.getGender()))
@@ -85,7 +86,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
                                 .where(board.gender.eq(member.getGender()))
-                                .where(board.ageLt.goe(member.getAge()).and(board.ageRt.loe(member.getAge())))
+                                .where(board.ageLt.loe(member.getAge()).and(board.ageRt.goe(member.getAge())))
                                 .distinct()
                                 .offset(pageable.getOffset())
                                 .limit(pageable.getPageSize())
@@ -93,11 +94,11 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                                 .fetch();
                     }
                 }else{
-                    if(Objects.equals(age, "전체")){
+                    if(Objects.equals(age, "나이_전체")){
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
                                 .where(board.gender.eq(member.getGender()))
-                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("-")+1)))
+                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("_")+1)))
                                 .distinct()
                                 .offset(pageable.getOffset())
                                 .limit(pageable.getPageSize())
@@ -107,8 +108,8 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
                                 .where(board.gender.eq(member.getGender()))
-                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("-")+1)))
-                                .where(board.ageLt.goe(member.getAge()).and(board.ageRt.loe(member.getAge())))
+                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("_")+1)))
+                                .where(board.ageLt.loe(member.getAge()).and(board.ageRt.goe(member.getAge())))
                                 .distinct()
                                 .offset(pageable.getOffset())
                                 .limit(pageable.getPageSize())
@@ -118,9 +119,9 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                 }
             }
         }else{
-            if(Objects.equals(gender, "전체")){
-                if(Objects.equals(local, "전체")){
-                    if(Objects.equals(age, "전체")){
+            if(Objects.equals(gender, "성별_전체")){
+                if(Objects.equals(local, "지역_전체")){
+                    if(Objects.equals(age, "나이_전체")){
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
                                 .distinct()
@@ -132,7 +133,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                     }else{
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
-                                .where(board.ageLt.goe(member.getAge()).and(board.ageRt.loe(member.getAge())))
+                                .where(board.ageLt.loe(member.getAge()).and(board.ageRt.goe(member.getAge())))
                                 .distinct()
                                 .offset(pageable.getOffset())
                                 .limit(pageable.getPageSize())
@@ -141,10 +142,10 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                                 .fetch();
                     }
                 }else{
-                    if(Objects.equals(age, "전체")){
+                    if(Objects.equals(age, "나이_전체")){
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
-                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("-")+1)))
+                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("_")+1)))
                                 .distinct()
                                 .offset(pageable.getOffset())
                                 .limit(pageable.getPageSize())
@@ -154,8 +155,8 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                     }else{
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
-                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("-")+1)))
-                                .where(board.ageLt.goe(member.getAge()).and(board.ageRt.loe(member.getAge())))
+                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("_")+1)))
+                                .where(board.ageLt.loe(member.getAge()).and(board.ageRt.goe(member.getAge())))
                                 .distinct()
                                 .offset(pageable.getOffset())
                                 .limit(pageable.getPageSize())
@@ -165,8 +166,8 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                     }
                 }
             }else{
-                if(Objects.equals(local, "전체")){
-                    if(Objects.equals(age, "전체")){
+                if(Objects.equals(local, "지역_전체")){
+                    if(Objects.equals(age, "나이_전체")){
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
                                 .where(board.gender.eq(member.getGender()))
@@ -180,7 +181,7 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
                                 .where(board.gender.eq(member.getGender()))
-                                .where(board.ageLt.goe(member.getAge()).and(board.ageRt.loe(member.getAge())))
+                                .where(board.ageLt.loe(member.getAge()).and(board.ageRt.goe(member.getAge())))
                                 .distinct()
                                 .offset(pageable.getOffset())
                                 .limit(pageable.getPageSize())
@@ -189,11 +190,11 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                                 .fetch();
                     }
                 }else{
-                    if(Objects.equals(age, "전체")){
+                    if(Objects.equals(age, "나이_전체")){
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
                                 .where(board.gender.eq(member.getGender()))
-                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("-")+1)))
+                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("_")+1)))
                                 .distinct()
                                 .offset(pageable.getOffset())
                                 .limit(pageable.getPageSize())
@@ -204,8 +205,8 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
                         boardList = queryFactory.selectFrom(board)
                                 .where(board.category.title.eq(category))
                                 .where(board.gender.eq(member.getGender()))
-                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("-")+1)))
-                                .where(board.ageLt.goe(member.getAge()).and(board.ageRt.loe(member.getAge())))
+                                .where(board.local.eq(member.getLocal().substring(member.getLocal().lastIndexOf("_")+1)))
+                                .where(board.ageLt.loe(member.getAge()).and(board.ageRt.goe(member.getAge())))
                                 .distinct()
                                 .offset(pageable.getOffset())
                                 .limit(pageable.getPageSize())
