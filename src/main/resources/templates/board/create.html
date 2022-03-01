@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<meta charset="UTF-8">
+	<title>Create</title>
+	<link rel="stylesheet" href="/css/create.css">
+</head>
+<body>
+	<div class="container">
+		<div class="main">
+			<div class="user">
+				<div class="username">
+					<span>작성자 </span>
+					<input type="text" th:value="${userDetails.username}" readonly/>
+				</div>
+			</div>
+			<div class="title">
+				<span>제목 </span>
+				<input type="text" name="title"/>
+			</div>
+			<div class="content">
+				<span>내용 </span><br/>
+				<label>
+					<textarea name="content"></textarea>
+				</label>
+			</div>
+			<div class="sort">
+
+			</div>
+		</div>
+	</div>
+</body>
+</html>

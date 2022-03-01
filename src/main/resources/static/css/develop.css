@@ -17,6 +17,14 @@ button{
     overflow: visible;
     font: inherit;
 }
+.align_list{
+    margin: 0 auto;
+    width: 87%;
+    height: 100%;
+    position: relative;
+    max-width: 1060px;
+}
+
 .board_list{
     margin: 0 auto;
     padding: 20px 0 80px;
@@ -209,4 +217,62 @@ button{
 
 .gender_selectBox, .local_selectBox, .age_selectBox{
     margin-right: 1.5%;
+}
+
+.button{
+    position: relative;
+    width: 105px;
+    height: 38px;
+    border-radius: 4px;
+    border: 1px solid #ececec;
+    background-color: rgba(0,0,255,0.2);;
+    background-size: 20px;
+    cursor: pointer;
+}
+.create_board{
+    margin-bottom: 10px;
+}
+
+.create_board_button{
+    width: inherit;
+    height: inherit;
+    border: 0 none;
+    outline: 0 none;
+    padding-left: 17px;
+    padding-right: 17px;
+    background: transparent;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: normal;
+    white-space: nowrap;
+}
+
+.button{
+    margin-left: auto;
+}
+
+.board{
+    padding-top: 10px;
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 100px;
+}
+
+.item{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    position: relative;
+    font-size: 20px;
+    font-weight: 900;
+    border: 1px solid #333333;
+}
+
+.align{
+    border-bottom: 1px solid #ececec;   
+    height: 150px;
 }

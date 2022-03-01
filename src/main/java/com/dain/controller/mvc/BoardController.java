@@ -8,6 +8,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 @RequiredArgsConstructor
@@ -21,11 +22,19 @@ public class BoardController {
 
         if(userDetails == null){
             log.info("visitor");
-            return "develop";
+            return "/board/develop";
         }else{
             log.info("member");
             model.addAttribute("userDetails", userDetails);
-            return "develop";
+            return "/board/develop";
         }
+    }
+
+    @GetMapping("/{category}/write")
+    public String createBoard(@PathVariable("category") String category, @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                         Model model){
+        model.addAttribute("userDetails", userDetails.returnProfile().toBoardMemberDTO());
+
+        return "board/create";
     }
 }

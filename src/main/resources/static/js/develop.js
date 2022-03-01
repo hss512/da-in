@@ -191,3 +191,7 @@ age_btn.on('click', function(){
         age_btn.parent().addClass('active');
     }
 });
+
+function createBoard(){
+    location.href = "/develop/write";
+}

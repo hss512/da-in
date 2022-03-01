@@ -1,0 +1,26 @@
+.container{
+    height: 100%;
+}
+
+.main{
+    padding: 50px 3% 50px 3%;
+    border: 1px solid #ececec;
+    margin: 50px auto 50px auto;
+    /*margin: 100px 0 80px;*/
+    width: 86%;
+    height: auto;
+    position: relative;
+    max-width: 1060px;
+}
+
+.username{
+    margin-bottom: 25px;
+}
+
+.title{
+    margin-bottom: 25px;
+}
+
+.content{
+    margin-bottom: 25px;
+}

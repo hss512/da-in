@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<meta charset="UTF-8">
+	<title>Title</title>
+	<style>
+		.all{
+			display: flex;
+		}
+	</style>
+	<link rel="stylesheet" href="/css/develop.css">
+</head>
+<body>
+<div class="page_title">
+	<span class="title_name">
+		<h1>Develop Page</h1>
+	</span>
+</div>
+<div class="container">
+	<div class="align">
+		<div class="align_list">
+			<div class="main">
+				<th:block th:if="${userDetails} != null">
+					<div class="select_container">
+						<div class="select_container_list">
+							<div class="gender_selectBox selectBox">
+								<button class="gender_order orderButton">
+									<span class="order_gender order_select">성별_전체</span>
+								</button>
+								<ul class="gender_optionList sort_list">
+									<li class="gender_optionItem order_option">내_성별</li>
+								</ul>
+							</div>
+							<div class="local_selectBox selectBox">
+								<button class="local_order orderButton">지역_전체</button>
+								<ul class="local_optionList sort_list">
+									<li class="local_optionItem order_option">내_지역</li>
+								</ul>
+							</div>
+							<div class="age_selectBox selectBox">
+								<button class="age_order orderButton">나이_전체</button>
+								<ul class="age_optionList sort_list">
+									<li class="age_optionItem order_option">내_나이</li>
+								</ul>
+							</div>
+							<div class="sort_selectBox selectBox" id="sort_order_button">
+								<button class="sort_order orderButton">최신순</button>
+								<ul class="sort_optionList sort_list">
+									<li class="sort_optionItem order_option">좋아요순</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</th:block>
+				<th:block th:unless="${userDetails} != null">
+					<div class="select_container">
+						<div class="select_container_list">
+							<div class="sort_selectBox selectBox" id="sort_order_button">
+								<button  class="sort_order orderButton">최신순</button>
+								<ul class="sort_optionList sort_list">
+									<li class="sort_optionItem order_option">좋아요순</li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</th:block>
+			</div>
+
+			<div class="create_board">
+				<div class="create_button">
+					<div class="button">
+						<button onclick="createBoard()" class="create_board_button">
+							<span>새 글 작성</span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="board_list">
+		<div class="board">
+			<div class="item">
+				1
+			</div>
+			<div class="item">
+				2
+			</div>
+			<div class="item">
+				3
+			</div>
+			<div class="item">
+				4
+			</div>
+			<div class="item">
+				5
+			</div>
+			<div class="item">
+				6
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/js/develop.js}"></script>
+</html>

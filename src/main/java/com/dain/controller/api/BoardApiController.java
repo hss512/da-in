@@ -14,6 +14,7 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,7 +29,7 @@ public class BoardApiController {
     private final BoardService boardService;
 
     @GetMapping("/{category}")
-    public ResponseEntity<?> develop(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable("category") String category,
+    public ResponseEntity<?> getBoard(@AuthenticationPrincipal UserDetailsImpl userDetails, @PathVariable("category") String category,
                                      @PageableDefault(size = 15) Pageable pageable,
                                      @RequestParam("sort") String sort, @RequestParam("gender") String gender,
                                      @RequestParam("local") String local, @RequestParam("age") String age){
@@ -55,4 +56,5 @@ public class BoardApiController {
             return new ResponseEntity<>(new ValidateDTO<>(1, "visitorBoard", result), HttpStatus.OK);
         }
     }
+
 }
