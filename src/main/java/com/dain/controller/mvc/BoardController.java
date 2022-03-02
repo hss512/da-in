@@ -2,6 +2,7 @@ package com.dain.controller.mvc;
 
 import com.dain.principal.UserDetailsImpl;
 import com.dain.service.BoardService;
+import com.dain.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -15,7 +16,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 @Log4j2
 public class BoardController {
 
-    private BoardService boardService;
+    private final BoardService boardService;
+    private final CategoryService categoryService;
 
     @GetMapping("/develop")
     public String developPage(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model){
@@ -33,7 +35,9 @@ public class BoardController {
     @GetMapping("/{category}/write")
     public String createBoard(@PathVariable("category") String category, @AuthenticationPrincipal UserDetailsImpl userDetails,
                                          Model model){
+
         model.addAttribute("userDetails", userDetails.returnProfile().toBoardMemberDTO());
+        model.addAttribute("category", categoryService.getCategoryId(category));
 
         return "board/create";
     }

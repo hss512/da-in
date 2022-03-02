@@ -1,12 +1,18 @@
 package com.dain.domain.entity;
 
 import com.dain.domain.dto.ReadBoardDTO;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Board extends BaseEntity{
 
     @Id
@@ -20,9 +26,9 @@ public class Board extends BaseEntity{
 
     private String local;
 
-    private int ageLt;
+    private int ltAge;
 
-    private int ageRt;
+    private int rtAge;
 
     private String gender;
 
@@ -44,8 +50,8 @@ public class Board extends BaseEntity{
         this.title = title;
         this.content = content;
         this.local = local;
-        this.ageLt = ageLt;
-        this.ageRt = ageRt;
+        this.ltAge = ageLt;
+        this.rtAge = ageRt;
         this.gender = gender;
         this.member = member;
         this.category = category;
@@ -61,8 +67,8 @@ public class Board extends BaseEntity{
                 .title(this.title)
                 .content(this.content)
                 .local(this.local)
-                .ageLt(this.ageLt)
-                .ageRt(this.ageRt)
+                .ageLt(this.ltAge)
+                .ageRt(this.rtAge)
                 .gender(this.gender)
                 .member(this.member.toBoardMemberDTO())
                 .category(this.category)

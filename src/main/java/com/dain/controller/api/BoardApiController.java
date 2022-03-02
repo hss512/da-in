@@ -1,8 +1,8 @@
 package com.dain.controller.api;
 
+import com.dain.domain.dto.BoardDTO;
 import com.dain.domain.dto.ReadBoardDTO;
 import com.dain.domain.entity.Board;
-import com.dain.domain.entity.Category;
 import com.dain.exception.ValidateDTO;
 import com.dain.principal.UserDetailsImpl;
 import com.dain.service.BoardService;
@@ -14,7 +14,6 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -55,6 +54,17 @@ public class BoardApiController {
             List<ReadBoardDTO> result = visitorsBoard.stream().map(Board::toReadBoardDTO/*, Category::toCategoryDTO*/).collect(Collectors.toList());
             return new ResponseEntity<>(new ValidateDTO<>(1, "visitorBoard", result), HttpStatus.OK);
         }
+    }
+
+    @PostMapping("/{category}/board/create")
+    public ResponseEntity<?> createBoard(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                         @RequestBody BoardDTO.CreateBoard data,
+                                         @PathVariable("category") Long categoryId){
+
+
+        ReadBoardDTO board = boardService.createBoard(userDetails.returnProfile(), data.toBoard(), categoryId);
+
+        return null;
     }
 
 }

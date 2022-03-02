@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html" >
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<meta charset="UTF-8">
@@ -12,7 +12,7 @@
 			<div class="user">
 				<div class="username">
 					<span>작성자 </span>
-					<input type="text" th:value="${userDetails.username}" readonly/>
+					<input type="text" name="username" th:value="${userDetails.nickname}" readonly/>
 				</div>
 			</div>
 			<div class="title">
@@ -26,9 +26,27 @@
 				</label>
 			</div>
 			<div class="sort">
-
+				<div class="age">
+					<span>나이</span><br/>
+					<input type="text" name="ltAge"/>
+					<span>~</span>
+					<input type="text" name="rtAge"/>
+				</div>
+				<br/>
+				<div class="gender">
+					<span>성별</span><br/>
+					<input type="text" name="gender"/>
+				</div>
+				<br/>
+				<div class="local">
+					<span>지역</span><br/>
+					<input type="text" name="local"/>
+				</div>
 			</div>
+			</br>
+			<button type="button" th:onclick="'javascript:create(' + ${userDetails.id} + ',' + ${category} +')'">작성</button>
 		</div>
 	</div>
 </body>
+<script type="text/javascript" th:src="@{/js/create.js}"></script>
 </html>

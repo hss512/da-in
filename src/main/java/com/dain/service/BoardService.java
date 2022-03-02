@@ -22,17 +22,19 @@ public class BoardService {
     private final BoardRepository boardRepository;
     private final CategoryRepository categoryRepository;
 
-    public void createBoard(Member member, Board board, String categoryName){
+    public ReadBoardDTO createBoard(Member member, Board board, Long categoryId){
 
         board.addMember(member);
 
-        Category category = categoryRepository.findByTitle(categoryName);
+        Category category = categoryRepository.findCategoryById(categoryId);
 
         board.addCategory(category);
 
         Board savedBoard = boardRepository.save(board);
 
         log.info("savedBoard={}", savedBoard);
+
+        return savedBoard.toReadBoardDTO();
     }
 
     public ReadBoardDTO read_one_board(Long boardId){
@@ -47,7 +49,7 @@ public class BoardService {
         Board findBoard = boardRepository.findBoardByIdAndMemberId(boardId, member.getId());
 
         findBoard.update(board.getTitle(), board.getContent(), board.getLocal(),
-                board.getAgeLt(), board.getAgeRt(), board.getGender(), board.getMember(), board.getCategory());
+                board.getLtAge(), board.getRtAge(), board.getGender(), board.getMember(), board.getCategory());
 
         log.info("findBoard={}", findBoard);
     }
