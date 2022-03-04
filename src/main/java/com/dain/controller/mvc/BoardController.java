@@ -1,5 +1,7 @@
 package com.dain.controller.mvc;
 
+import com.dain.domain.dto.ReadBoardDTO;
+import com.dain.domain.entity.Member;
 import com.dain.principal.UserDetailsImpl;
 import com.dain.service.BoardService;
 import com.dain.service.CategoryService;
@@ -10,6 +12,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+
+import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
@@ -40,5 +44,28 @@ public class BoardController {
         model.addAttribute("category", categoryService.getCategoryId(category));
 
         return "board/create";
+    }
+
+    @GetMapping("/develop/board/{boardId}")
+    public String getBoard(@PathVariable("boardId") String boardId, @AuthenticationPrincipal UserDetailsImpl userDetails,
+                           Model model){
+
+        log.info("Get/getBoard");
+
+        ReadBoardDTO getBoard = boardService.getBoard(boardId);
+        Member member = userDetails.returnProfile();
+
+        if(getBoard.getGender() == null || getBoard.getGender().equals(member.getGender())){
+            if(getBoard.getAgeLt() == 0 || (getBoard.getAgeLt() <= member.getAge() && getBoard.getAgeRt() >= member.getAge())){
+                if(getBoard.getLocal() == null || getBoard.getLocal().equals(member.getLocal())){
+                    model.addAttribute("board", getBoard);
+                    model.addAttribute("userDetails", userDetails.returnProfile());
+
+                    return "/board/post";
+                }
+            }
+        }
+
+        return "redirect:/api/board/error";
     }
 }

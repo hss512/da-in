@@ -6,6 +6,11 @@ ul{
     border: 0;
     margin-bottom: 10px;
 }
+a{
+    text-decoration: none;
+    color: inherit;
+}
+
 button{
     margin: 0;
     border: 0;
@@ -257,11 +262,10 @@ button{
     margin-top: 10px;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    grid-auto-rows: 100px;
+    grid-auto-rows: 200px;
 }
 
 .item{
-    display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
@@ -270,6 +274,15 @@ button{
     font-size: 20px;
     font-weight: 900;
     border: 1px solid #333333;
+}
+
+.board_tag{
+    display: flex;
+    font-size: 13px;
+}
+
+.board_nickname{
+    font-size: 13px;
 }
 
 .align{

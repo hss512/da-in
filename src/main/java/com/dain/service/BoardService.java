@@ -73,4 +73,8 @@ public class BoardService {
 
         return boardRepository.getVisitorsBoard(sort, gender, local, age, category, pageable);
     }
+
+    public ReadBoardDTO getBoard(String boardId) {
+        return boardRepository.findById(Long.parseLong(boardId)).get().toReadBoardDTO();
+    }
 }

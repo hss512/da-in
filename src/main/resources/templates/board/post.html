@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<meta charset="UTF-8">
+	<title>Create</title>
+	<link rel="stylesheet" href="/css/create.css">
+</head>
+<body>
+<div class="container">
+	<div class="main">
+		<div class="user">
+			<div class="username">
+				<span>작성자 </span>
+				<input type="text" name="username" th:value="${userDetails.nickname}" readonly/>
+			</div>
+		</div>
+		<div class="title">
+			<span>제목 </span>
+			<input type="text" name="title" th:value="${board.title}" readonly/>
+		</div>
+		<div class="content">
+			<label>
+				<span>내용</span><br/>
+				<textarea name="content" readonly>[[${board.content}]]</textarea>
+			</label>
+		</div>
+		<div class="sort">
+			<div class="age">
+				<span>나이</span><br/>
+				<input type="text" name="ltAge" th:value="${board.ageLt}" readonly/>
+				<span>~</span>
+				<input type="text" name="rtAge" th:value="${board.ageRt}" readonly/>
+			</div>
+			<br/>
+			<div class="gender">
+				<span>성별</span><br/>
+				<input type="text" name="gender" th:value="${board.gender}" readonly/>
+			</div>
+			<br/>
+			<div class="local">
+				<span>지역</span><br/>
+				<input type="text" name="local" th:value="${board.local}" readonly/>
+			</div>
+		</div>
+		</br>
+		<button type="button" onclick="history.back()">목록으로</button>
+		<br/>
+		<button type="button" th:onclick="'javascript:doScrap(' + ${userDetails.id} + ',' + ${board.id} +')'">스크랩</button>
+	</div>
+</div>
+</body>
+<script type="text/javascript" th:src="@{/js/post.js}"></script>
+</html>

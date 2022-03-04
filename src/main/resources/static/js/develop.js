@@ -37,8 +37,11 @@ function developPageLoad(condition){
         contentType: "application/x-www-form-urlencoded; charset=UTF-8",
         dataType: "json"
     }).done(res=>{
-
-        console.log("res=", res)
+        $(".board").empty();
+        console.log("res=", res.data)
+        res.data.forEach((data)=>{
+            $('.board').append(boardItem(data))
+        })
         history.pushState(null, null, url);
 
     }).fail(error=>{
@@ -47,6 +50,56 @@ function developPageLoad(condition){
 }
 
 developPageLoad($(location).attr('href'));
+
+function boardItem(data) {
+
+    let boardId = data.id;
+    let title = data.title;
+    let content = data.content;
+    let nickname = data.member.nickname;
+    let ageLt = data.ageLt;
+    let ageRt = data.ageRt;
+    let gender = data.gender;
+    let local = data.local;
+
+    let boardList =
+        "<div class='item'>" +
+            "<a href='/develop/board/" + boardId + "'>" +
+            "<div class='board_tag'>" +
+                "<div class='board_gender'>" +
+                    "<span>" + gender + " / " +"</span>"+
+                "</div>"+
+                "<div class='board_ageLt'>" +
+                    "<span>" + ageLt + "대 ~ " + "</span>"+
+                "</div>"+
+                "<div class='board_ageRt'>" +
+                    "<span>" + ageRt+ "대" + " /" + "</span>"+
+                "</div>"+
+                "<div class='board_local'>" +
+                    "<span>" + local +"</span>"+
+                "</div>"+
+            "</div>" +
+            "<br/>" +
+            "<div class='board_main'>" +
+                "<div class='board_title'>" +
+                    "<span>" + title + "</span>"+
+                "</div>"+
+                "<br/>" +
+                "<div class='board_content'>" +
+                    "<span>" + content + "</span>"+
+                "</div>"+
+            "</div>"+
+            "<br/>" +
+            "<div class='board_etc'>" +
+                "<div class='board_nickname'>" +
+                    "<span>" + nickname + "</span>"+
+                "</div>"+
+            "</div>"+
+            "</a>" +
+        "</div>"
+
+    return boardList;
+}
 
 const sort_change = function(item) {
     let tmp = sort_btn.text();

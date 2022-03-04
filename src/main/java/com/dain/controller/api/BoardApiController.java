@@ -67,4 +67,16 @@ public class BoardApiController {
         return null;
     }
 
+    @GetMapping("/board/error")
+    public String boardError(){
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<script>");
+        sb.append("alert('").append("안됩니다").append("');");
+        sb.append("history.back();");
+        sb.append("</script>");
+
+        return sb.toString();
+    }
 }
