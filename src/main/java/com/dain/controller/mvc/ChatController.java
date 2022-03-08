@@ -30,14 +30,16 @@ public class ChatController {
     public String room(@PathVariable String id,Model model){
         ChatRoom room = chatRoomRepository.findRoomById(id);
         model.addAttribute("room",room);
-        return "room";
+        return "/chat/room";
     }
+
+
 
     @GetMapping("/newRoom")
     public String makeRoomForm(Model model){
         ChatRoomForm chatRoomForm = new ChatRoomForm();
         model.addAttribute("chatRoomForm",chatRoomForm);
-        return "newroom";
+        return "/chat/newroom";
     }
 
     @PostMapping("/room/new")
