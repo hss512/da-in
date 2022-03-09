@@ -1,5 +1,6 @@
 package com.dain.domain.entity;
 
+import com.dain.domain.dto.BoardDTO;
 import com.dain.domain.dto.ReadBoardDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -72,6 +73,18 @@ public class Board extends BaseEntity{
                 .gender(this.gender)
                 .member(this.member.toBoardMemberDTO())
                 .category(this.category)
+                .build();
+    }
+
+    public BoardDTO toBoardDTO(){
+        return BoardDTO.builder()
+                .boardId(this.id)
+                .title(this.title)
+                .content(this.content)
+                .local(this.local)
+                .rtAge(String.valueOf(this.rtAge))
+                .ltAge(String.valueOf(this.ltAge))
+                .gender(this.gender)
                 .build();
     }
 }

@@ -1,8 +1,7 @@
 package com.dain.domain.entity;
 
 import com.dain.domain.dto.BoardMemberDTO;
-import com.dain.domain.dto.MemberDto;
-import lombok.AllArgsConstructor;
+import com.dain.domain.dto.MemberDTO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -56,8 +55,8 @@ public class Member extends BaseEntity{
         this.email=email;
     }
 
-    public MemberDto toDto(){
-        return MemberDto.builder()
+    public MemberDTO toDto(){
+        return MemberDTO.builder()
                 .id(id)
                 .username(username)
                 .nickname(nickname)

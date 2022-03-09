@@ -1,14 +1,12 @@
 package com.dain.controller.mvc;
 
-import com.dain.domain.dto.MemberDto;
-import com.dain.domain.entity.Member;
+import com.dain.domain.dto.MemberDTO;
 import com.dain.principal.UserDetailsImpl;
 import com.dain.service.EmailService;
 import com.dain.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -36,7 +34,7 @@ public class MemberController {
         return "member/signup";
     }//커밋용주석
     @PostMapping("/signup")
-    public String singup(@Validated MemberDto dto, BindingResult result){
+    public String singup(@Validated MemberDTO dto, BindingResult result){
         log.info("signup postmapping으로 들어왔습니다");
 
         if (result.hasErrors()) {

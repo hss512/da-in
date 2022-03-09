@@ -6,6 +6,7 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class BoardDTO {
 
     private Long boardId;
@@ -60,4 +61,14 @@ public class BoardDTO {
         }
     }
 
+    @Getter
+    @NoArgsConstructor
+    public static class ResponseBoardDTO {
+        private Long id;
+
+        @Builder
+        public ResponseBoardDTO(Long id){
+            this.id = id;
+        }
+    }
 }

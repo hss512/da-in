@@ -1,6 +1,6 @@
 package com.dain.service;
 
-import com.dain.domain.dto.MemberDto;
+import com.dain.domain.dto.MemberDTO;
 import com.dain.domain.entity.Member;
 import com.dain.principal.UserDetailsImpl;
 import com.dain.repository.MemberRepository;
@@ -29,7 +29,7 @@ public class MemberService implements UserDetailsService {
 
 
     @Transactional
-    public Long createUser (MemberDto dto) {
+    public Long createUser (MemberDTO dto) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         dto.setPassword(passwordEncoder.encode(dto.getPassword()));
         String email = emailCheck(dto.getEmail());

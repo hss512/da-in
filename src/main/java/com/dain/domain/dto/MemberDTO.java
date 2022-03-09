@@ -9,7 +9,7 @@ import javax.validation.constraints.Pattern;
 
 @Data
 @NoArgsConstructor
-public class MemberDto {
+public class MemberDTO {
 
     private Long id;
 
@@ -56,7 +56,7 @@ public class MemberDto {
     }
 
     @Builder
-    public MemberDto(Long id, String username, String nickname, String password, String local, int age, String gender, String imagePath, String role, String email,String sido,String gugun,int yy){
+    public MemberDTO(Long id, String username, String nickname, String password, String local, int age, String gender, String imagePath, String role, String email, String sido, String gugun, int yy){
         this.id=id;
         this.username=username;
         this.nickname=nickname;
@@ -75,7 +75,7 @@ public class MemberDto {
 
     @Getter
     @NoArgsConstructor
-    public static class BoardMemberDTO{
+    public static class ResponseMemberDTO {
         private Long id;
 
         private String username;
@@ -89,7 +89,7 @@ public class MemberDto {
         private String gender;
 
         @Builder
-        public BoardMemberDTO(Long id, String username, String nickname, String local, int age, String gender){
+        public ResponseMemberDTO(Long id, String username, String nickname, String local, int age, String gender){
             this.id = id;
             this.username = username;
             this.nickname = nickname;

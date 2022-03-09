@@ -4,7 +4,7 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<meta charset="UTF-8">
 	<title>Create</title>
-	<link rel="stylesheet" href="/css/create.css">
+	<link rel="stylesheet" href="/css/post.css">
 </head>
 <body>
 <div class="container">
@@ -46,7 +46,27 @@
 		</br>
 		<button type="button" onclick="history.back()">목록으로</button>
 		<br/>
+		<br/>
 		<button type="button" th:onclick="'javascript:doScrap(' + ${userDetails.id} + ',' + ${board.id} +')'">스크랩</button>
+	</div>
+	<div class="reply_container">
+		<div class="reply_write">
+			<div class="reply_input">
+				<label>
+					<input type="text" name="reply_text"/>
+				</label>
+			</div>
+			<div class="reply_button">
+				<button type="button" th:onclick="'javascript:reply_write('+ ${userDetails.id} + ',' + ${board.id} + ')'">
+					전송
+				</button>
+			</div>
+		</div>
+		<div class="reply_list">
+			<!--<div class="reply">
+
+			</div>-->
+		</div>
 	</div>
 </div>
 </body>
