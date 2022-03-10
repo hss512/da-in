@@ -5,30 +5,32 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import java.util.*;
 
+
+// import 생략....
+
 @Repository
 public class ChatRoomRepository {
-    private Map<String,ChatRoom> chatRoomMap;
+
+    private Map<String, ChatRoomDto> chatRoomMap;
 
     @PostConstruct
-    private void init(){
-        chatRoomMap=new LinkedHashMap<>();
+    private void init() {
+        chatRoomMap = new LinkedHashMap<>();
     }
 
-    public List<ChatRoom> findAllRoom(){
+    public List<ChatRoomDto> findAllRoom() {
         List chatRooms = new ArrayList<>(chatRoomMap.values());
         Collections.reverse(chatRooms);
         return chatRooms;
     }
 
-    public ChatRoom findRoomById(String id){
+    public ChatRoomDto findRoomById(String id) {
         return chatRoomMap.get(id);
     }
 
-    public ChatRoom createChatRoom(String name){
-        ChatRoom chatRoom=ChatRoom.create(name);
-        chatRoomMap.put(chatRoom.getRoomId(),chatRoom);
-        return chatRoom;
+    public ChatRoomDto createChatRoom(String name) {
+        ChatRoomDto chatRoomDto = ChatRoomDto.create(name);
+        chatRoomMap.put(chatRoomDto.getRoomId(), chatRoomDto);
+        return chatRoomDto;
     }
-
-
 }

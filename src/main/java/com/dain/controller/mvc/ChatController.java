@@ -1,6 +1,5 @@
 package com.dain.controller.mvc;
 
-import com.dain.chat.ChatRoom;
 import com.dain.chat.ChatRoomForm;
 import com.dain.chat.ChatRoomRepository;
 import com.dain.principal.UserDetailsImpl;
@@ -26,12 +25,12 @@ public class ChatController {
         return "/chat/rooms";
     }
 
-    @GetMapping("/rooms/{id}")
+    /*@GetMapping("/rooms/{id}")
     public String room(@PathVariable String id,Model model){
         ChatRoom room = chatRoomRepository.findRoomById(id);
         model.addAttribute("room",room);
         return "/chat/room";
-    }
+    }*/
 
 
 
@@ -54,4 +53,5 @@ public class ChatController {
         model.addAttribute("nickname",userDetails.returnProfile().getNickname());
         return "chat";
     }
+
 }
