@@ -53,3 +53,22 @@
     height: auto;
     position: relative;
 }
+
+.reply_page{
+    margin-top: 15px;
+    height: auto;
+    display: flex;
+}
+
+.reply_btn{
+    margin-right: 10px;
+}
+
+.reply_btn button[aria-selected=true]{
+    background-color: #007bff;
+}
+
+.reply_btn button{
+    height: 30px;
+    width: 30px;
+}

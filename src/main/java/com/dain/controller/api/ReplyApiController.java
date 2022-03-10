@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,12 +42,10 @@ public class ReplyApiController {
     }
 
     @GetMapping("/board/{boardId}/reply")
-    public ResponseEntity<?> getReply(@PathVariable("boardId") String boardId, @PageableDefault(size = 10) Pageable pageable){
+    public ResponseEntity<?> getReply(@PathVariable("boardId") String boardId, @PageableDefault(size = 10, direction = Sort.Direction.DESC) Pageable pageable){
 
-        Page<Reply> replyList = replyService.getReply(boardId, pageable);
+        Page<ReplyDTO> replyList = replyService.getReply(boardId, pageable);
 
-        List<ReplyDTO> result = replyList.stream().map(Reply::toReplyDTO).collect(Collectors.toList());
-
-        return new ResponseEntity<>(new ValidateDTO<>(1, "replyList", result), HttpStatus.OK);
+        return new ResponseEntity<>(new ValidateDTO<>(1, "replyList", replyList), HttpStatus.OK);
     }
 }

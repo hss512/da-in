@@ -48,7 +48,7 @@ public class ReplyService {
         return replyRepository.save(reply).toReplyDTO();
     }
 
-    public Page<Reply> getReply(String boardId, Pageable pageable) {
+    public Page<ReplyDTO> getReply(String boardId, Pageable pageable) {
         return replyRepository.getReply(Long.parseLong(boardId), pageable);
     }
 }

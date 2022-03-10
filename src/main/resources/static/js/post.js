@@ -1,16 +1,45 @@
-function getReplyList(){
+function getReplyList(replyNum){
 
     let boardId = $(location).attr("href").substring($(location).attr("href").search("board/") + 6)
-
+    console.log(replyNum)
     console.log("boardId =", boardId)
 
     $.ajax({
-        url: "/api/board/" + boardId + "/reply",
+        url: "/api/board/" + boardId + "/reply?page=" + replyNum,
         method: "get"
     }).done(res=>{
-        console.log(res)
+        console.log(res);
+        $(".reply").remove()
+        res.data.content.forEach(reply=>{
+            $(".reply_list").append(
+                "<div class='reply'>" +
+                "<div class='reply_user'>" +
+                reply.memberDTO.nickname +
+                "</div>" +
+                "<div class='reply_content'>" +
+                reply.content +
+                "</div>" +
+                "</div>"
+            );
+        })
+        $(".reply_btn").remove()
+        for (let i = 1; i <= res.data.totalPages ; i++) {
+            $(".reply_page").append(
+                "<div class='reply_btn'>" +
+                "<button id='reply_" + i +"' type='button' name='reply_page_button' onclick='getReply(" + i + ")'>"+
+                i +
+                "</button>" +
+                "</div>"
+            )
+        }
+        if(replyNum === undefined){
+            $("#reply_1").attr("aria-selected", true);
+        }else{
+            let n = replyNum+1;
+            $("#reply_"+ n).attr("aria-selected", true);
+        }
     }).fail(err=>{
-
+        console.log(err);
     })
 
 }
@@ -45,18 +74,14 @@ function reply_write(userId, boardId){
         dataType: "json"
     }).done(res=>{
         console.log(res.data)
-        $(".reply_list").append(
-            "<div class='reply'>" +
-            "<div class='reply_user'>" +
-            res.data.memberDTO.nickname +
-            "</div>" +
-            "<div class='reply_content'>" +
-            res.data.content +
-            "</div>" +
-            "</div>"
-        );
+        $("#reply_text_value").val("");
+        getReplyList();
     }).fail(err=>{
         console.log(err)
     })
 
+}
+
+function getReply(replyNum){
+    getReplyList(replyNum - 1)
 }
