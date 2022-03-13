@@ -72,3 +72,11 @@
     height: 30px;
     width: 30px;
 }
+
+.reply_user{
+    display: flex;
+}
+
+.reply_delete{
+    margin-left: auto;
+}

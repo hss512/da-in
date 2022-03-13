@@ -16,4 +16,6 @@ public class ReplyDTO {
 
     private String content;
 
+    private int equal;
+
 }

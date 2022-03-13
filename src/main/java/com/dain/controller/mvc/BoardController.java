@@ -23,16 +23,19 @@ public class BoardController {
     private final BoardService boardService;
     private final CategoryService categoryService;
 
-    @GetMapping("/develop")
-    public String developPage(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model){
+    @GetMapping("/{category}")
+    public String developPage(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model,
+                              @PathVariable("category") String boardCategory){
 
         if(userDetails == null){
             log.info("visitor");
-            return "/board/develop";
+            model.addAttribute("category", boardCategory);
+            return "/board/boardCategory";
         }else{
             log.info("member");
+            model.addAttribute("category", boardCategory);
             model.addAttribute("userDetails", userDetails);
-            return "/board/develop";
+            return "/board/boardCategory";
         }
     }
 

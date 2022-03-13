@@ -11,16 +11,32 @@ function getReplyList(replyNum){
         console.log(res);
         $(".reply").remove()
         res.data.content.forEach(reply=>{
-            $(".reply_list").append(
-                "<div class='reply'>" +
-                "<div class='reply_user'>" +
-                reply.memberDTO.nickname +
-                "</div>" +
-                "<div class='reply_content'>" +
-                reply.content +
-                "</div>" +
-                "</div>"
-            );
+            if(reply.equal === 1){
+                $(".reply_list").append(
+                    "<div class='reply'>" +
+                    "<div class='reply_user'>" +
+                    reply.memberDTO.nickname +
+                    "<div class='reply_delete'>" +
+                    "<button class='reply_delete_btn' type='button' onclick='reply_delete("+ reply.id + "," + reply.memberDTO.id +")'>x</button>" +
+                    "</div>" +
+                    "</div>" +
+                    "<div class='reply_content'>" +
+                    reply.content +
+                    "</div>" +
+                    "</div>"
+                )
+            }else{
+                $(".reply_list").append(
+                    "<div class='reply'>" +
+                    "<div class='reply_user'>" +
+                    reply.memberDTO.nickname +
+                    "</div>" +
+                    "<div class='reply_content'>" +
+                    reply.content +
+                    "</div>" +
+                    "</div>"
+                )
+            }
         })
         $(".reply_btn").remove()
         for (let i = 1; i <= res.data.totalPages ; i++) {
@@ -84,4 +100,18 @@ function reply_write(userId, boardId){
 
 function getReply(replyNum){
     getReplyList(replyNum - 1)
+}
+
+function reply_delete(replyId, memberId){
+    $.ajax({
+        url: "/api/reply/" + replyId + "/member/" + memberId,
+        method: "delete"
+    }).done(res=>{
+        if(res === 1){
+            getReplyList();
+        }
+        console.log(res.data)
+    }).fail(err=>{
+        console.log(err)
+    })
 }

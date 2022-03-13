@@ -42,10 +42,30 @@ public class ReplyApiController {
     }
 
     @GetMapping("/board/{boardId}/reply")
-    public ResponseEntity<?> getReply(@PathVariable("boardId") String boardId, @PageableDefault(size = 10, direction = Sort.Direction.DESC) Pageable pageable){
+    public ResponseEntity<?> getReply(@PathVariable("boardId") String boardId,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails,
+                                      @PageableDefault(size = 10, direction = Sort.Direction.DESC) Pageable pageable){
 
         Page<ReplyDTO> replyList = replyService.getReply(boardId, pageable);
 
+        for (ReplyDTO replyDTO : replyList) {
+            if(replyDTO.getMemberDTO().getId().equals(userDetails.returnProfile().getId())){
+                replyDTO.setEqual(1);
+            }else replyDTO.setEqual(0);
+        }
+
         return new ResponseEntity<>(new ValidateDTO<>(1, "replyList", replyList), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/reply/{replyId}/member/{memberId}")
+    public int deleteReply(@PathVariable("replyId") String replyId,
+                                         @PathVariable("memberId") String memberId,
+                                         @AuthenticationPrincipal UserDetailsImpl userDetails){
+
+        if(userDetails.returnProfile().getId() != Long.parseLong(memberId)){
+            return 0;
+        }else{
+            return replyService.deleteReply(Long.parseLong(replyId));
+        }
     }
 }

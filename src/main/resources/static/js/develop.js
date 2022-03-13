@@ -8,6 +8,7 @@ const age_btn = $('.age_order');
 const age_item = $('.age_optionItem');
 
 function developPageLoad(condition){
+    let category = $(".title_name")[0].innerHTML.substring(7, $(".title_name")[0].innerHTML.search(" "));
     console.log("loadPage")
     console.log(condition)
     if(condition.search("sort") === -1){
@@ -29,7 +30,7 @@ function developPageLoad(condition){
     gender_btn.html(gender)
     gender_item.html(sessionStorage.gender)
 
-    let url = "/develop?sort=" + sort + "&gender=" + gender + "&local=" + local + "&age=" + age;
+    let url = "/" + category + "?sort=" + sort + "&gender=" + gender + "&local=" + local + "&age=" + age;
 
     $.ajax({
         url: "/api" + url,
@@ -246,5 +247,5 @@ age_btn.on('click', function(){
 });
 
 function createBoard(){
-    location.href = "/develop/write";
+    location.href = "/" + $(".title_name")[0].innerHTML.substring(7, $(".title_name")[0].innerHTML.search(" ")) + "/write";
 }

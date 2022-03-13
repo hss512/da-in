@@ -35,7 +35,7 @@ public class ReplyCustomRepositoryImpl implements ReplyCustomRepository{
                 .orderBy(reply.createdDate.desc())
                 .fetch();
 
-        int size = queryFactory.selectFrom(reply).fetch().size();
+        int size = queryFactory.selectFrom(reply).where(reply.board.id.eq(boardId)).fetch().size();
 
         List<ReplyDTO> result = replyList.stream().map(Reply::toReplyDTO).collect(Collectors.toList());
 

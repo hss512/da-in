@@ -51,4 +51,9 @@ public class ReplyService {
     public Page<ReplyDTO> getReply(String boardId, Pageable pageable) {
         return replyRepository.getReply(Long.parseLong(boardId), pageable);
     }
+
+    public int deleteReply(Long replyId) {
+        replyRepository.deleteById(replyId);
+        return 1;
+    }
 }
