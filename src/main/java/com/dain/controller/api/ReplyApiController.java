@@ -4,6 +4,7 @@ import com.dain.domain.dto.ReplyDTO;
 import com.dain.domain.entity.Reply;
 import com.dain.exception.ValidateDTO;
 import com.dain.principal.UserDetailsImpl;
+import com.dain.service.AlarmService;
 import com.dain.service.ReplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class ReplyApiController {
 
     private final ReplyService replyService;
+    private final AlarmService alarmService;
 
     @PostMapping("/board/{boardId}/user/{userId}")
     public ResponseEntity<?> replyWrite(@PathVariable("boardId") String boardId, @PathVariable("userId") String userId,
@@ -34,6 +36,9 @@ public class ReplyApiController {
         log.info(replyDTO.getContent());
 
         if(userDetails.returnProfile().getId().equals(Long.parseLong(userId))) {
+
+            alarmService.message(replyDTO, Long.parseLong(boardId), Long.parseLong(userId));
+
             return new ResponseEntity<>(new ValidateDTO<>(1, "responseReply",
                     replyService.replyWrite(boardId, userId, replyDTO)), HttpStatus.OK);
         }else{

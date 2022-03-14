@@ -15,7 +15,6 @@ import javax.persistence.*;
 public class Member extends BaseEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
     private Long id;
 
     @Column(name = "user_username",nullable = false,unique = true)
@@ -40,6 +39,8 @@ public class Member extends BaseEntity{
     @Column(name = "user_email",unique = true)
     private String email;
 
+    @Embedded
+    private final Alarms alarms = new Alarms();
 
     @Builder
     public Member(Long id, String username, String nickname, String password, String local, int age, String gender,  String imagePath, String role,String email){
@@ -82,5 +83,9 @@ public class Member extends BaseEntity{
     public void toUpdateMember(String nickname,String local){
         this.nickname=nickname;
         this.local=local;
+    }
+
+    public void addAlarm(Alarm alarm) {
+        alarms.addAlarm(alarm);
     }
 }
