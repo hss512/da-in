@@ -17,6 +17,10 @@ public class MainController {
         return "index";
     }
 
+    @GetMapping("/chat/chat")
+    public String chatForm(){
 
+        return "/chat/chat";
+    }
 }
 

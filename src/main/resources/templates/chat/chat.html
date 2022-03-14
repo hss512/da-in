@@ -1,47 +1,51 @@
 <!DOCTYPE html>
-<html lang="en"
+<html lang="ko"
       xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>채팅 서비스</title>
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-
-    <!-- 부가적인 테마 -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-
-    <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <title>Spring Boot WebSocket Chat Application</title>
+  <link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+  <script type="text/javascript" th:src="@{/js/chat.js}" ></script>
 
 </head>
 <body>
-<input type="hidden" id="nickname" class="form-inline">
-<div id = "chatroom" style = "width:400px; height: 600px; border:1px solid; background-color : gray"></div>
-<input type = "text" id = "message" style = "height : 30px; width : 340px" placeholder="내용을 입력하세요" autofocus>
-<button class = "btn btn-primary" id = "send">전송</button>
-<script>
 
-</script>
+<div id="username-page">
+  <div class="username-page-container">
+    <h1 class="title">username을 입력하세요</h1>
+    <form id="usernameForm" name="usernameForm">
+      <div class="form-group">
+        <input type="text" id="name" placeholder="Username" autocomplete="off" class="form-control" />
+      </div>
+      <div class="form-group">
+        <button type="submit" onclick="connect()" class="accent username-submit">채팅 시작하기</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="chat-page" class="hidden">
+  <div class="chat-container">
+    <div class="chat-header">
+      <h2>Spring WebSocket Chat Demo</h2>
+    </div>
+    <div class="connecting">
+      연결중...
+    </div>
+    <ul id="messageArea">
+
+    </ul>
+    <form id="messageForm" name="messageForm">
+      <div class="form-group">
+        <div class="input-group clearfix">
+          <input type="text" id="message" placeholder="Type a message..." autocomplete="off" class="form-control"/>
+          <button type="submit" onclick="sendMessage()" class="primary">보내기</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
 </body>
-<script th:inline="javascript">
-    function connect() {
-        var socket = new SockJS('/chat');
-        stompClient = Stomp.over(socket);
-        stompClient.connect({}, function () {
-            stompClient.subscribe('/topic/' + nickname, function (e) {
-                showMessage(JSON.parse(e.body));
-                alertClosing('comeMessage',2000);
-            });
-        });
-    }
-
-    function send() {
-        data = {'chatRoomId': chatRoomId, 'sender' :nickname, 'receiver': receiver,'message': $("#message").val()};
-        stompClient.send("/app/chat/send", {}, JSON.stringify(data));
-        showMessage(data);
-        $("#message").val('');
-        alertClosing('successMessage',2000);
-    }
-</script>
 </html>

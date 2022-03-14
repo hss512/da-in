@@ -1,70 +1,87 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>채팅 서비스</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<th:block th:replace="~{/layout/basic :: setContent(~{this :: content})}">
+  <th:block th:fragment="content">
+
+    <div class="container">
+      <div class="col-6">
+        <h1>[[${room.name}]]</h1>
+      </div>
+      <div>
+        <div id="msgArea" class="col"></div>
+        <div class="col-6">
+          <div class="input-group mb-3">
+            <input type="text" id="msg" class="form-control">
+            <div class="input-group-append">
+              <button class="btn btn-outline-secondary" type="button" id="button-send">전송</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-6"></div>
+    </div>
 
 
-</head>
-<body>
-<input type="text" id="nickname" class="form-inline" placeholder="닉네임을 입력해주세요" required autofocus>
-<button class = "btn btn-primary" id = "name">확인</button>
-<label for="roomId" class="label label-default">방 번호</label>
-<label th:text="*{room.roomId}" id="roomId" class="form-inline"></label>
-<br>
-<label for="roomName" class="label label-default">방 이름</label>
-<label th:text="*{room.name}" id="roomName" class="form-inline"></label>
-<div id = "chatroom" style = "width:400px; height: 600px; border:1px solid; background-color : gray"></div>
-<input type = "text" id = "message" style = "height : 30px; width : 340px" placeholder="내용을 입력하세요" autofocus>
-<button class = "btn btn-primary" id = "send">전송</button>
-<script>
+    <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
 
-</script>
-</body>
-<script th:inline = "javascript">
-    var webSocket;
-    var nickname;
-    /* <![CDATA[*/
-    var roomId = /*[[${room.roomId}]]*/;
-    /* ]]> */
-    document.getElementById("name").addEventListener("click",function(){
-        nickname = document.getElementById("nickname").value;
-        document.getElementById("nickname").style.display = "none";
-        document.getElementById("name").style.display = "none";
-        connect();
-    })
-    document.getElementById("send").addEventListener("click",function(){
-        send();
-    })
-    function connect(){
-        webSocket = new WebSocket("ws://localhost:8080/chat");
-        webSocket.onopen = onOpen;
-        webSocket.onclose = onClose;
-        webSocket.onmessage = onMessage;
-    }
-    function disconnect(){
-        webSocket.send(JSON.stringify({chatRoomId : roomId,type:'LEAVE',writer:nickname}));
-        webSocket.close();
-    }
-    function send(){
-        msg = document.getElementById("message").value;
-        webSocket.send(JSON.stringify({chatRoomId : roomId,type:'CHAT',writer:nickname,message : msg}));
-        document.getElementById("message").value = "";
-    }
-    function onOpen(){
-        webSocket.send(JSON.stringify({chatRoomId : roomId,type:'ENTER',writer:nickname}));
-    }
-    function onMessage(e){
-        data = e.data;
-        chatroom = document.getElementById("chatroom");
-        chatroom.innerHTML = chatroom.innerHTML + "<br>" + data;
-    }
-    function onClose(){
-        disconnect();
-    }
+  </th:block>
+</th:block>
 
-</script>
 </html>
+<script th:inline="javascript">
+  $(document).ready(function(){
+
+    var roomName = [[${room.name}]];
+    var roomId = [[${room.roomId}]];
+    var username = [[${#authentication.principal.username}]];
+
+    console.log(roomName + ", " + roomId + ", " + username);
+
+    var sockJs = new SockJS("/ws");
+    //1. SockJS를 내부에 들고있는 stomp를 내어줌
+    var stomp = Stomp.over(sockJs);
+
+    //2. connection이 맺어지면 실행
+    stomp.connect({}, function (){
+      console.log("STOMP Connection")
+
+      //4. subscribe(path, callback)으로 메세지를 받을 수 있음
+      stomp.subscribe("/sub/chat/room/" + roomId, function (chat) {
+        var content = JSON.parse(chat.body);
+
+        var writer = content.writer;
+        var str = '';
+
+        if(writer === username){
+          str = "<div class='col-6'>";
+          str += "<div class='alert alert-secondary'>";
+          str += "<b>" + writer + " : " + message + "</b>";
+          str += "</div></div>";
+          $("#msgArea").append(str);
+        }
+        else{
+          str = "<div class='col-6'>";
+          str += "<div class='alert alert-warning'>";
+          str += "<b>" + writer + " : " + message + "</b>";
+          str += "</div></div>";
+          $("#msgArea").append(str);
+        }
+
+        $("#msgArea").append(str);
+      });
+
+      //3. send(path, header, message)로 메세지를 보낼 수 있음
+      stomp.send('/pub/chat/enter', {}, JSON.stringify({roomId: roomId, writer: username}))
+    });
+
+    $("#button-send").on("click", function(e){
+      var msg = document.getElementById("msg");
+
+      console.log(username + ":" + msg.value);
+      stomp.send('/pub/chat/message', {}, JSON.stringify({roomId: roomId, message: msg.value, writer: username}));
+      msg.value = '';
+    });
+  });
+</script>
