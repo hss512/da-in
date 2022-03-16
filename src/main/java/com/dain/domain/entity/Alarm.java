@@ -18,27 +18,21 @@ public class Alarm extends BaseEntity{
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "from_member_id")
-    private Member fromMember;
-
-    @ManyToOne
-    @JoinColumn(name = "to_member_id")
-    private Member toMember;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     private String message;
 
-    public Alarm(Long id, Member fromMember, Member toMember, String message){
+    public Alarm(Long id, Member toMember, String message){
         this.id = id;
-        this.fromMember = fromMember;
-        this.toMember = toMember;
+        this.member = toMember;
         this.message = message;
 
         toMember.addAlarm(this);
     }
 
-    public Alarm(Member fromMember, Member toMember, String message){
-        this.fromMember = fromMember;
-        this.toMember = toMember;
+    public Alarm(Member toMember, String message){
+        this.member = toMember;
         this.message = message;
 
         toMember.addAlarm(this);

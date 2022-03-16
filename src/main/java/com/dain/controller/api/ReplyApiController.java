@@ -36,9 +36,6 @@ public class ReplyApiController {
         log.info(replyDTO.getContent());
 
         if(userDetails.returnProfile().getId().equals(Long.parseLong(userId))) {
-
-            alarmService.message(replyDTO, Long.parseLong(boardId), Long.parseLong(userId));
-
             return new ResponseEntity<>(new ValidateDTO<>(1, "responseReply",
                     replyService.replyWrite(boardId, userId, replyDTO)), HttpStatus.OK);
         }else{

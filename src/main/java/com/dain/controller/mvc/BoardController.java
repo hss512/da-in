@@ -32,9 +32,10 @@ public class BoardController {
             model.addAttribute("category", boardCategory);
             return "/board/boardCategory";
         }else{
+            log.info("Member_nickname={}", userDetails.returnProfile().getNickname());
             log.info("member");
             model.addAttribute("category", boardCategory);
-            model.addAttribute("userDetails", userDetails);
+            model.addAttribute("userDetails", userDetails.returnProfile());
             return "/board/boardCategory";
         }
     }

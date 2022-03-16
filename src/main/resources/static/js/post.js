@@ -76,11 +76,37 @@ function doScrap(userId, boardId){
     })
 }
 
+/*$(document).ready(function (){
+
+    $('#btnSend').on("click", function (evt){
+        evt.preventDefault();
+        if(!isStomp && socket.readyState !== 1) return;
+
+        let msg = $("input[name=reply_text]").val();
+
+        console.log("socket test={}", msg);
+
+        if(isStomp)
+            socket.send('/TTT', {}, msg);
+        else
+            socket.send(msg);
+    })
+})*/
+
 function reply_write(userId, boardId){
 
     let reply = $("input[name=reply_text]").val();
 
     let data = {"content": reply}
+
+    if(!isStomp && socket.readyState !== 1) return;
+
+    console.log("socket test={}", reply);
+
+    if(isStomp)
+        socket.send('/TTT/' + boardId, {}, reply);
+    else
+        socket.send(reply);
 
     $.ajax({
         url: "/api/board/" + boardId + "/user/" + userId,

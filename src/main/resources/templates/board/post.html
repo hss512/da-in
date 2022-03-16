@@ -2,6 +2,33 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
+	<script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
+	<script th:inline="javascript">
+        let socket = null;
+        let isStomp = false;
+        let userId = [[${userDetails}]]
+
+        console.log(userId)
+
+        function connectStomp(){
+            let sock = new SockJS("/stompTest");
+            let client = Stomp.over(sock);
+            isStomp = true;
+            socket = client;
+
+            client.connect({}, function (frame){
+                console.log("소켓 연결 성공!", frame);
+                client.send('/TTT', {}, "msg: hahaha");
+
+                client.subscribe('/topic/user/' + userId, function (event){
+                    console.log("event={}", event);
+                })
+            })
+        }
+
+        connectStomp();
+	</script>
 	<meta charset="UTF-8">
 	<title>Create</title>
 	<link rel="stylesheet" href="/css/post.css">
@@ -57,7 +84,7 @@
 				</label>
 			</div>
 			<div class="reply_button">
-				<button type="button" th:onclick="'javascript:reply_write('+ ${userDetails.id} + ',' + ${board.id} + ')'">
+				<button id="btnSend" type="button" th:onclick="'javascript:reply_write('+ ${userDetails.id} + ',' + ${board.id} + ')'">
 					전송
 				</button>
 			</div>
