@@ -1,31 +1,55 @@
 package com.dain.chat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
+import javax.persistence.*;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
+@Entity
+@NoArgsConstructor
 public class ChatRoom {
-    private String roomId;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "room_id")
+    private Long id;
+    private String roomCode;
     private String name;
-    private Set<WebSocketSession> sessions = new HashSet<>();
 
-    public static ChatRoom create(String name){
+    @OneToMany(mappedBy = "chatRoom",cascade = CascadeType.ALL)
+    private List<ChatMessage> messages=new ArrayList<>();
+
+    private int userLimit;
+    @Builder
+    public ChatRoom(Long id,String name, String roomCode,int userLimit) {
+        this.id = id;
+        this.name=name;
+        this.roomCode = roomCode;
+        this.userLimit=userLimit;
+    }
+
+    /*
+    private Set<WebSocketSession> sessions = new HashSet<>();
+*/
+
+
+
+    /*public static ChatRoom create(String name,int userLimit){
         ChatRoom chatRoom = new ChatRoom();
         chatRoom.roomId = UUID.randomUUID().toString();
         chatRoom.name = name;
+        chatRoom.userLimit=userLimit;
         return chatRoom;
-    }
+    }*/
 
-    public void handleMessage(WebSocketSession session, ChatMessage chatMessage,
+    /*public void handleMessage(WebSocketSession session, ChatMessage chatMessage,
                               ObjectMapper objectMapper) throws IOException {
         if(chatMessage.getType() == MessageType.ENTER){
             sessions.add(session);
@@ -47,5 +71,5 @@ public class ChatRoom {
         for(WebSocketSession sess : sessions){
             sess.sendMessage(textMessage);
         }
-    }
+    }*/
 }

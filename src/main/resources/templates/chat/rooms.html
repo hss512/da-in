@@ -28,10 +28,10 @@
         </thead>
         <tbody>
         <tr th:each="room : ${rooms}">
-            <td th:text="${room.roomId}"></td>
-            <td th:text="${room.name}"></td>
+            <td th:text="${room.getId()}"></td>
+            <td th:text="${room.getName()}"></td>
             <td>
-                <a class = "btn btn-primary" th:href = "@{/rooms/{id} (id = ${room.roomId})}"></a>
+                <a class = "btn btn-primary" th:href = "@{/chat/room(roomCode=${room.getRoomCode()})}"></a>
             </td>
         </tr>
         </tbody>
