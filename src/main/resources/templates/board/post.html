@@ -14,15 +14,16 @@
         function connectStomp(){
             let sock = new SockJS("/stompTest");
             let client = Stomp.over(sock);
+            client.debug = null;
             isStomp = true;
             socket = client;
 
             client.connect({}, function (frame){
                 console.log("소켓 연결 성공!", frame);
-                client.send('/TTT', {}, "msg: hahaha");
+                /*client.send('/TTT', {}, "msg: hahaha");*/
 
-                client.subscribe('/topic/user/' + userId, function (event){
-                    console.log("event={}", event);
+                client.subscribe('/topic/user/' + userId, function (count){
+                    console.log("alarm=", count.body);
                 })
             })
         }

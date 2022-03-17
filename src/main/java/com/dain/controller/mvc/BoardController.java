@@ -1,8 +1,10 @@
 package com.dain.controller.mvc;
 
 import com.dain.domain.dto.ReadBoardDTO;
+import com.dain.domain.dto.ResponseAlarmDTO;
 import com.dain.domain.entity.Member;
 import com.dain.principal.UserDetailsImpl;
+import com.dain.service.AlarmService;
 import com.dain.service.BoardService;
 import com.dain.service.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.List;
 import java.util.Objects;
 
 @Controller
@@ -22,22 +25,26 @@ public class BoardController {
 
     private final BoardService boardService;
     private final CategoryService categoryService;
+    private final AlarmService alarmService;
 
     @GetMapping("/{category}")
     public String developPage(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model,
                               @PathVariable("category") String boardCategory){
 
+        List<ResponseAlarmDTO> alarmList = alarmService.getAlarmList(userDetails.returnProfile().getId());
+
         if(userDetails == null){
             log.info("visitor");
             model.addAttribute("category", boardCategory);
-            return "/board/boardCategory";
         }else{
             log.info("Member_nickname={}", userDetails.returnProfile().getNickname());
             log.info("member");
             model.addAttribute("category", boardCategory);
             model.addAttribute("userDetails", userDetails.returnProfile());
-            return "/board/boardCategory";
+            model.addAttribute("alarmList", alarmList);
+            model.addAttribute("alarmCount", alarmList.size());
         }
+        return "/board/boardCategory";
     }
 
     @GetMapping("/{category}/write")

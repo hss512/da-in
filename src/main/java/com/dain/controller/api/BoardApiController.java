@@ -33,12 +33,6 @@ public class BoardApiController {
                                      @RequestParam("sort") String sort, @RequestParam("gender") String gender,
                                      @RequestParam("local") String local, @RequestParam("age") String age){
 
-        log.info("category={}", category);
-        log.info("sort={}", sort);
-        log.info("gender={}", gender);
-        log.info("local={}", local);
-        log.info("age={}", age);
-
         if(userDetails != null){
             Page<Board> membersBoard = boardService.getMembersBoard(userDetails.returnProfile(), sort, gender, local, age, category, pageable);
             for (Board board : membersBoard) {

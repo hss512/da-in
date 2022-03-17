@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="layout/header :: header"></th:block>
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
@@ -12,15 +13,16 @@
         function connectStomp(){
             let sock = new SockJS("/stompTest");
             let client = Stomp.over(sock);
+            client.debug = null;
             isStomp = true;
             socket = client;
 
-            client.connect({}, function (){
-                console.log("소켓 연결 성공!");
-                client.send('/TTT', {}, "msg: hahaha");
+            client.connect({}, function (frame){
+                console.log("소켓 연결 성공!", frame);
+                /*client.send('/TTT', {}, "msg: hahaha");*/
 
-                client.subscribe('/topic/user/' + userId, function (message){
-                    console.log("message=", message.body);
+                client.subscribe('/topic/user/' + userId, function (count){
+                    $(".alarm_btn")[0].innerText = count.body;
                 })
             })
         }
@@ -37,6 +39,7 @@
 	<link rel="stylesheet" href="/css/develop.css">
 </head>
 <body>
+
 <div class="page_title">
 	<span class="title_name">
 		<h1>[[${category}]] Page</h1>

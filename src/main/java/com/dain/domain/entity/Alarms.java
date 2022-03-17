@@ -9,7 +9,7 @@ import java.util.List;
 @Embeddable
 public class Alarms {
 
-    @OneToMany(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER)
     private List<Alarm> alarms;
 
     public Alarms(){
