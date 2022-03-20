@@ -8,4 +8,6 @@ import org.springframework.stereotype.Repository;
 public interface AlarmRepository extends JpaRepository<Alarm, Long>, AlarmCustomRepository {
 
     int countByMemberId(Long userId);
+
+    void deleteByMemberId(Long userId);
 }

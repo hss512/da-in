@@ -162,6 +162,7 @@ button{
 }
 
 .selectBox .sort_list {
+    z-index: 50;
     position: relative;
     top: 4px;
     left: -1px;

@@ -65,7 +65,7 @@ function boardItem(data) {
 
     let boardList =
         "<div class='item'>" +
-            "<a href='/develop/board/" + boardId + "'>" +
+            "<a href='/board/" + boardId + "'>" +
             "<div class='board_tag'>" +
                 "<div class='board_gender'>" +
                     "<span>" + gender + " / " +"</span>"+

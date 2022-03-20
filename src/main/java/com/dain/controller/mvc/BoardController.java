@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,18 +32,17 @@ public class BoardController {
     public String developPage(@AuthenticationPrincipal UserDetailsImpl userDetails, Model model,
                               @PathVariable("category") String boardCategory){
 
-        List<ResponseAlarmDTO> alarmList = alarmService.getAlarmList(userDetails.returnProfile().getId());
-
         if(userDetails == null){
             log.info("visitor");
             model.addAttribute("category", boardCategory);
         }else{
+            List<ResponseAlarmDTO> alarmList = alarmService.getAlarmList(userDetails.returnProfile().getId());
             log.info("Member_nickname={}", userDetails.returnProfile().getNickname());
             log.info("member");
             model.addAttribute("category", boardCategory);
             model.addAttribute("userDetails", userDetails.returnProfile());
             model.addAttribute("alarmList", alarmList);
-            model.addAttribute("alarmCount", alarmList.size());
+            model.addAttribute("alarmCount", (int) alarmList.stream().filter(a -> a.getCheck() == 0).count());
         }
         return "/board/boardCategory";
     }
@@ -57,7 +57,7 @@ public class BoardController {
         return "board/create";
     }
 
-    @GetMapping("/develop/board/{boardId}")
+    @GetMapping("/board/{boardId}")
     public String getBoard(@PathVariable("boardId") String boardId, @AuthenticationPrincipal UserDetailsImpl userDetails,
                            Model model){
 

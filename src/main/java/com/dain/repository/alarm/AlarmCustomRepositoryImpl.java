@@ -23,11 +23,17 @@ public class AlarmCustomRepositoryImpl implements AlarmCustomRepository{
     @Override
     public List<Alarm> getAlarmList(Long userId) {
 
-        List<Alarm> alarmList = queryFactory.selectFrom(alarm)
+        return queryFactory.selectFrom(alarm)
+                .where(alarm.member.id.eq(userId))
+                .orderBy(alarm.createdDate.desc())
+                .fetch();
+    }
+
+    @Override
+    public List<Alarm> allCheck(Long userId){
+        return queryFactory.selectFrom(alarm)
                 .where(alarm.member.id.eq(userId))
                 .where(alarm.checkAlarm.eq(0))
                 .fetch();
-
-        return alarmList;
     }
 }

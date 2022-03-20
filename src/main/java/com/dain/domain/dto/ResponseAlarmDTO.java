@@ -11,7 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ResponseAlarmDTO {
 
-    private Long userId;
+    private Long alarmId;
+    private MemberDTO.ResponseMemberDTO member;
     private String message;
     private Long boardId;
     private int check;

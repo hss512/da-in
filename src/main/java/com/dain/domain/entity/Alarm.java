@@ -1,5 +1,6 @@
 package com.dain.domain.entity;
 
+import com.dain.domain.dto.MemberDTO;
 import com.dain.domain.dto.ResponseAlarmDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,8 @@ public class Alarm extends BaseEntity{
 
     private int checkAlarm;
 
+    private int removeAlarm;
+
     private Long boardId;
 
     public Alarm(Long id, Member toMember, String message, Long boardId){
@@ -48,10 +51,22 @@ public class Alarm extends BaseEntity{
 
     public ResponseAlarmDTO toAlarmDTO(){
         return ResponseAlarmDTO.builder()
-                .userId(this.member.getId())
+                .alarmId(this.id)
+                .member(MemberDTO.ResponseMemberDTO.builder()
+                        .id(this.member.getId())
+                        .username(this.member.getUsername())
+                        .nickname(this.member.getNickname())
+                        .local(this.member.getLocal())
+                        .age(this.member.getAge())
+                        .gender(this.member.getGender())
+                        .build())
                 .boardId(this.boardId)
                 .check(this.checkAlarm)
                 .message(this.message)
                 .build();
+    }
+
+    public void checkUpdate(){
+        this.checkAlarm = 1;
     }
 }

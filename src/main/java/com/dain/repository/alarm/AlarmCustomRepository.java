@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface AlarmCustomRepository {
     List<Alarm> getAlarmList(Long userId);
+
+    List<Alarm> allCheck(Long userId);
 }
