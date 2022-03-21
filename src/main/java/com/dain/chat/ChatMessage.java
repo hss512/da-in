@@ -2,6 +2,7 @@ package com.dain.chat;
 
 
 import com.dain.domain.entity.Member;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,10 +25,18 @@ public class ChatMessage {
     @JoinColumn(name = "room_id")
     private ChatRoom chatRoom;
 
-    @ManyToOne
-    @JoinColumn(name = "member_id")
-    private Member writer;
+    /*@ManyToOne
+    @JoinColumn(name = "member_id")*/
+    private String writer;
 
     private String message;
 
+    @Builder
+    public ChatMessage(Long id, LocalDateTime chatTime, ChatRoom chatRoom, String  writer, String message) {
+        this.id = id;
+        this.chatTime = chatTime;
+        this.chatRoom = chatRoom;
+        this.writer = writer;
+        this.message = message;
+    }
 }
