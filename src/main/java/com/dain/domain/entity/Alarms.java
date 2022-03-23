@@ -1,3 +1,4 @@
+/*
 package com.dain.domain.entity;
 
 import javax.persistence.Embeddable;
@@ -24,3 +25,4 @@ public class Alarms {
         alarms.add(alarm);
     }
 }
+*/

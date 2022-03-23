@@ -80,3 +80,11 @@
 .reply_delete{
     margin-left: auto;
 }
+
+.reply_content{
+    display: flex;
+}
+
+.reply_member_chat{
+    margin-left: auto;
+}

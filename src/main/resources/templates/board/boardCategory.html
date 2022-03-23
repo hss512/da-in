@@ -3,32 +3,6 @@
 <th:block th:replace="layout/header :: header"></th:block>
 <head>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-	<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
-	<script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
-	<script th:inline="javascript">
-        let socket = null;
-        let isStomp = false;
-        let userId = [[${userDetails.id}]]
-
-        function connectStomp(){
-            let sock = new SockJS("/stompTest");
-            let client = Stomp.over(sock);
-            client.debug = null;
-            isStomp = true;
-            socket = client;
-
-            client.connect({}, function (frame){
-                console.log("소켓 연결 성공!", frame);
-                /*client.send('/TTT', {}, "msg: hahaha");*/
-
-                client.subscribe('/topic/user/' + userId, function (count){
-                    $(".alarm_btn")[0].innerText = count.body;
-                })
-            })
-        }
-
-        connectStomp();
-	</script>
 	<meta charset="UTF-8">
 	<title>Title</title>
 	<style>

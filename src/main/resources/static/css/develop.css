@@ -138,7 +138,7 @@ button{
     width: 0;
     height: 0;
     position: absolute;
-    z-index: 99;
+    /*z-index: 90;*/
     border-top: 6px solid #333;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;

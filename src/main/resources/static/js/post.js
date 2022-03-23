@@ -1,7 +1,6 @@
 function getReplyList(replyNum){
 
     let boardId = $(location).attr("href").substring($(location).attr("href").search("board/") + 6)
-    console.log(replyNum)
     console.log("boardId =", boardId)
 
     $.ajax({
@@ -33,6 +32,9 @@ function getReplyList(replyNum){
                     "</div>" +
                     "<div class='reply_content'>" +
                     reply.content +
+                    "<div class='reply_member_chat'>" +
+                    "<button class='reply_chat_btn' type='button' onclick='create_chat("+ reply.memberDTO.id +")'>chat</button>" +
+                    "</div>"+
                     "</div>" +
                     "</div>"
                 )
@@ -90,7 +92,7 @@ function reply_write(userId, boardId){
     if(!isStomp && socket.readyState !== 1) return;
 
     if(isStomp)
-        socket.send('/TTT/' + boardId, {}, JSON.stringify(alarm));
+        socket.send('/alarm/' + boardId, {}, JSON.stringify(alarm));
     else
         socket.send(JSON.stringify(alarm));
 
@@ -122,8 +124,26 @@ function reply_delete(replyId, memberId){
         if(res === 1){
             getReplyList();
         }
-        console.log(res.data)
     }).fail(err=>{
         console.log(err)
     })
+}
+
+function create_chat(replyMemberId){
+
+    $.ajax({
+        url: "/api/chat/" + replyMemberId,
+        method: "post"
+    }).done(res=>{
+        ch_clear()
+        ch_open()
+    }).fail(err=>{
+
+    })
+
+    console.log(replyMemberId)
+}
+
+function room_enter(){
+
 }

@@ -17,9 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 @RestController
 @RequiredArgsConstructor
 @Log4j2
@@ -27,7 +24,6 @@ import java.util.stream.Collectors;
 public class ReplyApiController {
 
     private final ReplyService replyService;
-    private final AlarmService alarmService;
 
     @PostMapping("/board/{boardId}/user/{userId}")
     public ResponseEntity<?> replyWrite(@PathVariable("boardId") String boardId, @PathVariable("userId") String userId,

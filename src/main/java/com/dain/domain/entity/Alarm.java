@@ -37,16 +37,12 @@ public class Alarm extends BaseEntity{
         this.boardId = boardId;
         this.member = toMember;
         this.message = message;
-
-        toMember.addAlarm(this);
     }
 
     public Alarm(Member toMember, String message, Long boardId){
         this.member = toMember;
         this.message = message;
         this.boardId = boardId;
-
-        toMember.addAlarm(this);
     }
 
     public ResponseAlarmDTO toAlarmDTO(){

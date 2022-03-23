@@ -39,7 +39,6 @@ function developPageLoad(condition){
         dataType: "json"
     }).done(res=>{
         $(".board").empty();
-        console.log("res=", res.data)
         res.data.forEach((data)=>{
             $('.board').append(boardItem(data))
         })

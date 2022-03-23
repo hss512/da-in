@@ -16,7 +16,7 @@ function alarmsClick(){
         "<button class='alarm_check_button' type='button' onclick='alarmAllCheck()'>알림 전체 읽음</button>" +
         "</div>"+
         "</div>"+
-        "<ul class='alarms'>"+
+        "<ul class='alarms' style='padding: 0'>"+
         "</ul>"+
         "</div>" +
         "</div>" +
@@ -126,4 +126,36 @@ function alarmClick(alarmId, boardId){
         })
         console.log("check")
     }
+}
+
+function ch_open(){
+    $('#ch-plugin-script').css("display", "")
+    $.ajax({
+        url: "/api/chat/room",
+        method: "get"
+    }).done(res=>{
+        console.log(res.data)
+        ch_clear()
+        res.data.forEach(data=>{
+            $(".ch-main-container-body").append(
+                "<ul class='chat_rooms'>" +
+                "<div class='chat_room' id='roomCode_" + data.roomCode + "' style='cursor: pointer'  onclick='room_enter()'>" +
+                "<div class='chat_room_title'>" +
+                data.title +
+                "</div>" +
+                "</div>" +
+                "</ul>"
+            )
+        })
+    }).fail(err=>{
+        console.log(err)
+    })
+}
+
+function ch_close(){
+    $('#ch-plugin-script').css("display", "none")
+}
+
+function ch_clear(){
+    $(".chat_rooms").remove();
 }

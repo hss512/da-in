@@ -2,6 +2,7 @@ package com.dain.domain.entity;
 
 import com.dain.domain.dto.BoardMemberDTO;
 import com.dain.domain.dto.MemberDTO;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,7 @@ import javax.persistence.*;
 @Getter
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Member extends BaseEntity{
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,22 +41,8 @@ public class Member extends BaseEntity{
     @Column(name = "user_email",unique = true)
     private String email;
 
-    @Embedded
-    private final Alarms alarms = new Alarms();
-
-    @Builder
-    public Member(Long id, String username, String nickname, String password, String local, int age, String gender,  String imagePath, String role,String email){
-        this.id=id;
-        this.username=username;
-        this.nickname=nickname;
-        this.password=password;
-        this.local=local;
-        this.age=age;
-        this.gender = gender;
-        this.imagePath=imagePath;
-        this.role=role;
-        this.email=email;
-    }
+    /*@OneToMany(mappedBy = "member")
+    private List<ChatMember> chatMemberList = new ArrayList<>();*/
 
     public MemberDTO toDto(){
         return MemberDTO.builder()
@@ -83,9 +71,5 @@ public class Member extends BaseEntity{
     public void toUpdateMember(String nickname,String local){
         this.nickname=nickname;
         this.local=local;
-    }
-
-    public void addAlarm(Alarm alarm) {
-        alarms.addAlarm(alarm);
     }
 }

@@ -1,6 +1,43 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <th:block th:fragment="header">
+	<script src="/webjars/sockjs-client/1.1.2/sockjs.min.js"></script>
+	<script src="/webjars/stomp-websocket/2.3.3/stomp.min.js"></script>
+	<script th:inline="javascript">
+        let socket = null;
+        let chatSocket = null;
+        let isStomp = false;
+        let userId = [[${userDetails.id}]]
+
+        function connectStomp(){
+            let alarmSock = new SockJS("/ws/alarm");
+            let client = Stomp.over(alarmSock);
+            client.debug = null;
+            isStomp = true;
+            socket = client;
+
+            client.connect({}, function (frame){
+                console.log("소켓 연결 성공!", frame);
+                client.subscribe('/topic/user/' + userId, function (count){
+                    $(".alarm_btn")[0].innerText = count.body;
+                })
+            })
+
+            let chatSock = new SockJS("/ws/chat");
+            let chatClient = Stomp.over(chatSock);
+            chatClient.debug = null;
+            chatSocket = chatClient;
+
+            chatClient.connect({}, function (frame){
+                console.log("채팅 소켓 연결", frame);
+                chatClient.subscribe('/topic/chat', function (chat){
+                    console.log(chat);
+                })
+            })
+        }
+
+        connectStomp();
+	</script>
 	<link rel="stylesheet" href="/css/header.css">
 	<div>
 		<div class="alarm_">
@@ -13,6 +50,43 @@
 			</div>
 		</div>
 	</div>
+
+	<div id="talk-plugin">
+		<div id="talk-plugin-core">
+			<div class="launcher" onclick="ch_open()">
+				<div id="ch-plugin-launcher">
+					<img src="" width="74" height="74">
+					<div id="badge">
+						0</div>
+				</div>
+			</div>
+		</div>
+		<div id="ch-plugin-script" class="ch-desk-messenger rightPosition" style="display: none">
+			<div id="ch-plugin-script-iframe" style="position:relative!important;height:100%;width:100%!important;border:none!important;">
+				<div id="ch-main">
+					<div class="ch-main-container">
+						<div class="ch-main-container-inner">
+							<div class="ch-main-container-header">
+								<div class="ch-main-container-title">
+									다인
+									<div class="ch-close-btn">
+										<button type="button" class="ch-btn" onclick="ch_close()">x</button>
+									</div>
+								</div>
+								<div class="ch-main-container-header_">
+									실시간 채팅
+								</div>
+							</div>
+							<div class="ch-main-container-body">
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<script type="text/javascript" th:src="@{/js/header.js}"></script>
 </th:block>
 </html>

@@ -36,13 +36,12 @@ public class BoardController {
             log.info("visitor");
             model.addAttribute("category", boardCategory);
         }else{
-            List<ResponseAlarmDTO> alarmList = alarmService.getAlarmList(userDetails.returnProfile().getId());
-            log.info("Member_nickname={}", userDetails.returnProfile().getNickname());
             log.info("member");
+            List<ResponseAlarmDTO> alarmList = alarmService.getAlarmList(userDetails.returnProfile().getId());
+            model.addAttribute("alarmCount", (int) alarmList.stream().filter(a -> a.getCheck() == 0).count());
             model.addAttribute("category", boardCategory);
             model.addAttribute("userDetails", userDetails.returnProfile());
             model.addAttribute("alarmList", alarmList);
-            model.addAttribute("alarmCount", (int) alarmList.stream().filter(a -> a.getCheck() == 0).count());
         }
         return "/board/boardCategory";
     }
@@ -53,6 +52,8 @@ public class BoardController {
 
         model.addAttribute("userDetails", userDetails.returnProfile().toBoardMemberDTO());
         model.addAttribute("category", categoryService.getCategoryId(category));
+        List<ResponseAlarmDTO> alarmList = alarmService.getAlarmList(userDetails.returnProfile().getId());
+        model.addAttribute("alarmCount", (int) alarmList.stream().filter(a -> a.getCheck() == 0).count());
 
         return "board/create";
     }
@@ -62,7 +63,8 @@ public class BoardController {
                            Model model){
 
         log.info("Get/getBoard");
-
+        List<ResponseAlarmDTO> alarmList = alarmService.getAlarmList(userDetails.returnProfile().getId());
+        model.addAttribute("alarmCount", (int) alarmList.stream().filter(a -> a.getCheck() == 0).count());
         ReadBoardDTO getBoard = boardService.getBoard(boardId);
         Member member = userDetails.returnProfile();
 
