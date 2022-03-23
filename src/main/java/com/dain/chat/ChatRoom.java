@@ -1,12 +1,9 @@
 package com.dain.chat;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
 import javax.persistence.*;
 import java.io.IOException;
@@ -27,14 +24,21 @@ public class ChatRoom {
     private List<ChatMessage> messages=new ArrayList<>();
 
     private int userLimit;
+
+    private int countUser;
+
     @Builder
-    public ChatRoom(Long id,String name, String roomCode,int userLimit) {
+    public ChatRoom(Long id,String name, String roomCode,int userLimit,int countUser) {
         this.id = id;
         this.name=name;
         this.roomCode = roomCode;
         this.userLimit=userLimit;
+        this.countUser=countUser;
     }
 
+    public void toUpdateCountUser(int countUser){
+        this.countUser=countUser;
+    }
     /*
     private Set<WebSocketSession> sessions = new HashSet<>();
 */

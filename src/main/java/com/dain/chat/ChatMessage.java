@@ -19,6 +19,7 @@ public class ChatMessage {
     @Column(name = "message_id")
     private Long id;
 
+
     private LocalDateTime chatTime;
 
     @ManyToOne
@@ -38,5 +39,12 @@ public class ChatMessage {
         this.chatRoom = chatRoom;
         this.writer = writer;
         this.message = message;
+    }
+
+    public ChatMessageDto toDto(){
+        return ChatMessageDto.builder()
+                .writer(writer)
+                .message(message)
+                .build();
     }
 }

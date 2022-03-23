@@ -1,6 +1,6 @@
 package com.dain.chat;
 
-import com.dain.domain.entity.Member;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,6 +20,12 @@ public class ChatMessageDto {
     private String writer;
 
     private String message;
+
+    @Builder
+    public ChatMessageDto(String writer, String message) {
+        this.writer = writer;
+        this.message = message;
+    }
 
     public ChatMessage toEntity(){
         return ChatMessage.builder()

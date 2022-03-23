@@ -26,13 +26,18 @@ public class ChatRoomController {
     }
 
     @GetMapping("/chat/room")
-    public void getRoom(String roomCode, Model model, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public String getRoom(String roomCode, Model model, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
         log.info("# get Chat Room, roomID : " + roomCode);
         log.info("controller-username={}",userDetails.getUsername().getClass());
         ChatRoom room = chatService.findRoom(roomCode);
         model.addAttribute("room", room);
         model.addAttribute("userDetails",userDetails);
+        if(room.getUserLimit()==0 || room.getCountUser()>= room.getUserLimit()){
+            return "redirect:/chat/rooms";
+        }else {
+            return "/chat/room";
+        }
     }
 
     @GetMapping("/chat/new")

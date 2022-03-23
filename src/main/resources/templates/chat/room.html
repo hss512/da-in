@@ -30,8 +30,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <script th:inline="javascript">
       var roomName = [[${room.name}]];
-      var roomId = [[${room.roomId}]];
+      var roomId = [[${room.roomCode}]];
       var username = [[${userDetails.getUsername()}]];
+      console.log(typeof(username));
       var sockJs = new SockJS("/stomp/chat", null, {transports: ["websocket", "xhr-streaming", "xhr-polling"]});
       let stomp = Stomp.over(sockJs);
 
@@ -45,8 +46,8 @@
           //4. subscribe(path, callback)으로 메세지를 받을 수 있음
           stomp.subscribe("/sub/chat/room/" + roomId, function (chat) {
             let content = JSON.parse(chat.body);
-
             var writer = content.writer;
+            console.log(content);
             var message= content.message;
             var str = '';
 
@@ -67,16 +68,21 @@
 
           });
 
-          stomp.send('/pub/chat/enter', {}, JSON.stringify({roomId: roomId, writer: username}))
+          stomp.send('/pub/chat/enter/'+roomId, {}, JSON.stringify({roomId: roomId, writer: username}))
         });
 
       };
       function sendMessage(){
           var msg = document.getElementById("msg");
           console.log(username + ":" + msg.value);
-          stomp.send('/pub/chat/message', {}, JSON.stringify({roomId: roomId, message: msg.value, writer: username}));
+          stomp.send('/pub/chat/message/'+roomId, {}, JSON.stringify({roomId: roomId, message: msg.value, writer: username}));
           msg.value = '';
       }
+      document.addEventListener("keypress", function(e){
+          if(e.keyCode == 13){ //enter press
+              sendMessage();
+          }
+      });
     connectChat();
     </script>
 </body>
