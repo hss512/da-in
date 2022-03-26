@@ -163,7 +163,7 @@
     border-radius: 12px !important;
 }
 
-#ch-plugin-script{
+.ch-plugin-script{
     position: fixed!important;
     height: 100%;
     border: none!important;
@@ -173,7 +173,7 @@
     top: 250px;
 }
 
-#ch-plugin-script-iframe{
+.ch-plugin-script-iframe{
     position: relative!important;
     height: 100%;
     border: none!important;
@@ -181,7 +181,7 @@
     font-family: inherit;
 }
 
-#ch-main{
+.ch-main{
     height: 100%;
     opacity: 1;
     box-sizing: border-box;
@@ -271,7 +271,7 @@
 .ch-desk-messenger {
     position: fixed !important;
     bottom: 25px !important;
-    z-index: 1000000000 !important;
+    z-index: 200 !important;
     width: 370px !important;
     height: 80% !important;
     min-height: 520px !important;
@@ -288,7 +288,90 @@
     margin: 5px 10px 5px 10px;
 }
 
-.chat_room_title{
+.chat_room{
     border: 1px solid;
     padding: 10px 10px 10px 10px;
+    display: flex;
+}
+
+#chat_room_main{
+    z-index: 300;
+    position: fixed !important;
+    bottom: 25px !important;
+    width: 370px !important;
+    height: 80% !important;
+    min-height: 520px !important;
+    max-height: 680px !important;
+    overflow: hidden !important;
+    background-color: transparent !important;
+    animation: 0.25s ease-out 0s 1 normal none running jZyQVL !important;
+}
+
+.chat_room_exit{
+    margin-left: auto;
+}
+
+.ch-main-container-footer{
+    position: fixed !important;
+    bottom: 45px !important;
+    height: 45px;
+    margin: 10px 10px;
+    width: 94%;
+    border: 1px solid #ececec;
+    display: flex;
+}
+
+.chat_input{
+    width: 86.8%;
+}
+
+.chat_input input:focus{
+    outline: none;
+}
+
+.ch_input{
+    padding: 0;
+    border: 0;
+    width: 90%;
+    margin: 0 5% 0 5%;
+    height: 100%;
+    font-size: 100%;
+}
+
+.chat_input_btn{
+    margin-left: auto;
+}
+
+.ch_input_btn{
+    height: 100%;
+    padding: 6px 6px 6px 6px;
+    border-left: 1px solid #ececec;
+}
+
+.message_content{
+    display: flex;
+}
+
+.my_message{
+    width: 100%;
+    margin-left: auto;
+}
+
+.my_message_content{
+    width: 100%;
+    margin-left: auto;
+}
+
+.my_message_check{
+    margin-right: 10px;
+    margin-left: auto;
+    color: darkslategray;
+}
+
+.my_message_msg{
+    margin-right: 20px;
+}
+
+.message_check{
+
 }

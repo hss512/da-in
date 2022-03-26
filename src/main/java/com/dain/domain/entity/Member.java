@@ -59,6 +59,17 @@ public class Member extends BaseEntity{
                 .build();
     }
 
+    public MemberDTO.ResponseMemberDTO toResponseDTO(){
+        return MemberDTO.ResponseMemberDTO.builder()
+                .id(id)
+                .username(username)
+                .nickname(nickname)
+                .local(local)
+                .age(age)
+                .gender(gender)
+                .build();
+    }
+
 
     public BoardMemberDTO toBoardMemberDTO(){
         return BoardMemberDTO.builder()

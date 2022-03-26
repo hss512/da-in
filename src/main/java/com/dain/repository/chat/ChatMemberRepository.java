@@ -8,5 +8,7 @@ import java.util.List;
 
 @Repository
 public interface ChatMemberRepository extends JpaRepository<ChatMember, Long>, ChatMemberCustomRepository {
+    void deleteByRoomIdAndMemberId(Long roomId, Long memberId);
 
+    List<ChatMember> findByRoomId(Long roomId);
 }

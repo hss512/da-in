@@ -1,11 +1,14 @@
 package com.dain.service;
 
+import com.dain.domain.dto.ChatDTO;
 import com.dain.domain.dto.RoomDTO;
+import com.dain.domain.entity.Chat;
 import com.dain.domain.entity.ChatMember;
 import com.dain.domain.entity.Member;
 import com.dain.domain.entity.Room;
 import com.dain.repository.chat.ChatMemberRepository;
 import com.dain.repository.MemberRepository;
+import com.dain.repository.chat.ChatRepository;
 import com.dain.repository.chat.RoomRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,6 +30,7 @@ public class ChatService {
     private final RoomRepository roomRepository;
     private final MemberRepository memberRepository;
     private final ChatMemberRepository chatMemberRepository;
+    private final ChatRepository chatRepository;
 
     public RoomDTO createChatRoom(Long toMemberId, Long fromMemberId) {
 
@@ -37,7 +41,7 @@ public class ChatService {
         List<Member> memberList = memberRepository.findAllById(ids);
 
         for (Member member : memberList) {
-            sb.append(member.getNickname()).append("/");
+            sb.append(member.getNickname()).append("-");
         }
 
         Room createRoom = Room.builder()
@@ -88,5 +92,29 @@ public class ChatService {
         }
 
         return 0;
+    }
+
+    public void exitRoom(String roomId, Long memberId) {
+        chatMemberRepository.deleteByRoomIdAndMemberId(Long.parseLong(roomId), memberId);
+    }
+
+    public RoomDTO getRoom(Long roomId, Long memberId) {
+        RoomDTO roomDTO = roomRepository.findById(roomId).get().toDTO();
+        Member member = memberRepository.findById(memberId).get();
+        roomDTO.setMyNickname(member.getNickname());
+        return roomDTO;
+    }
+
+    public ChatDTO createChat(Long roomId, String username, String message) {
+        Room room = roomRepository.findById(roomId).get();
+        Member member = memberRepository.findByUsername(username).get();
+        Chat chat = Chat.builder()
+                .member(member)
+                .room(room)
+                .content(message)
+                .chatCheck(1)
+                .build();
+
+        return chatRepository.save(chat).toDTO();
     }
 }

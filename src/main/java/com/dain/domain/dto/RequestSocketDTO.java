@@ -3,7 +3,7 @@ package com.dain.domain.dto;
 import lombok.Data;
 
 @Data
-public class MessageAlarmDTO {
+public class RequestSocketDTO {
 
     private String userId;
     private String content;

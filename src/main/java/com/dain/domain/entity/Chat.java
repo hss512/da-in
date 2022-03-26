@@ -1,5 +1,6 @@
 package com.dain.domain.entity;
 
+import com.dain.domain.dto.ChatDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,6 +21,8 @@ public class Chat extends BaseEntity{
 
     private String content;
 
+    private int chatCheck;
+
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
@@ -27,4 +30,13 @@ public class Chat extends BaseEntity{
     @ManyToOne
     @JoinColumn(name = "room_id")
     private Room room;
+
+    public ChatDTO toDTO(){
+        return ChatDTO.builder()
+                .id(this.id)
+                .message(this.content)
+                .memberDTO(this.member.toResponseDTO())
+                .roomDTO(this.room.toDTO())
+                .build();
+    }
 }

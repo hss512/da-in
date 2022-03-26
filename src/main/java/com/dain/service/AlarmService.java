@@ -1,13 +1,11 @@
 package com.dain.service;
 
-import com.dain.domain.dto.MessageAlarmDTO;
-import com.dain.domain.dto.ReplyDTO;
+import com.dain.domain.dto.RequestSocketDTO;
 import com.dain.domain.dto.ResponseAlarmDTO;
 import com.dain.domain.entity.Alarm;
 import com.dain.domain.entity.Board;
 import com.dain.domain.entity.Member;
 import com.dain.repository.alarm.AlarmRepository;
-import com.dain.repository.MemberRepository;
 import com.dain.repository.board.BoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -27,7 +25,7 @@ public class AlarmService {
     private final BoardRepository boardRepository;
 
     @Transactional(readOnly = true)
-    public Alarm createAlarm(String boardId, MessageAlarmDTO alarmDTO) {
+    public Alarm createAlarm(String boardId, RequestSocketDTO alarmDTO) {
         Board board = boardRepository.findById(Long.parseLong(boardId)).get();
         Member toMember = board.getMember();
 

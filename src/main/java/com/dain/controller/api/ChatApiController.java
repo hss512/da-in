@@ -1,6 +1,7 @@
 package com.dain.controller.api;
 
 import com.dain.domain.dto.RoomDTO;
+import com.dain.domain.entity.Room;
 import com.dain.exception.ValidateDTO;
 import com.dain.principal.UserDetailsImpl;
 import com.dain.service.ChatService;
@@ -40,7 +41,25 @@ public class ChatApiController {
     public ResponseEntity<?> getRoomList(@AuthenticationPrincipal UserDetailsImpl userDetails){
 
         List<RoomDTO> roomList = chatService.getRoomList(userDetails.returnProfile().getId());
+        roomList.forEach(roomDTO -> roomDTO.setMyNickname(userDetails.returnProfile().getNickname()));
 
         return new ResponseEntity<>(new ValidateDTO<>(1, "roomList", roomList), HttpStatus.OK);
+    }
+
+    @GetMapping("/chat/room/{roomId}")
+    public ResponseEntity<?> getRoom(@PathVariable String roomId,
+                                     @AuthenticationPrincipal UserDetailsImpl userDetails){
+        RoomDTO roomDTO = chatService.getRoom(Long.parseLong(roomId), userDetails.returnProfile().getId());
+
+        return new ResponseEntity<>(new ValidateDTO<>(1, "room", roomDTO), HttpStatus.OK);
+    }
+
+    @PostMapping("/chat/room/exit/{roomId}")
+    public ResponseEntity<?> exitRoom(@PathVariable String roomId,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails){
+
+        chatService.exitRoom(roomId, userDetails.returnProfile().getId());
+
+        return new ResponseEntity<>("roomExit", HttpStatus.OK);
     }
 }

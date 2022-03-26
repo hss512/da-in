@@ -117,7 +117,7 @@ function alarmDelete(alarmId){
 function alarmClick(alarmId, boardId){
     if($('#alarmId_'+alarmId).length !== 0){
         $.ajax({
-            url: "api/check/alarm/" + alarmId,
+            url: "/api/check/alarm/" + alarmId,
             method: "put"
         }).done(res=>{
             location.href = "/board/" + boardId
@@ -129,20 +129,33 @@ function alarmClick(alarmId, boardId){
 }
 
 function ch_open(){
-    $('#ch-plugin-script').css("display", "")
+    $('.ch-plugin-script').css("display", "")
     $.ajax({
         url: "/api/chat/room",
-        method: "get"
+        method: "get",
+        async: false
     }).done(res=>{
         console.log(res.data)
         ch_clear()
         res.data.forEach(data=>{
+
+            let title = data.title.split("-")
+
+
+            title.forEach(t=>{
+                if((data.myNickname !== t) && t !== ""){
+                    title = t;
+                }
+            })
+
             $(".ch-main-container-body").append(
                 "<ul class='chat_rooms'>" +
-                "<div class='chat_room' id='roomCode_" + data.roomCode + "' style='cursor: pointer'  onclick='room_enter()'>" +
+                "<div class='chat_room' id='roomCode_" + data.roomCode + "' style='cursor: pointer'  onclick='room_enter("+ data.id +")'>" +
                 "<div class='chat_room_title'>" +
-                data.title +
+                title +
                 "</div>" +
+                "<div class='chat_room_exit'>" +
+                "<button class='room_exit_btn' onclick='room_exit("+ data.id + ", " + data.title + ")'>x</button>" +
                 "</div>" +
                 "</ul>"
             )
@@ -153,9 +166,138 @@ function ch_open(){
 }
 
 function ch_close(){
-    $('#ch-plugin-script').css("display", "none")
+    $('#chat_main').css("display", "none")
 }
 
 function ch_clear(){
     $(".chat_rooms").remove();
+}
+
+function room_enter(roomId){
+
+    $.ajax({
+        url: "/api/chat/room/" + roomId,
+        method: "get"
+    }).done(res=>{
+
+        let title = res.data.title.split("-")
+
+        title.forEach(t=>{
+            if((res.data.myNickname !== t) && (t !== "")){
+                title = t;
+            }
+        })
+
+        $("#talk-plugin").append(
+            "<div id='chat_room_main' class='ch-plugin-script rightPosition'>"+
+            "<div class='ch-plugin-script-iframe' style='position:relative!important;height:100%;width:100%!important;border:none!important;'>" +
+            "<div class='ch-main'>" +
+            "<div class='ch-main-container'>" +
+            "<div class='ch-main-container-inner'>" +
+            "<div class='ch-main-container-header'>" +
+            "<div class='ch-main-container-title'>" +
+            title +
+            "<div class='ch-close-btn'>" +
+            "<button type='button' class='ch-btn' onClick='chat_room_close()'>x</button>" +
+            "</div>" +
+            "</div>" +
+            "<div class='ch-main-container-header_'>실시간 채팅</div>" +
+            "</div>" +
+            "<div class='ch-main-container-body'>" +
+            "<ul class='chat_message'>" +
+
+            "</ul>" +
+            "</div>" +
+            "<div class='ch-main-container-footer'>" +
+            "<div class='chat_input'>" +
+            "<input type='text' class='ch_input' name='send_chat_message'/>"+
+            "</div>"+
+            "<div class='chat_input_btn'>" +
+            "<button type='button' class='ch_input_btn' onclick='sendMessage(" + roomId + ")'>전송</button> " +
+            "</div>"+
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            "</div>"
+        )
+        connectChat(roomId);
+
+    }).fail(err=>{
+        console.log(err)
+    })
+}
+
+function room_exit(roomId, nickname){
+    $.ajax({
+        url: "/api/chat/room/exit/" + roomId,
+        method: "post"
+    }).done(res=>{
+        sendMessage(roomId, nickname + "님이 채팅방에서 퇴장하셨습니다.");
+    }).fail(err=>{
+
+    })
+}
+
+function chat_room_close(){
+    $('#chat_room_main').remove();
+    disconnectChat();
+}
+
+function connectChat(roomId){
+    let chatSock = new SockJS("/ws/chat");
+    let chatClient = Stomp.over(chatSock);
+    chatClient.debug = null;
+    chatSocket = chatClient;
+
+    chatClient.connect({}, function (frame){
+        console.log("채팅 소켓 연결", frame);
+
+        chatClient.subscribe('/topic/chat/room/' + roomId, function (chat){
+            let data = JSON.parse(chat.body);
+            if(frame.headers['user-name'] !== data.memberDTO.username){
+                $('.chat_message').append(
+                    "<div class='message'>" +
+                    "<div class='message_member'>" +
+                    data.memberDTO.nickname +
+                    "</div>" +
+                    "<div class='message_content'>" +
+                    "<div class='message_msg'>" +
+                    data.message +
+                    "</div>" +
+                    "</div>" +
+                    "</div>"
+                )
+            }
+        })
+    })
+}
+
+function sendMessage(roomId){
+
+    let message = $("input[name=send_chat_message]").val();
+
+    let chat = {"content": message}
+
+    $('.chat_message').append(
+        "<div class='message my_message'>" +
+        "<div class='message_content my_message_content'>" +
+        "<div class='message_check my_message_check'>" +
+        1+
+        "</div>" +
+        "<div class='message_msg my_message_msg'>" +
+        message +
+        "</div>" +
+        "</div>" +
+        "</div>"
+    )
+
+    $(".ch_input").val("");
+
+    chatSocket.send('/chat/room/' + roomId, {}, JSON.stringify(chat))
+}
+
+function disconnectChat(){
+    chatSocket.unsubscribe();
 }

@@ -6,13 +6,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class RoomDTO {
+public class ChatDTO {
 
     private Long id;
-    private String roomCode;
-    private String title;
-    private String myNickname;
+
+    private String message;
+
+    private int chatCheck;
+
+    private MemberDTO.ResponseMemberDTO memberDTO;
+
+    private RoomDTO roomDTO;
 }

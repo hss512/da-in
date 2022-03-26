@@ -143,7 +143,3 @@ function create_chat(replyMemberId){
 
     console.log(replyMemberId)
 }
-
-function room_enter(){
-
-}
