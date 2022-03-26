@@ -22,9 +22,10 @@ public class ChatMessageDto {
     private String message;
 
     @Builder
-    public ChatMessageDto(String writer, String message) {
-        this.writer = writer;
-        this.message = message;
+    public ChatMessageDto(String writer, String message, LocalDateTime chatTime){
+        this.writer=writer;
+        this.message=message;
+        this.chatTime=chatTime;
     }
 
     public ChatMessage toEntity(){

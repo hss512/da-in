@@ -20,4 +20,10 @@ public class ChatRoomJoin {
     @ManyToOne
     @JoinColumn(name = "room_id")
     private ChatRoom chatRoom;
+
+    private int dropUserRoom;
+
+    public void toInsertRoomState(ChatRoomForm chatRoomForm){
+        this.chatRoom=chatRoomForm.toEntity();
+    }
 }

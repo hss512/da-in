@@ -8,6 +8,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.LocalDateTime;
+
 @Controller
 @RequiredArgsConstructor
 @Log4j2
@@ -23,10 +25,12 @@ public class StompChatController {
     public void enter(@DestinationVariable String roomId, ChatMessage message) {
         message.setMessage(message.getWriter() + "님이 채팅방에 참여하였습니다.");
         ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomId).get();
-        log.info("chatroomId={}",chatRoom.getId());
+        System.out.println("message.getWriter() = " + message.getWriter());
+        System.out.println("chatRoom = " + chatRoom);
         message.setChatRoom(chatRoom);
-
-        chatService.saveChat(message);
+        if (chatService.ifExistSaveEnter(message.getWriter(),chatRoom)){
+            chatService.saveChat(message);
+        }
         template.convertAndSend("/sub/chat/room/" + roomId,message.toDto());
     }
 
@@ -34,6 +38,7 @@ public class StompChatController {
     public void message(@DestinationVariable String roomId, ChatMessage chatMessage){
         ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomId).get();
         chatMessage.setChatRoom(chatRoom);
-        template.convertAndSend("/sub/chat/room/" + roomId, chatMessage);
+        chatService.saveChat(chatMessage);
+        template.convertAndSend("/sub/chat/room/" + roomId, chatMessage.toDto());
     }
 }

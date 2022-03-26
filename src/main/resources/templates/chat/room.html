@@ -49,12 +49,13 @@
             var writer = content.writer;
             console.log(content);
             var message= content.message;
+            let chatTime = content.chatTime;
             var str = '';
 
             if(writer === username){
               str = "<div>";
               str += "<div id='writeByMe' style='color: blue'>";
-              str += "<b>" + writer + " : " + message + "</b>";
+                str += "<b>"+ "<span style='font-size:10px;'>"+ chatTime +"</span>"+ " "+ writer + " : " + message + "</b>";
               str += "</div></div>";
               $("#msgArea").append(str);
             }

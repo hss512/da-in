@@ -45,6 +45,7 @@ public class ChatMessage {
         return ChatMessageDto.builder()
                 .writer(writer)
                 .message(message)
+                .chatTime(chatTime)
                 .build();
     }
 }

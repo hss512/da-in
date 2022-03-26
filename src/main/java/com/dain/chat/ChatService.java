@@ -1,5 +1,7 @@
 package com.dain.chat;
 
+import com.dain.domain.entity.Member;
+import com.dain.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -8,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 
@@ -21,6 +25,10 @@ public class ChatService {
 
     private final ChatRepository chatRepository;
 
+    private final ChatRoomJoinRepository chatRoomJoinRepository;
+
+    private final MemberRepository memberRepository;
+
     public List<ChatRoom> findAllRoom(){
         List<ChatRoom> chatRoomList = chatRoomRepository.findAll();
         Collections.reverse(chatRoomList);
@@ -32,9 +40,9 @@ public class ChatService {
         return chatRoom;
     }
 
-    public Long createChatRoom(ChatRoomForm dto){
-        dto.setRoomCode(UUID.randomUUID().toString());
-        return chatRoomRepository.save(dto.toEntity()).getId();
+    public Long createChatRoom(ChatRoom chatRoom){
+        chatRoom.setRoomCode(UUID.randomUUID().toString());
+        return chatRoomRepository.save(chatRoom).getId();
     }
 
     public Long saveChat(ChatMessage chatMessage){
@@ -62,7 +70,32 @@ public class ChatService {
         }
     }
 
+    public Long saveChatRoomJoin(Member member,ChatRoom chatRoom){
+        ChatRoomJoin chatRoomJoin=new ChatRoomJoin();
+        chatRoomJoin.setMember(member);
+        chatRoomJoin.setChatRoom(chatRoom);
+        return chatRoomJoinRepository.save(chatRoomJoin).getId();
+    }
 
+    public boolean ifExistSaveRoomJoin(Long memberId,Long roomId){
+        Member findMember = memberRepository.findById(memberId).get();
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).get();
+        Optional<ChatRoomJoin> findChatRoomJoin = chatRoomJoinRepository.findByChatRoomAndMember(chatRoom, findMember);
+        if(findChatRoomJoin.isEmpty()){
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+    public boolean ifExistSaveEnter(String writer,ChatRoom chatRoom){
+        Optional<ChatMessage> findChatMessage = chatRepository.findByWriterAndChatRoom(writer, chatRoom);
+        if(findChatMessage.isEmpty()){
+            return true;
+        }else {
+            return false;
+        }
+    }
 
 }
 
