@@ -19,6 +19,7 @@
         <input type="text" id="msg" class="form-control">
         <div class="input-group-append">
           <button class="btn btn-outline-secondary" type="button" onclick="sendMessage()" id="button-send">전송</button>
+          <button class="btn btn-outline-secondary" type="button" onclick="disconnectChat()" id="button-leave">퇴장</button>
         </div>
       </div>
     </div>
@@ -32,10 +33,10 @@
       var roomName = [[${room.name}]];
       var roomId = [[${room.roomCode}]];
       var username = [[${userDetails.getUsername()}]];
+
       console.log(typeof(username));
       var sockJs = new SockJS("/stomp/chat", null, {transports: ["websocket", "xhr-streaming", "xhr-polling"]});
       let stomp = Stomp.over(sockJs);
-
       function connectChat(){
         console.log(roomName + ", " + roomId + ", " + username);
 
@@ -50,24 +51,57 @@
             console.log(content);
             var message= content.message;
             let chatTime = content.chatTime;
+            var chatTime2='';
+            chatTime2+=chatTime.substring(6,7);
+            chatTime2+="월 "
+            chatTime2+=chatTime.substring(8,10);
+            chatTime2+="일 "
+            chatTime2+=chatTime.substring(11,13);
+            chatTime2+="시 "
+            chatTime2+=chatTime.substring(14,16);
+            chatTime2+="분"
             var str = '';
 
             if(writer === username){
               str = "<div>";
               str += "<div id='writeByMe' style='color: blue'>";
-                str += "<b>"+ "<span style='font-size:10px;'>"+ chatTime +"</span>"+ " "+ writer + " : " + message + "</b>";
+              str += "<b>"+ "<span style='font-size:10px;'>"+ chatTime2 +"</span>"+ " "+ writer + " : " + message + "</b>";
               str += "</div></div>";
               $("#msgArea").append(str);
             }
             else{
               str = "<div>";
               str += "<div id='writeByYou' style='color: red'>";
-              str += "<b>" + writer + " : " + message + "</b>";
+              str += "<b>"+ "<span style='font-size:12px;'>"+ chatTime2 +"</span>"+ " "+ writer + " : " + message + "</b>";
               str += "</div></div>";
               $("#msgArea").append(str);
             }
 
           });
+              stomp.subscribe('/sub/chat/leave/room/' + roomId, function (chat) {
+                  let content = JSON.parse(chat.body);
+                  var writer = content.writer;
+                  console.log(content);
+                  var message = content.message;
+                  let chatTime = content.chatTime;
+                  var chatTime2 = '';
+                  chatTime2 += chatTime.substring(6, 7);
+                  chatTime2 += "월 "
+                  chatTime2 += chatTime.substring(8, 10);
+                  chatTime2 += "일 "
+                  chatTime2 += chatTime.substring(11, 13);
+                  chatTime2 += "시 "
+                  chatTime2 += chatTime.substring(14, 16);
+                  chatTime2 += "분"
+                  var str = '';
+
+
+                  str = "<div>";
+                  str += "<div style='color: black'>";
+                  str += "<b>" + "<span style='font-size:12px;'>" + chatTime2 + "</span>" + " " + writer + " : " + message + "</b>";
+                  str += "</div></div>";
+                  $("#msgArea").append(str);
+              })
 
           stomp.send('/pub/chat/enter/'+roomId, {}, JSON.stringify({roomId: roomId, writer: username}))
         });
@@ -84,8 +118,35 @@
               sendMessage();
           }
       });
-    connectChat();
-    </script>
+
+
+      function unsubscribeStomp(content){
+          stomp.unsubscribe(content);
+      }
+
+      function disconnectChat() {
+          stomp.send('/pub/chat/leave/'+roomId,{},JSON.stringify({roomId:roomId,writer:username}));
+          // unsubscribeStomp(content);
+          stomp.disconnect();
+          $.ajax({
+              type:"get",
+              url:"/api/chat/room/leave/"+roomId+"/exit",
+              dataType:"json"
+          })
+              .done(res=>{
+                  if(res===1){
+                      console.log("유저수 1감소")
+                  }else {
+                      console.log("api실패");
+                  }
+              }).fail(err=>{
+                  console.error(err);
+          })
+          location.href='/chat/rooms';
+
+      }
+      connectChat();
+     </script>
 </body>
 
 </html>

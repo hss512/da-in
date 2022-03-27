@@ -1,6 +1,8 @@
 package com.dain.chat;
 
+import com.dain.domain.entity.Member;
 import com.dain.principal.UserDetailsImpl;
+import com.dain.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @Log4j2
 @Controller
 @RequiredArgsConstructor
@@ -18,6 +22,8 @@ public class ChatRoomController {
     private final ChatRoomRepository chatRoomRepository;
 
     private final ChatService chatService;
+
+    private final MemberService memberService;
 
     @GetMapping("/chat/rooms")
     public String rooms(Model model){
@@ -31,6 +37,8 @@ public class ChatRoomController {
         ChatRoom room = chatService.findRoom(roomCode);
         model.addAttribute("room", room);
         model.addAttribute("userDetails",userDetails);
+        List<Member> allMember = memberService.findAllMember();
+
         if(room.getUserLimit()==0 || room.getCountUser()>= room.getUserLimit()){
             return "redirect:/chat/rooms";
         }else {

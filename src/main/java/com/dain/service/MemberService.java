@@ -17,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -122,5 +124,11 @@ public class MemberService implements UserDetailsService {
     public ResponseEntity<?> memberDelete(Member member) {
         memberRepository.delete(member);
         return new ResponseEntity<>(1,HttpStatus.OK);
+    }
+
+    public List<Member> findAllMember(){
+        List<Member> allMember = memberRepository.findAll();
+        Collections.reverse(allMember);
+        return allMember;
     }
 }

@@ -24,4 +24,9 @@ public class ChatApiController {
         log.info("이게중요햐={}",check.getBody());
         return check;
     }
+
+    @GetMapping("/leave/{roomId}/exit")
+    public ResponseEntity<?> UserCountMinus(@PathVariable("roomId") String roomCode){
+        return chatService.userCountMinus(roomCode);
+    }
 }

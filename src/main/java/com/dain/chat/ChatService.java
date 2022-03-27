@@ -46,7 +46,6 @@ public class ChatService {
     }
 
     public Long saveChat(ChatMessage chatMessage){
-        chatMessage.setChatTime(LocalDateTime.now());
         return chatRepository.save(chatMessage).getId();
     }
 
@@ -97,6 +96,16 @@ public class ChatService {
         }
     }
 
+    @Transactional
+    public ResponseEntity<?> userCountMinus(String roomCode){
+        ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomCode).get();
+        if (chatRoom.getCountUser()!=0 &&chatRoom.getCountUser()>0){
+            chatRoom.toUpdateCountUser(chatRoom.getCountUser()-1);
+            return new ResponseEntity<>(1,HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(0,HttpStatus.OK);
+        }
+    }
 }
 
 

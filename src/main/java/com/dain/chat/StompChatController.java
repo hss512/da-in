@@ -28,8 +28,11 @@ public class StompChatController {
         System.out.println("message.getWriter() = " + message.getWriter());
         System.out.println("chatRoom = " + chatRoom);
         message.setChatRoom(chatRoom);
-        if (chatService.ifExistSaveEnter(message.getWriter(),chatRoom)){
-            chatService.saveChat(message);
+        message.setChatTime(LocalDateTime.now());
+        if(message.getMessage()==message.getWriter()+"님이 채팅방에 참여하였습니다."){
+            if (chatService.ifExistSaveEnter(message.getWriter(),chatRoom)){
+                chatService.saveChat(message);
+            }
         }
         template.convertAndSend("/sub/chat/room/" + roomId,message.toDto());
     }
@@ -38,7 +41,19 @@ public class StompChatController {
     public void message(@DestinationVariable String roomId, ChatMessage chatMessage){
         ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomId).get();
         chatMessage.setChatRoom(chatRoom);
+        chatMessage.setChatTime(LocalDateTime.now());
         chatService.saveChat(chatMessage);
         template.convertAndSend("/sub/chat/room/" + roomId, chatMessage.toDto());
+    }
+
+    @MessageMapping("/chat/leave/{roomId}")
+    public void leave(@DestinationVariable String roomId,ChatMessage chatMessage){
+        log.info("채팅 나가기 들어옴");
+        ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomId).get();
+        chatMessage.setMessage(chatMessage.getWriter()+"님이 채팅방을 떠나셨습니다.");
+        chatMessage.setChatRoom(chatRoom);
+        chatMessage.setChatTime(LocalDateTime.now());
+        log.info(chatMessage);
+        template.convertAndSend("/sub/chat/leave/room/"+roomId,chatMessage.toDto());
     }
 }
