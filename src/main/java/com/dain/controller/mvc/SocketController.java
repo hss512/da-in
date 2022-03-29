@@ -49,4 +49,12 @@ public class SocketController {
         template.convertAndSend("/topic/chat/room/" + Long.parseLong(roomId), chatDTO);
     }
 
+
+    @MessageMapping("/chat/room/{roomId}/enter")
+    public void chatEnter(@DestinationVariable String roomId, Principal principal){
+
+        log.info("chatEnter 호출");
+
+        template.convertAndSend("/topic/chat/room/" + roomId, principal.getName());
+    }
 }

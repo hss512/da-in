@@ -112,9 +112,22 @@ public class ChatService {
                 .member(member)
                 .room(room)
                 .content(message)
-                .chatCheck(1)
+                .chatCheck(false)
                 .build();
 
         return chatRepository.save(chat).toDTO();
+    }
+
+    public List<ChatDTO> getChatList(Long roomId) {
+
+        List<Chat> chatList = chatRepository.findByRoomId(roomId);
+
+        List<ChatDTO> chatDTOList = chatList.stream().map(Chat::toDTO).collect(Collectors.toList());
+
+        return chatDTOList;
+    }
+
+    public void readChat(Long roomId) {
+        chatRepository.findByIdAndChatCheckIsFalse(roomId);
     }
 }

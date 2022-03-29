@@ -132,8 +132,7 @@ function ch_open(){
     $('.ch-plugin-script').css("display", "")
     $.ajax({
         url: "/api/chat/room",
-        method: "get",
-        async: false
+        method: "get"
     }).done(res=>{
         console.log(res.data)
         ch_clear()
@@ -177,55 +176,92 @@ function room_enter(roomId){
 
     $.ajax({
         url: "/api/chat/room/" + roomId,
-        method: "get"
-    }).done(res=>{
+        method: "get",
+        success: async function (res){
+            console.log("room_enter")
+            let myNick = res.data.myNickname;
 
-        let title = res.data.title.split("-")
+            let title = res.data.title.split("-")
 
-        title.forEach(t=>{
-            if((res.data.myNickname !== t) && (t !== "")){
-                title = t;
-            }
-        })
+            title.forEach(t=>{
+                if((myNick !== t) && (t !== "")){
+                    title = t;
+                }
+            })
 
-        $("#talk-plugin").append(
-            "<div id='chat_room_main' class='ch-plugin-script rightPosition'>"+
-            "<div class='ch-plugin-script-iframe' style='position:relative!important;height:100%;width:100%!important;border:none!important;'>" +
-            "<div class='ch-main'>" +
-            "<div class='ch-main-container'>" +
-            "<div class='ch-main-container-inner'>" +
-            "<div class='ch-main-container-header'>" +
-            "<div class='ch-main-container-title'>" +
-            title +
-            "<div class='ch-close-btn'>" +
-            "<button type='button' class='ch-btn' onClick='chat_room_close()'>x</button>" +
-            "</div>" +
-            "</div>" +
-            "<div class='ch-main-container-header_'>실시간 채팅</div>" +
-            "</div>" +
-            "<div class='ch-main-container-body'>" +
-            "<ul class='chat_message'>" +
+            $("#talk-plugin").append(
+                "<div id='chat_room_main' class='ch-plugin-script rightPosition'>"+
+                "<div class='ch-plugin-script-iframe' style='position:relative!important;height:100%;width:100%!important;border:none!important;'>" +
+                "<div class='ch-main'>" +
+                "<div class='ch-main-container'>" +
+                "<div class='ch-main-container-inner'>" +
+                "<div class='ch-main-container-header'>" +
+                "<div class='ch-main-container-title'>" +
+                title +
+                "<div class='ch-close-btn'>" +
+                "<button type='button' class='ch-btn' onClick='chat_room_close()'>x</button>" +
+                "</div>" +
+                "</div>" +
+                "<div class='ch-main-container-header_'>실시간 채팅</div>" +
+                "</div>" +
+                "<div class='ch-main-container-body'>" +
+                "<ul class='chat_message'>" +
 
-            "</ul>" +
-            "</div>" +
-            "<div class='ch-main-container-footer'>" +
-            "<div class='chat_input'>" +
-            "<input type='text' class='ch_input' name='send_chat_message'/>"+
-            "</div>"+
-            "<div class='chat_input_btn'>" +
-            "<button type='button' class='ch_input_btn' onclick='sendMessage(" + roomId + ")'>전송</button> " +
-            "</div>"+
-            "</div>" +
-            "</div>" +
-            "</div>" +
-            "</div>" +
-            "</div>" +
-            "</div>"
-        )
-        connectChat(roomId);
+                "</ul>" +
+                "</div>" +
+                "<div class='ch-main-container-footer'>" +
+                "<div class='chat_input'>" +
+                "<input type='text' class='ch_input' name='send_chat_message'/>"+
+                "</div>"+
+                "<div class='chat_input_btn'>" +
+                "<button type='button' class='ch_input_btn' onclick='sendMessage(" + roomId + ")'>전송</button> " +
+                "</div>"+
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>" +
+                "</div>"
+            )
 
-    }).fail(err=>{
-        console.log(err)
+            await connectChat(roomId);
+
+            res.data.chatList.forEach(data=>{
+                console.log("data.nick={}", data.memberDTO.nickname)
+                console.log("my.nick={}", myNick)
+
+                if(data.memberDTO.nickname === myNick){
+                    $(".chat_message").append(
+                        "<div class='message my_message'>" +
+                        "<div class='message_content my_message_content'>" +
+                        "<div class='message_check my_message_check'>" +
+                        1 +
+                        "</div>" +
+                        "<div class='message_msg my_message_msg'>" +
+                        data.message +
+                        "</div>" +
+                        "</div>" +
+                        "</div>"
+                    )
+                }else{
+                    $(".chat_message").append(
+                        "<div class='message'>" +
+                        "<div class='message_member'>" +
+                        data.memberDTO.nickname +
+                        "</div>" +
+                        "<div class='message_content'>" +
+                        "<div class='message_msg'>" +
+                        data.message +
+                        "</div>" +
+                        "</div>"+
+                        "</div>"
+                    )
+                }
+            })
+
+            await chatRead(roomId);
+
+        }
     })
 }
 
@@ -246,32 +282,40 @@ function chat_room_close(){
 }
 
 function connectChat(roomId){
+
+    console.log("connectChat")
+
     let chatSock = new SockJS("/ws/chat");
     let chatClient = Stomp.over(chatSock);
     chatClient.debug = null;
     chatSocket = chatClient;
 
-    chatClient.connect({}, function (frame){
-        console.log("채팅 소켓 연결", frame);
+    return new Promise(function(resolve,reject){
+        chatClient.connect({}, function (frame){
+            console.log("채팅 소켓 연결", frame);
 
-        chatClient.subscribe('/topic/chat/room/' + roomId, function (chat){
-            let data = JSON.parse(chat.body);
-            if(frame.headers['user-name'] !== data.memberDTO.username){
-                $('.chat_message').append(
-                    "<div class='message'>" +
-                    "<div class='message_member'>" +
-                    data.memberDTO.nickname +
-                    "</div>" +
-                    "<div class='message_content'>" +
-                    "<div class='message_msg'>" +
-                    data.message +
-                    "</div>" +
-                    "</div>" +
-                    "</div>"
-                )
-            }
+            chatClient.subscribe('/topic/chat/room/' + roomId, function (chat){
+                console.log(chat.body)
+                let data = JSON.parse(chat.body);
+                if(frame.headers['user-name'] !== data.memberDTO.username){
+                    $('.chat_message').append(
+                        "<div class='message'>" +
+                        "<div class='message_member'>" +
+                        data.memberDTO.nickname +
+                        "</div>" +
+                        "<div class='message_content'>" +
+                        "<div class='message_msg'>" +
+                        data.message +
+                        "</div>" +
+                        "</div>" +
+                        "</div>"
+                    )
+                }
+            })
         })
-    })
+        console.log("connectChat_end")
+        resolve();
+    });
 }
 
 function sendMessage(roomId){
@@ -300,4 +344,28 @@ function sendMessage(roomId){
 
 function disconnectChat(){
     chatSocket.unsubscribe();
+}
+
+function chatRead(roomId){
+    return new Promise(function(resolve,reject){
+        console.log("chatRead")
+        chatSocket.send("/chat/room/" + roomId + "/enter")
+        resolve();
+        console.log("chatReadEnd")
+    });
+}
+
+function waitForConnection(stompClient:Stomp.Client, callback :any) {
+    setTimeout(
+        function () {
+            // 연결되었을 때 콜백함수 실행
+            if (stompClient.ws.readyState === 1) {
+                callback();
+                // 연결이 안 되었으면 재호출
+            } else {
+                waitForConnection(stompClient, callback);
+            }
+        },
+        1 // 밀리초 간격으로 실행
+    );
 }

@@ -24,7 +24,6 @@ public class AlarmService {
     private final AlarmRepository alarmRepository;
     private final BoardRepository boardRepository;
 
-    @Transactional(readOnly = true)
     public Alarm createAlarm(String boardId, RequestSocketDTO alarmDTO) {
         Board board = boardRepository.findById(Long.parseLong(boardId)).get();
         Member toMember = board.getMember();
@@ -37,7 +36,8 @@ public class AlarmService {
     @Transactional(readOnly = true)
     public int getAll(Long userId) {
         List<ResponseAlarmDTO> alarmList = getAlarmList(userId);
-        return alarmList.size();
+
+        return (int)alarmList.stream().filter(alarm-> alarm.getCheck() == 0).count();
     }
 
     @Transactional(readOnly = true)

@@ -21,7 +21,7 @@ public class Chat extends BaseEntity{
 
     private String content;
 
-    private int chatCheck;
+    private boolean chatCheck;
 
     @ManyToOne
     @JoinColumn(name = "member_id")
@@ -32,11 +32,25 @@ public class Chat extends BaseEntity{
     private Room room;
 
     public ChatDTO toDTO(){
-        return ChatDTO.builder()
-                .id(this.id)
-                .message(this.content)
-                .memberDTO(this.member.toResponseDTO())
-                .roomDTO(this.room.toDTO())
-                .build();
+
+        if(this.chatCheck) {
+            return ChatDTO.builder()
+                    .id(this.id)
+                    .chatCheck(1)
+                    .message(this.content)
+                    .memberDTO(this.member.toResponseDTO())
+                    .roomDTO(this.room.toDTO())
+                    .created_at(this.createdDate)
+                    .build();
+        }else{
+            return ChatDTO.builder()
+                    .id(this.id)
+                    .chatCheck(0)
+                    .message(this.content)
+                    .memberDTO(this.member.toResponseDTO())
+                    .roomDTO(this.room.toDTO())
+                    .created_at(this.createdDate)
+                    .build();
+        }
     }
 }

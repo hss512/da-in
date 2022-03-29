@@ -1,5 +1,6 @@
 package com.dain.controller.api;
 
+import com.dain.domain.dto.ChatDTO;
 import com.dain.domain.dto.RoomDTO;
 import com.dain.domain.entity.Room;
 import com.dain.exception.ValidateDTO;
@@ -50,6 +51,12 @@ public class ChatApiController {
     public ResponseEntity<?> getRoom(@PathVariable String roomId,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails){
         RoomDTO roomDTO = chatService.getRoom(Long.parseLong(roomId), userDetails.returnProfile().getId());
+
+        chatService.readChat(Long.parseLong(roomId));
+
+        List<ChatDTO> chatList = chatService.getChatList(Long.parseLong(roomId));
+
+        roomDTO.setChatList(chatList);
 
         return new ResponseEntity<>(new ValidateDTO<>(1, "room", roomDTO), HttpStatus.OK);
     }
