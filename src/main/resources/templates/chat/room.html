@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <link type="text/css" rel="stylesheet" th:src="@{/css/chat.css}">
@@ -13,6 +14,16 @@
     <h1>[[${room.name}]]</h1>
   </div>
   <div>
+      <div>
+          <th:block th:each="Member: ${inMember}">
+              <div>
+                  <input th:id="userCheck+${Member.id}" type="checkbox" th:onclick="|javascript:userCheck(${Member.id})|">
+                  <span th:text="${Member.getId()}"/>
+                  <span th:text="${Member.getUsername()}"/>
+                  <button type='button' th:id='userButton+${Member.id}' th:onclick="|javascript:userKick(${Member.id})|" } style="visibility: hidden">강퇴</button>
+              </div>
+          </th:block>
+      </div>
     <div id="msgArea" class="col"></div>
     <div class="col-6">
       <div class="input-group mb-3">
@@ -33,13 +44,28 @@
       var roomName = [[${room.name}]];
       var roomId = [[${room.roomCode}]];
       var username = [[${userDetails.getUsername()}]];
-
+      var chatUserId= [[${userDetails.getId()}]];
+      console.log(chatUserId);
+      function userCheck(id){
+          const checkBox=document.getElementById("userCheck"+id);
+          let changeId = $("#userCheck"+id).attr("id");
+          console.log(changeId);
+          console.log(checkBox.checked);
+          if(checkBox.checked==true){
+              document.getElementById("userButton"+id).style.visibility="visible";
+          }else if(checkBox.checked==false){
+              document.getElementById("userButton"+id).style.visibility="hidden";
+          }
+      }
+      function userKick(id){
+          console.log(id)
+          stomp.send('/pub/chat/kick/room/'+roomId+"/"+id, {}, JSON.stringify({roomId: roomId, userId: id}))
+      }
       console.log(typeof(username));
       var sockJs = new SockJS("/stomp/chat", null, {transports: ["websocket", "xhr-streaming", "xhr-polling"]});
       let stomp = Stomp.over(sockJs);
       function connectChat(){
         console.log(roomName + ", " + roomId + ", " + username);
-
 
           stomp.connect({}, function (){
           console.log("STOMP Connection")
@@ -102,6 +128,23 @@
                   str += "</div></div>";
                   $("#msgArea").append(str);
               })
+
+                  stomp.subscribe('/sub/chat/kick/room/' + roomId + "/" + id, function (chat) {
+                      console.log("subKIck들어옴");
+                      let content = JSON.parse(chat.body);
+                      console.log(content);
+                      let userId = content.userId;
+                      let type = content.type;
+                      console.log(type);
+                      console.log(userId);
+                      console.log(id);
+                      if (userId == chatUserId) {
+                          if (type == "KICK") {
+                              alert("강퇴당하셨습니다");
+                              location.href = "/chat/rooms";
+                          }
+                      }
+                  })
 
           stomp.send('/pub/chat/enter/'+roomId, {}, JSON.stringify({roomId: roomId, writer: username}))
         });

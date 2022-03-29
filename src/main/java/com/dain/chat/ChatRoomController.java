@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Log4j2
@@ -38,12 +39,18 @@ public class ChatRoomController {
         model.addAttribute("room", room);
         model.addAttribute("userDetails",userDetails);
         List<Member> allMember = memberService.findAllMember();
-
+        List<Member> inMember=new ArrayList<>();
+        for (Member member : allMember){
+            if(chatService.userInChatRoom(room,member)){
+                inMember.add(member);
+            }
+        }
+        model.addAttribute("inMember",inMember);
         if(room.getUserLimit()==0 || room.getCountUser()>= room.getUserLimit()){
             return "redirect:/chat/rooms";
         }else {
             if(chatService.ifExistSaveRoomJoin(userDetails.returnProfile().getId(),room.getId())){
-                chatService.saveChatRoomJoin(userDetails.returnProfile(),room);
+                chatService.saveChatRoomJoinGuest(userDetails.returnProfile(),room);
             }
             return "/chat/room";
         }
@@ -59,7 +66,7 @@ public class ChatRoomController {
     @PostMapping("/room/new")
     public String makeRoom(ChatRoom chatRoom,@AuthenticationPrincipal UserDetailsImpl userDetails){
         chatService.createChatRoom(chatRoom);
-        chatService.saveChatRoomJoin(userDetails.returnProfile(),chatRoom);
+        chatService.saveChatRoomJoinOwner(userDetails.returnProfile(),chatRoom);
         return "redirect:/chat/rooms";
     }
 

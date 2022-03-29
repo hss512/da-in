@@ -23,6 +23,10 @@ public class ChatRoomJoin {
 
     private int dropUserRoom;
 
+    @Column(name = "room_owner")
+    @Enumerated(EnumType.STRING)
+    private RoomOwner roomOwner;
+
     public void toInsertRoomState(ChatRoomForm chatRoomForm){
         this.chatRoom=chatRoomForm.toEntity();
     }

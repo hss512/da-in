@@ -56,4 +56,12 @@ public class StompChatController {
         log.info(chatMessage);
         template.convertAndSend("/sub/chat/leave/room/"+roomId,chatMessage.toDto());
     }
+
+    @MessageMapping("/chat/kick/room/{roomId}/{userId}")
+    public void kick(@DestinationVariable("roomId")String roomId,@DestinationVariable("userId")Long userId,KickDto kickDto){
+        kickDto.setType("KICK");
+        kickDto.setRoomId(roomId);
+        kickDto.setUserId(userId);
+        template.convertAndSend("/sub/chat/kick/room/"+roomId+"/"+userId,kickDto);
+    }
 }

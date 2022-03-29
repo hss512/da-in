@@ -69,10 +69,19 @@ public class ChatService {
         }
     }
 
-    public Long saveChatRoomJoin(Member member,ChatRoom chatRoom){
+    public Long saveChatRoomJoinOwner(Member member,ChatRoom chatRoom){
         ChatRoomJoin chatRoomJoin=new ChatRoomJoin();
         chatRoomJoin.setMember(member);
         chatRoomJoin.setChatRoom(chatRoom);
+        chatRoomJoin.setRoomOwner(RoomOwner.OWNER);
+        return chatRoomJoinRepository.save(chatRoomJoin).getId();
+    }
+
+    public Long saveChatRoomJoinGuest(Member member,ChatRoom chatRoom){
+        ChatRoomJoin chatRoomJoin=new ChatRoomJoin();
+        chatRoomJoin.setMember(member);
+        chatRoomJoin.setChatRoom(chatRoom);
+        chatRoomJoin.setRoomOwner(RoomOwner.GUEST);
         return chatRoomJoinRepository.save(chatRoomJoin).getId();
     }
 
@@ -104,6 +113,16 @@ public class ChatService {
             return new ResponseEntity<>(1,HttpStatus.OK);
         }else {
             return new ResponseEntity<>(0,HttpStatus.OK);
+        }
+    }
+
+    public boolean userInChatRoom(ChatRoom chatRoom,Member member){
+        log.info("여기 매번들어오는곳인데 뭔개소리야시발좇같게진짜");
+        Optional<ChatRoomJoin> chatRoomJoin = chatRoomJoinRepository.findByChatRoomAndMember(chatRoom, member);
+        if(chatRoomJoin.isPresent()){
+            return true;
+        }else {
+            return false;
         }
     }
 }
