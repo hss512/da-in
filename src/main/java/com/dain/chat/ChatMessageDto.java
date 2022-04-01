@@ -21,11 +21,17 @@ public class ChatMessageDto {
 
     private String message;
 
+    private MessageType messageType;
+
+    private int chatRoomUserCount;
+
     @Builder
-    public ChatMessageDto(String writer, String message, LocalDateTime chatTime){
+    public ChatMessageDto(String writer, String message, LocalDateTime chatTime,ChatRoom chatRoom,MessageType messageType,int chatRoomUserCount){
         this.writer=writer;
         this.message=message;
         this.chatTime=chatTime;
+        this.chatRoomUserCount=chatRoomUserCount;
+        this.messageType=messageType;
     }
 
     public ChatMessage toEntity(){

@@ -40,17 +40,24 @@ public class ChatRoomController {
         model.addAttribute("userDetails",userDetails);
         List<Member> allMember = memberService.findAllMember();
         List<Member> inMember=new ArrayList<>();
+
         for (Member member : allMember){
             if(chatService.userInChatRoom(room,member)){
                 inMember.add(member);
             }
         }
-        model.addAttribute("inMember",inMember);
         if(room.getUserLimit()==0 || room.getCountUser()>= room.getUserLimit()){
             return "redirect:/chat/rooms";
         }else {
             if(chatService.ifExistSaveRoomJoin(userDetails.returnProfile().getId(),room.getId())){
                 chatService.saveChatRoomJoinGuest(userDetails.returnProfile(),room);
+            }
+            ChatRoomJoin chatRoomJoin = chatService.modelUpChatRoomJoin(room,userDetails.returnProfile());
+            if (chatRoomJoin.getRoomOwner().toString()=="OWNER"){
+                model.addAttribute("inMember",inMember);
+            }
+            if(chatRoomJoin.getDropUserRoom()==1){
+                return "redirect:/chat/rooms";
             }
             return "/chat/room";
         }
@@ -58,8 +65,8 @@ public class ChatRoomController {
 
     @GetMapping("/chat/new")
     public String make(Model model){
-        ChatRoomForm form = new ChatRoomForm();
-        model.addAttribute("form",form);
+        ChatRoom chatRoom = new ChatRoom();
+        model.addAttribute("form",chatRoom);
         return "/chat/newRoom";
     }
 

@@ -9,9 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.*;
 
 
@@ -28,6 +26,7 @@ public class ChatService {
     private final ChatRoomJoinRepository chatRoomJoinRepository;
 
     private final MemberRepository memberRepository;
+
 
     public List<ChatRoom> findAllRoom(){
         List<ChatRoom> chatRoomList = chatRoomRepository.findAll();
@@ -116,14 +115,33 @@ public class ChatService {
         }
     }
 
+    @Transactional
+    public ResponseEntity<?> userCountRefresh(String roomCode,String userId){
+        ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomCode).get();
+        Member member = memberRepository.findById(Long.parseLong(userId)).get();
+        ChatRoomJoin chatRoomJoin = chatRoomJoinRepository.findByChatRoomAndMember(chatRoom, member).get();
+        if (chatRoom.getCountUser()!=0 &&chatRoom.getCountUser()>0){
+            chatRoom.toUpdateCountUser(chatRoom.getCountUser()-1);
+            chatRoomJoin.toUpdateDropUserRoom(1);
+            return new ResponseEntity<>(1,HttpStatus.OK);
+        }else {
+            return new ResponseEntity<>(0,HttpStatus.OK);
+        }
+    }
+
     public boolean userInChatRoom(ChatRoom chatRoom,Member member){
         log.info("여기 매번들어오는곳인데 뭔개소리야시발좇같게진짜");
         Optional<ChatRoomJoin> chatRoomJoin = chatRoomJoinRepository.findByChatRoomAndMember(chatRoom, member);
-        if(chatRoomJoin.isPresent()){
+
+        if (chatRoomJoin.isPresent() && chatRoomJoin.get().getRoomOwner().toString()!="OWNER") {
             return true;
-        }else {
+        } else {
             return false;
         }
+    }
+    public ChatRoomJoin modelUpChatRoomJoin(ChatRoom chatRoom,Member member){
+        ChatRoomJoin chatRoomJoin = chatRoomJoinRepository.findByChatRoomAndMember(chatRoom, member).get();
+        return chatRoomJoin;
     }
 }
 

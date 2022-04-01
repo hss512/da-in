@@ -13,11 +13,11 @@ public class ChatRoomJoin {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "room_id")
     private ChatRoom chatRoom;
 
@@ -27,7 +27,7 @@ public class ChatRoomJoin {
     @Enumerated(EnumType.STRING)
     private RoomOwner roomOwner;
 
-    public void toInsertRoomState(ChatRoomForm chatRoomForm){
-        this.chatRoom=chatRoomForm.toEntity();
+    public void toUpdateDropUserRoom(int dropUserRoom){
+        this.dropUserRoom=dropUserRoom;
     }
 }

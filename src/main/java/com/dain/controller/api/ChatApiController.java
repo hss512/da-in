@@ -1,9 +1,11 @@
 package com.dain.controller.api;
 
 import com.dain.chat.ChatService;
+import com.dain.principal.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,6 +30,11 @@ public class ChatApiController {
     @GetMapping("/leave/{roomId}/exit")
     public ResponseEntity<?> UserCountMinus(@PathVariable("roomId") String roomCode){
         return chatService.userCountMinus(roomCode);
+    }
+
+    @GetMapping("/kick/{roomId}/{chatUserId}/exit")
+    public ResponseEntity<?> UserCountRefresh(@PathVariable("roomId") String roomCode,@PathVariable("chatUserId") String userId){
+        return chatService.userCountRefresh(roomCode,userId);
     }
 
 }
