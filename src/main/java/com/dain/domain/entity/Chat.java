@@ -36,7 +36,7 @@ public class Chat extends BaseEntity{
         if(this.chatCheck) {
             return ChatDTO.builder()
                     .id(this.id)
-                    .chatCheck(1)
+                    .chatCheck(0)
                     .message(this.content)
                     .memberDTO(this.member.toResponseDTO())
                     .roomDTO(this.room.toDTO())
@@ -45,12 +45,16 @@ public class Chat extends BaseEntity{
         }else{
             return ChatDTO.builder()
                     .id(this.id)
-                    .chatCheck(0)
+                    .chatCheck(1)
                     .message(this.content)
                     .memberDTO(this.member.toResponseDTO())
                     .roomDTO(this.room.toDTO())
                     .created_at(this.createdDate)
                     .build();
         }
+    }
+
+    public void chatRead(){
+        this.chatCheck = true;
     }
 }

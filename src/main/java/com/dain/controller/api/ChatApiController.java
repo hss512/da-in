@@ -52,8 +52,6 @@ public class ChatApiController {
                                      @AuthenticationPrincipal UserDetailsImpl userDetails){
         RoomDTO roomDTO = chatService.getRoom(Long.parseLong(roomId), userDetails.returnProfile().getId());
 
-        chatService.readChat(Long.parseLong(roomId));
-
         List<ChatDTO> chatList = chatService.getChatList(Long.parseLong(roomId));
 
         roomDTO.setChatList(chatList);
@@ -68,5 +66,27 @@ public class ChatApiController {
         chatService.exitRoom(roomId, userDetails.returnProfile().getId());
 
         return new ResponseEntity<>("roomExit", HttpStatus.OK);
+    }
+
+    @PostMapping("/chat/room/{roomId}/member/{username}/readChat")
+    public ResponseEntity<?> readChat(@PathVariable String roomId,
+                                      @PathVariable String username,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails){
+
+        log.info("메세지 읽음");
+
+        if(userDetails.returnProfile().getUsername().equals(username)){
+            chatService.readAnotherChat(Long.parseLong(roomId), userDetails.returnProfile().getId());
+        }else {
+            chatService.readChat(Long.parseLong(roomId), username);
+        }
+
+        return new ResponseEntity<>("readChat", HttpStatus.OK);
+    }
+
+    @PostMapping("/chat/{chatId}/read/realTime")
+    public ResponseEntity<?> readRealTime(@PathVariable String chatId){
+        chatService.readRealTime(Long.parseLong(chatId));
+        return new ResponseEntity<>("readRealTime", HttpStatus.OK);
     }
 }

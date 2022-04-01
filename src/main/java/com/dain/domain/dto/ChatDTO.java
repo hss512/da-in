@@ -17,6 +17,8 @@ public class ChatDTO {
 
     private String message;
 
+    private int status;
+
     private int chatCheck;
 
     private MemberDTO.ResponseMemberDTO memberDTO;

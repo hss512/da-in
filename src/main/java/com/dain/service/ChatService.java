@@ -127,7 +127,47 @@ public class ChatService {
         return chatDTOList;
     }
 
-    public void readChat(Long roomId) {
-        chatRepository.findByIdAndChatCheckIsFalse(roomId);
+    public void readChat(Long roomId, String username) {
+
+        Member member = memberRepository.findByUsername(username).get();
+
+        List<Chat> getChatList = chatRepository.findByRoomIdAndMemberIdAndChatCheckIsFalse(roomId, member.getId());
+
+        for (Chat chat : getChatList) {
+            chat.chatRead();
+        }
+
+        log.info("readChat-username={}", username);
+    }
+
+    public void readAnotherChat(Long roomId, Long memberId) {
+        List<ChatMember> getChatMember = chatMemberRepository.findByRoomId(roomId);
+        List<ChatMember> anotherMember = getChatMember.stream().filter(m -> m.getMember().getId() != memberId).collect(Collectors.toList());
+        for (ChatMember chatMember : anotherMember) {
+            log.info("filter_member={}", chatMember.getMember().getId());
+        }
+        String username = anotherMember.get(0).getMember().getUsername();
+
+        readChat(roomId, username);
+    }
+
+    public void readRealTime(Long chatId) {
+        Chat chat = chatRepository.findById(chatId).get();
+        chat.chatRead();
+        log.info("채팅 읽음={}", chatRepository.findById(chatId).get().isChatCheck());
+    }
+
+    @Transactional(readOnly = true)
+    public int getChatCheck(Long chatId) {
+
+        boolean chatCheck = chatRepository.findById(chatId).get().isChatCheck();
+
+        log.info("메세지 append시킴");
+
+        if(chatCheck){
+            return 0;
+        }else{
+            return 1;
+        }
     }
 }

@@ -3,6 +3,7 @@ package com.dain.controller.mvc;
 import com.dain.domain.dto.ChatDTO;
 import com.dain.domain.dto.RequestSocketDTO;
 import com.dain.domain.entity.Alarm;
+import com.dain.exception.ValidateDTO;
 import com.dain.service.AlarmService;
 import com.dain.service.ChatService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,7 +45,7 @@ public class SocketController {
 
         log.info("userDetails={}", principal.getName());
 
-        ChatDTO chatDTO = chatService.createChat(Long.parseLong(roomId), principal.getName(), chat.getContent() );
+        ChatDTO chatDTO = chatService.createChat(Long.parseLong(roomId), principal.getName(), chat.getContent());
 
         template.convertAndSend("/topic/chat/room/" + Long.parseLong(roomId), chatDTO);
     }
@@ -55,6 +56,14 @@ public class SocketController {
 
         log.info("chatEnter 호출");
 
-        template.convertAndSend("/topic/chat/room/" + roomId, principal.getName());
+        ValidateDTO<String> response = new ValidateDTO<>(10, principal.getName() + " 입장", principal.getName());
+
+        template.convertAndSend("/topic/chat/room/" + roomId, response);
+    }
+
+    @MessageMapping("/chat/room/inRoom/{roomId}/{username}")
+    public void inRoom(@DestinationVariable String roomId, @DestinationVariable String username){
+        log.info("inRoom");
+        template.convertAndSend("/topic/chat/inRoom/" + roomId + "/" + username, 1);
     }
 }

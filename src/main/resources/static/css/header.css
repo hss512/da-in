@@ -200,7 +200,6 @@
 .ch-main-container-inner{
     position: relative;
     height: 100%;
-    overflow-y: scroll;
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
 }
@@ -258,6 +257,7 @@
 }
 
 .ch-main-container-body{
+    height: 470px;
     position: relative;
     padding: 0px 14px 20px;
     box-sizing: border-box;
@@ -292,6 +292,11 @@
     border: 1px solid;
     padding: 10px 10px 10px 10px;
     display: flex;
+}
+
+.chat_message{
+    overflow-y: scroll;
+    height: 100%;
 }
 
 #chat_room_main{

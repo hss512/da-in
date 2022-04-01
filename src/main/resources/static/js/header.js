@@ -132,7 +132,8 @@ function ch_open(){
     $('.ch-plugin-script').css("display", "")
     $.ajax({
         url: "/api/chat/room",
-        method: "get"
+        method: "get",
+        async: false
     }).done(res=>{
         console.log(res.data)
         ch_clear()
@@ -176,66 +177,65 @@ function room_enter(roomId){
 
     $.ajax({
         url: "/api/chat/room/" + roomId,
-        method: "get",
-        success: async function (res){
-            console.log("room_enter")
-            let myNick = res.data.myNickname;
+        method: "get"
+    }).done(res=>{
 
-            let title = res.data.title.split("-")
+        console.log("room_enter")
+        let myNick = res.data.myNickname;
 
-            title.forEach(t=>{
-                if((myNick !== t) && (t !== "")){
-                    title = t;
-                }
-            })
+        let title = res.data.title.split("-")
 
-            $("#talk-plugin").append(
-                "<div id='chat_room_main' class='ch-plugin-script rightPosition'>"+
-                "<div class='ch-plugin-script-iframe' style='position:relative!important;height:100%;width:100%!important;border:none!important;'>" +
-                "<div class='ch-main'>" +
-                "<div class='ch-main-container'>" +
-                "<div class='ch-main-container-inner'>" +
-                "<div class='ch-main-container-header'>" +
-                "<div class='ch-main-container-title'>" +
-                title +
-                "<div class='ch-close-btn'>" +
-                "<button type='button' class='ch-btn' onClick='chat_room_close()'>x</button>" +
-                "</div>" +
-                "</div>" +
-                "<div class='ch-main-container-header_'>실시간 채팅</div>" +
-                "</div>" +
-                "<div class='ch-main-container-body'>" +
-                "<ul class='chat_message'>" +
+        title.forEach(t=>{
+            if((res.data.myNickname !== t) && (t !== "")){
+                title = t;
+            }
+        })
 
-                "</ul>" +
-                "</div>" +
-                "<div class='ch-main-container-footer'>" +
-                "<div class='chat_input'>" +
-                "<input type='text' class='ch_input' name='send_chat_message'/>"+
-                "</div>"+
-                "<div class='chat_input_btn'>" +
-                "<button type='button' class='ch_input_btn' onclick='sendMessage(" + roomId + ")'>전송</button> " +
-                "</div>"+
-                "</div>" +
-                "</div>" +
-                "</div>" +
-                "</div>" +
-                "</div>" +
-                "</div>"
-            )
+        $("#talk-plugin").append(
+            "<div id='chat_room_main' class='ch-plugin-script rightPosition'>"+
+            "<div class='ch-plugin-script-iframe' style='position:relative!important;height:100%;width:100%!important;border:none!important;'>" +
+            "<div class='ch-main'>" +
+            "<div class='ch-main-container'>" +
+            "<div class='ch-main-container-inner'>" +
+            "<div class='ch-main-container-header'>" +
+            "<div class='ch-main-container-title'>" +
+            title +
+            "<div class='ch-close-btn'>" +
+            "<button type='button' class='ch-btn' onClick='chat_room_close(" + roomId + ")'>x</button>" +
+            "</div>" +
+            "</div>" +
+            "<div class='ch-main-container-header_'>실시간 채팅</div>" +
+            "</div>" +
+            "<div class='ch-main-container-body'>" +
+            "<ul class='chat_message'>" +
 
-            await connectChat(roomId);
+            "</ul>" +
+            "</div>" +
+            "<div class='ch-main-container-footer'>" +
+            "<div class='chat_input'>" +
+            "<input type='text' class='ch_input' name='send_chat_message'/>"+
+            "</div>"+
+            "<div class='chat_input_btn'>" +
+            "<button type='button' class='ch_input_btn' onclick='sendMessage(" + roomId + ")'>전송</button> " +
+            "</div>"+
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            "</div>" +
+            "</div>"
+        )
+        connectChat(roomId);
 
-            res.data.chatList.forEach(data=>{
-                console.log("data.nick={}", data.memberDTO.nickname)
-                console.log("my.nick={}", myNick)
+        res.data.chatList.forEach(data=>{
 
-                if(data.memberDTO.nickname === myNick){
+            if(data.memberDTO.nickname === myNick){
+                if(data.chatCheck !== 0){
                     $(".chat_message").append(
                         "<div class='message my_message'>" +
                         "<div class='message_content my_message_content'>" +
                         "<div class='message_check my_message_check'>" +
-                        1 +
+                        data.chatCheck +
                         "</div>" +
                         "<div class='message_msg my_message_msg'>" +
                         data.message +
@@ -245,23 +245,37 @@ function room_enter(roomId){
                     )
                 }else{
                     $(".chat_message").append(
-                        "<div class='message'>" +
-                        "<div class='message_member'>" +
-                        data.memberDTO.nickname +
+                        "<div class='message my_message'>" +
+                        "<div class='message_content my_message_content'>" +
+                        "<div class='message_check my_message_check'>" +
                         "</div>" +
-                        "<div class='message_content'>" +
-                        "<div class='message_msg'>" +
+                        "<div class='message_msg my_message_msg'>" +
                         data.message +
                         "</div>" +
-                        "</div>"+
+                        "</div>" +
                         "</div>"
                     )
                 }
-            })
+            }else{
+                $(".chat_message").append(
+                    "<div class='message'>" +
+                    "<div class='message_member'>" +
+                    data.memberDTO.nickname +
+                    "</div>" +
+                    "<div class='message_content'>" +
+                    "<div class='message_msg'>" +
+                    data.message +
+                    "</div>" +
+                    "</div>"+
+                    "</div>"
+                )
+            }
+        })
 
-            await chatRead(roomId);
+        chatRead(roomId);
 
-        }
+    }).fail(err=>{
+        console.log(err)
     })
 }
 
@@ -276,27 +290,71 @@ function room_exit(roomId, nickname){
     })
 }
 
-function chat_room_close(){
+function chat_room_close(roomId){
     $('#chat_room_main').remove();
-    disconnectChat();
+    disconnectChat(roomId);
 }
 
 function connectChat(roomId){
-
-    console.log("connectChat")
-
     let chatSock = new SockJS("/ws/chat");
     let chatClient = Stomp.over(chatSock);
     chatClient.debug = null;
     chatSocket = chatClient;
 
-    return new Promise(function(resolve,reject){
-        chatClient.connect({}, function (frame){
-            console.log("채팅 소켓 연결", frame);
+    chatClient.connect({}, function (frame){
+        console.log("채팅 소켓 연결", frame);
 
-            chatClient.subscribe('/topic/chat/room/' + roomId, function (chat){
+        chatClient.subscribe('/topic/chat/inRoom/' + roomId + "/" + frame.headers['user-name'], function (check){
+            console.log("응애요..")
+            console.log(check)
+            console.log(check.body)
+            if(check.body === "1"){
+                console.log("호출되냐? 제발요..")
+                $(".my_message_check").empty();
+            }
+        })
+
+        chatClient.subscribe('/topic/chat/room/' + roomId, function (chat){
+            console.log('=======subscribe 호출========')
+            let data = JSON.parse(chat.body);
+            console.log(data)
+
+            if(data.status === 10){
+                console.log("일단 입장")
+                $.ajax({
+                    url: "/api/chat/room/" + roomId + "/member/" + frame.headers['user-name'] +"/readChat",
+                    method: "post",
+                    async: false
+                }).done(res=>{
+
+                }).fail(err={
+
+                })
+                if(frame.headers['user-name'] !== data.data){
+                    console.log(data.message)
+                    $(".my_message_check").empty();
+                    $.ajax({
+                        url: "/api/chat/room/" + roomId + "/member/" + frame.headers['user-name'] +"/readChat",
+                        method: "post",
+                        async: false
+                    }).done(res=>{
+
+                    }).fail(err={
+
+                    })
+                }
+            }else{
+                if(data.memberDTO.username !== frame.headers['user-name']){
+                    $.ajax({
+                        url: "/api/chat/" + data.id +"/read/realTime",
+                        method: "post",
+                        async: false
+                    }).done(res=>{
+                        console.log("reaTime")
+                        chatSocket.send("/chat/room/inRoom/" + roomId + "/" + data.memberDTO.username)
+                    })
+                }
                 console.log(chat.body)
-                let data = JSON.parse(chat.body);
                 if(frame.headers['user-name'] !== data.memberDTO.username){
                     $('.chat_message').append(
                         "<div class='message'>" +
@@ -311,11 +369,9 @@ function connectChat(roomId){
                         "</div>"
                     )
                 }
-            })
+            }
         })
-        console.log("connectChat_end")
-        resolve();
-    });
+    })
 }
 
 function sendMessage(roomId){
@@ -323,6 +379,8 @@ function sendMessage(roomId){
     let message = $("input[name=send_chat_message]").val();
 
     let chat = {"content": message}
+
+    chatSocket.send('/chat/room/' + roomId, {}, JSON.stringify(chat))
 
     $('.chat_message').append(
         "<div class='message my_message'>" +
@@ -338,24 +396,14 @@ function sendMessage(roomId){
     )
 
     $(".ch_input").val("");
-
-    chatSocket.send('/chat/room/' + roomId, {}, JSON.stringify(chat))
 }
 
-function disconnectChat(){
-    chatSocket.unsubscribe();
+function disconnectChat(roomId){
+    console.log(roomId)
+    chatSocket.disconnect();
 }
 
-function chatRead(roomId){
-    return new Promise(function(resolve,reject){
-        console.log("chatRead")
-        chatSocket.send("/chat/room/" + roomId + "/enter")
-        resolve();
-        console.log("chatReadEnd")
-    });
-}
-
-function waitForConnection(stompClient:Stomp.Client, callback :any) {
+function waitForConnection(stompClient, callback) {
     setTimeout(
         function () {
             // 연결되었을 때 콜백함수 실행
@@ -368,4 +416,10 @@ function waitForConnection(stompClient:Stomp.Client, callback :any) {
         },
         1 // 밀리초 간격으로 실행
     );
+}
+
+function chatRead(roomId){
+    waitForConnection(chatSocket,function() {
+        chatSocket.send("/chat/room/" + roomId + "/enter", {}, JSON.stringify())
+    })
 }
