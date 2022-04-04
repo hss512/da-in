@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -34,8 +35,10 @@ public class StompChatController {
         message.setChatRoom(chatRoom);
         message.setChatTime(LocalDateTime.now());
         message.setMessageType(MessageType.CHAT);
-        log.info("please={}",chatRoom.getCountUser());
         message.setChatRoomUserCount(chatRoom.getCountUser());
+        /*List<ChatRoomJoin> findCRJoin = chatService.findChatRoomJoinByChatRoom(chatRoom);
+        System.out.println("findCRJoin = " + findCRJoin.get(0).getId());
+        */
         if(message.getMessage()==message.getWriter()+"님이 채팅방에 참여하였습니다."){
             if (chatService.ifExistSaveEnter(message.getWriter(),chatRoom)){
                 chatService.saveChat(message);

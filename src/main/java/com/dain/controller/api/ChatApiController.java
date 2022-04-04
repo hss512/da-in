@@ -35,6 +35,7 @@ public class ChatApiController {
     @GetMapping("/kick/{roomId}/{chatUserId}/exit")
     public ResponseEntity<?> UserCountRefresh(@PathVariable("roomId") String roomCode,@PathVariable("chatUserId") String userId){
         return chatService.userCountRefresh(roomCode,userId);
-    }
-
+    }/*
+    @GetMapping("/return/userCount")
+    public ResponseEntity<?> readUserCount()*/
 }

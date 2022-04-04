@@ -27,6 +27,10 @@ public class ChatRoomJoin {
     @Enumerated(EnumType.STRING)
     private RoomOwner roomOwner;
 
+    @Column(name = "chat_state")
+    @Enumerated(EnumType.STRING)
+    private MessageType messageType;
+
     public void toUpdateDropUserRoom(int dropUserRoom){
         this.dropUserRoom=dropUserRoom;
     }

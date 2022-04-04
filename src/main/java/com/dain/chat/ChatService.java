@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @RequiredArgsConstructor
@@ -142,6 +143,31 @@ public class ChatService {
     public ChatRoomJoin modelUpChatRoomJoin(ChatRoom chatRoom,Member member){
         ChatRoomJoin chatRoomJoin = chatRoomJoinRepository.findByChatRoomAndMember(chatRoom, member).get();
         return chatRoomJoin;
+    }
+
+    /*public List<ChatRoomJoin> findChatRoomJoinByChatRoom(ChatRoom chatRoom){
+        List<ChatRoomJoin> chatRoomJoins = chatRoomJoinRepository.findAll();
+        for (ChatRoomJoin chatRoomJoin: chatRoomJoins){
+           if (chatRoomJoin.getChatRoom().getId()!=chatRoom.getId()){
+               chatRoomJoins.remove(chatRoomJoin);
+           }
+        }
+        return chatRoomJoins;
+    }*/
+
+    public List<ChatMessage> loadMessage(String roomCode){
+        List<ChatMessage> allMessage = chatRepository.findAll();
+        ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomCode).get();
+        /*List<ChatMessage> chatMessages = allMessage.stream().filter(i ->
+                i.getChatRoom().getId() == chatRoom.getId()).collect(Collectors.toList());
+*/
+        for (Iterator<ChatMessage> itr=allMessage.iterator();itr.hasNext();){
+            ChatMessage chatMessage=itr.next();
+            if (chatMessage.getChatRoom().getId()!=chatRoom.getId()){
+                itr.remove();
+            }
+        }
+        return allMessage;
     }
 }
 

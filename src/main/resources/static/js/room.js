@@ -49,15 +49,10 @@ function connectChat(id){
                     }).fail(err=>{
                     console.log("개같이멸망");
                 })
-
             }else {
                 let chatRoom = content.chatRoomUserCount;
                 let userCount = parseInt(chatRoom);
-                if(content.messageType==="CHAT"){
-                    userCount--;
-                }else if(content.messageType==="NOCHAT"){
-                    userCount++;
-                }
+
                 var writer = content.writer;
                 console.log(content);
                 var message = content.message;
@@ -181,4 +176,3 @@ function disconnectChat() {
 
 }
 connectChat();
-subKick();

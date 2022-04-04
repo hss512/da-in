@@ -40,7 +40,8 @@ public class ChatRoomController {
         model.addAttribute("userDetails",userDetails);
         List<Member> allMember = memberService.findAllMember();
         List<Member> inMember=new ArrayList<>();
-
+        List<ChatMessage> chatMessages = chatService.loadMessage(roomCode);
+        model.addAttribute("chatMessages",chatMessages);
         for (Member member : allMember){
             if(chatService.userInChatRoom(room,member)){
                 inMember.add(member);
