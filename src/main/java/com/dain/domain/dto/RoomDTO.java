@@ -17,6 +17,7 @@ public class RoomDTO {
     private String roomCode;
     private String title;
     private String myNickname;
+    private int count;
 
     private List<ChatDTO> chatList;
 }

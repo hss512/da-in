@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -24,6 +26,9 @@ public class Room extends BaseEntity{
     private String title;
 
     private int enter;
+
+    @OneToMany(mappedBy = "room")
+    private List<ChatMember> chatMemberList = new ArrayList<>();
 
     public RoomDTO toDTO(){
         return RoomDTO.builder()

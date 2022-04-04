@@ -3,10 +3,11 @@ package com.dain.controller.mvc;
 import com.dain.domain.dto.ChatDTO;
 import com.dain.domain.dto.RequestSocketDTO;
 import com.dain.domain.entity.Alarm;
+import com.dain.domain.entity.Member;
 import com.dain.exception.ValidateDTO;
+import com.dain.repository.MemberRepository;
 import com.dain.service.AlarmService;
 import com.dain.service.ChatService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -25,6 +26,7 @@ public class SocketController {
     private final SimpMessagingTemplate template;
     private final AlarmService alarmService;
     private final ChatService chatService;
+    private final MemberRepository memberRepository;
 
     @MessageMapping("/alarm/{boardId}")
     public void createAlarm(@DestinationVariable("boardId") String boardId,
@@ -36,7 +38,18 @@ public class SocketController {
 
         int count = alarmService.getAll(alarm.getMember().getId());
 
-        template.convertAndSend("/topic/alarm/user/" + alarm.getMember().getId(), count);
+        template.convertAndSend("/topic/alarm/user/" + alarm.getMember().getId(), "alarm/" + count);
+    }
+
+    @MessageMapping("/alarm/chat/all/{roomId}")
+    public void chatAllAlarm(@DestinationVariable String roomId,Principal principal){
+        String username = principal.getName();
+        Member member = memberRepository.findByUsername(username).get();
+        Long userId = chatService.anotherMember(username, roomId);
+        int chatAllAlarm = chatService.getMemberChatList(username, roomId);
+        log.info("userId={}", userId);
+        log.info("chatAllAlarm={}", chatAllAlarm);
+        template.convertAndSend("/topic/alarm/user/" + userId, "chat/" + chatAllAlarm);
     }
 
     @MessageMapping("/chat/room/{roomId}")

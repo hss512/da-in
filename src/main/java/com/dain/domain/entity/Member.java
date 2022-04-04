@@ -41,9 +41,6 @@ public class Member extends BaseEntity{
     @Column(name = "user_email",unique = true)
     private String email;
 
-    /*@OneToMany(mappedBy = "member")
-    private List<ChatMember> chatMemberList = new ArrayList<>();*/
-
     public MemberDTO toDto(){
         return MemberDTO.builder()
                 .id(id)

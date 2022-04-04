@@ -227,46 +227,23 @@ public class BoardCustomRepositoryImpl implements BoardCustomRepository{
         List<Board> boardList;
 
         if(Objects.equals(sort, "최신순")) {
-            if(Objects.equals(gender, "전체")) {
-                boardList = queryFactory.selectFrom(board)
-                        .where(board.category.title.eq(categoryName))
-                        .distinct()
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
-                        .orderBy(board.createdDate.desc())
-                        .fetch();
-                log.info("최신순, 성별 전체 쿼리");
-            }else {
-                boardList = queryFactory.selectFrom(board)
-                        .where(board.category.title.eq(categoryName).and(board.gender.eq(gender)))
-                        .distinct()
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
-                        .orderBy(board.createdDate.desc())
-                        .fetch();
-                log.info("최신순 쿼리");
-            }
+            boardList = queryFactory.selectFrom(board)
+                    .where(board.category.title.eq(categoryName))
+                    .distinct()
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .orderBy(board.createdDate.desc())
+                    .fetch();
+            log.info("최신순, 성별 전체 쿼리");
         }else{
-            if(Objects.equals(gender, "전체")) {
-                boardList = queryFactory.selectFrom(board)
-                        .where(board.category.title.eq(categoryName))
-                        .distinct()
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
-                        .orderBy(board.createdDate.desc())
-                        .fetch();
-                log.info("좋아요순, 성별 전체 쿼리");
-            }else {
-                boardList = queryFactory.selectFrom(board)
-                        .where(board.category.title.eq(categoryName).and(board.gender.eq(gender)))
-                        .distinct()
-                        .offset(pageable.getOffset())
-                        .limit(pageable.getPageSize())
-                        .orderBy(board.likeCount.desc())
-                        .orderBy(board.createdDate.desc())
-                        .fetch();
-                log.info("좋아요순 쿼리");
-            }
+            boardList = queryFactory.selectFrom(board)
+                    .where(board.category.title.eq(categoryName))
+                    .distinct()
+                    .offset(pageable.getOffset())
+                    .limit(pageable.getPageSize())
+                    .orderBy(board.createdDate.desc())
+                    .fetch();
+            log.info("좋아요순, 성별 전체 쿼리");
         }
 
         return new PageImpl<>(boardList, pageable, boardList.size());

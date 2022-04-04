@@ -103,12 +103,13 @@ window.onclick = function (e){
 }
 
 function alarmDelete(alarmId){
+    let alarm_btn = $('.alarm_btn')
     $.ajax({
         url: "/api/alarm/" + alarmId,
         method: "delete"
     }).done(res=>{
         $('#alarmId_'+alarmId).remove();
-        $('.alarm_btn')[0].innerHTML = ($('.alarm_btn')[0].innerHTML) -1;
+        alarm_btn[0].innerHTML = (alarm_btn[0].innerHTML) -1;
     }).fail(err=>{
         console.log("알림 삭제 오류")
     })
@@ -150,12 +151,17 @@ function ch_open(){
 
             $(".ch-main-container-body").append(
                 "<ul class='chat_rooms'>" +
-                "<div class='chat_room' id='roomCode_" + data.roomCode + "' style='cursor: pointer'  onclick='room_enter("+ data.id +")'>" +
+                "<div class='chat_room_'>" +
+                "<div class='chat_room_count'>" +
+                data.count +
+                "</div>" +
+                "<div class='chat_room' onclick='connectChat("+ data.id +")' style='cursor: pointer'>" +
                 "<div class='chat_room_title'>" +
                 title +
                 "</div>" +
                 "<div class='chat_room_exit'>" +
                 "<button class='room_exit_btn' onclick='room_exit("+ data.id + ", " + data.title + ")'>x</button>" +
+                "</div>" +
                 "</div>" +
                 "</ul>"
             )
@@ -165,22 +171,94 @@ function ch_open(){
     })
 }
 
-function ch_close(){
-    $('#chat_main').css("display", "none")
-}
+function connectChat(roomId){
 
-function ch_clear(){
-    $(".chat_rooms").remove();
+    let chatSock = new SockJS("/ws/chat");
+    let chatClient = Stomp.over(chatSock);
+    chatClient.debug = null;
+    chatSocket = chatClient;
+    console.log("connectChat 호출 / connect 아직 안됨")
+
+    chatSocket.connect({}, function (frame){
+        console.log("채팅 소켓 연결", frame);
+        room_enter(roomId);
+        chatSocket.subscribe('/topic/chat/inRoom/' + roomId + "/" + frame.headers['user-name'], function (check){
+            console.log("응애요..")
+            console.log(check)
+            console.log(check.body)
+            if(check.body === "1"){
+                console.log("호출되냐? 제발요..")
+                $(".my_message_check").empty();
+            }
+        })
+        chatSocket.subscribe('/topic/chat/room/' + roomId, function (chat){
+            console.log('=======subscribe 호출========')
+            let data = JSON.parse(chat.body);
+            console.log(data)
+            if(data.status === 10){
+                console.log("일단 입장")
+                $.ajax({
+                    url: "/api/chat/room/" + roomId + "/member/" + frame.headers['user-name'] +"/readChat",
+                    method: "post",
+                    async: false
+                }).done(res=>{
+                }).fail(err={
+                })
+                if(frame.headers['user-name'] !== data.data){
+                    console.log(data.message)
+                    $(".my_message_check").empty();
+                    $.ajax({
+                        url: "/api/chat/room/" + roomId + "/member/" + frame.headers['user-name'] +"/readChat",
+                        method: "post",
+                        async: false
+                    }).done(res=>{
+                    }).fail(err={
+                    })
+                }
+            }else{
+                if(data.memberDTO.username !== frame.headers['user-name']){
+                    $.ajax({
+                        url: "/api/chat/" + data.id +"/read/realTime",
+                        method: "post",
+                        async: false
+                    }).done(res=>{
+                        console.log("reaTime")
+                        chatSocket.send("/chat/room/inRoom/" + roomId + "/" + data.memberDTO.username)
+                    })
+                }
+                console.log(chat.body)
+                if(frame.headers['user-name'] !== data.memberDTO.username){
+                    $('.chat_message').append(
+                        "<div class='message'>" +
+                        "<div class='message_member'>" +
+                        data.memberDTO.nickname +
+                        "</div>" +
+                        "<div class='message_content'>" +
+                        "<div class='message_msg'>" +
+                        data.message +
+                        "</div>" +
+                        "</div>" +
+                        "</div>"
+                    )
+                }
+            }
+            let chat_message = $(".chat_message")
+            chat_message.scrollTop(chat_message[0].scrollHeight)
+        })
+    })
 }
 
 function room_enter(roomId){
 
+    console.log("room_enter");
+
     $.ajax({
         url: "/api/chat/room/" + roomId,
-        method: "get"
+        method: "get",
+        async:false
     }).done(res=>{
 
-        console.log("room_enter")
+        console.log("room_enter/ajax_done")
         let myNick = res.data.myNickname;
 
         let title = res.data.title.split("-")
@@ -225,7 +303,6 @@ function room_enter(roomId){
             "</div>" +
             "</div>"
         )
-        connectChat(roomId);
 
         res.data.chatList.forEach(data=>{
 
@@ -274,9 +351,21 @@ function room_enter(roomId){
 
         chatRead(roomId);
 
+        let chat_message = $(".chat_message")
+
+        chat_message.scrollTop(chat_message[0].scrollHeight)
+
     }).fail(err=>{
         console.log(err)
     })
+}
+
+function ch_close(){
+    $('#chat_main').css("display", "none")
+}
+
+function ch_clear(){
+    $(".chat_rooms").remove();
 }
 
 function room_exit(roomId, nickname){
@@ -293,85 +382,6 @@ function room_exit(roomId, nickname){
 function chat_room_close(roomId){
     $('#chat_room_main').remove();
     disconnectChat(roomId);
-}
-
-function connectChat(roomId){
-    let chatSock = new SockJS("/ws/chat");
-    let chatClient = Stomp.over(chatSock);
-    chatClient.debug = null;
-    chatSocket = chatClient;
-
-    chatClient.connect({}, function (frame){
-        console.log("채팅 소켓 연결", frame);
-
-        chatClient.subscribe('/topic/chat/inRoom/' + roomId + "/" + frame.headers['user-name'], function (check){
-            console.log("응애요..")
-            console.log(check)
-            console.log(check.body)
-            if(check.body === "1"){
-                console.log("호출되냐? 제발요..")
-                $(".my_message_check").empty();
-            }
-        })
-
-        chatClient.subscribe('/topic/chat/room/' + roomId, function (chat){
-            console.log('=======subscribe 호출========')
-            let data = JSON.parse(chat.body);
-            console.log(data)
-
-            if(data.status === 10){
-                console.log("일단 입장")
-                $.ajax({
-                    url: "/api/chat/room/" + roomId + "/member/" + frame.headers['user-name'] +"/readChat",
-                    method: "post",
-                    async: false
-                }).done(res=>{
-
-                }).fail(err={
-
-                })
-                if(frame.headers['user-name'] !== data.data){
-                    console.log(data.message)
-                    $(".my_message_check").empty();
-                    $.ajax({
-                        url: "/api/chat/room/" + roomId + "/member/" + frame.headers['user-name'] +"/readChat",
-                        method: "post",
-                        async: false
-                    }).done(res=>{
-
-                    }).fail(err={
-
-                    })
-                }
-            }else{
-                if(data.memberDTO.username !== frame.headers['user-name']){
-                    $.ajax({
-                        url: "/api/chat/" + data.id +"/read/realTime",
-                        method: "post",
-                        async: false
-                    }).done(res=>{
-                        console.log("reaTime")
-                        chatSocket.send("/chat/room/inRoom/" + roomId + "/" + data.memberDTO.username)
-                    })
-                }
-                console.log(chat.body)
-                if(frame.headers['user-name'] !== data.memberDTO.username){
-                    $('.chat_message').append(
-                        "<div class='message'>" +
-                        "<div class='message_member'>" +
-                        data.memberDTO.nickname +
-                        "</div>" +
-                        "<div class='message_content'>" +
-                        "<div class='message_msg'>" +
-                        data.message +
-                        "</div>" +
-                        "</div>" +
-                        "</div>"
-                    )
-                }
-            }
-        })
-    })
 }
 
 function sendMessage(roomId){
@@ -396,6 +406,8 @@ function sendMessage(roomId){
     )
 
     $(".ch_input").val("");
+
+    socket.send("/alarm/chat/all/" + roomId, {}, JSON.stringify())
 }
 
 function disconnectChat(roomId){
@@ -420,6 +432,20 @@ function waitForConnection(stompClient, callback) {
 
 function chatRead(roomId){
     waitForConnection(chatSocket,function() {
+        console.log("chatRead")
         chatSocket.send("/chat/room/" + roomId + "/enter", {}, JSON.stringify())
     })
 }
+
+function getChatAlarm(){
+    $.ajax({
+        url: "/api/chat/all/alarm",
+        method: "get"
+    }).done(res=>{
+        $("#badge")[0].innerText = res.data;
+    }).fail(err=>{
+        console.log(err)
+    })
+}
+
+getChatAlarm();

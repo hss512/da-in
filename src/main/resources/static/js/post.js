@@ -24,7 +24,7 @@ function getReplyList(replyNum){
                     "</div>" +
                     "</div>"
                 )
-            }else{
+            }else if(reply.equal === 0){
                 $(".reply_list").append(
                     "<div class='reply'>" +
                     "<div class='reply_user'>" +
@@ -35,6 +35,17 @@ function getReplyList(replyNum){
                     "<div class='reply_member_chat'>" +
                     "<button class='reply_chat_btn' type='button' onclick='create_chat("+ reply.memberDTO.id +")'>chat</button>" +
                     "</div>"+
+                    "</div>" +
+                    "</div>"
+                )
+            }else{
+                $(".reply_list").append(
+                    "<div class='reply'>" +
+                    "<div class='reply_user'>" +
+                    reply.memberDTO.nickname +
+                    "</div>" +
+                    "<div class='reply_content'>" +
+                    reply.content +
                     "</div>" +
                     "</div>"
                 )
@@ -130,16 +141,17 @@ function reply_delete(replyId, memberId){
 }
 
 function create_chat(replyMemberId){
-
+    console.log("create chat")
     $.ajax({
         url: "/api/chat/" + replyMemberId,
-        method: "post"
+        method: "post",
+        async: false
     }).done(res=>{
+        console.log(res)
         ch_clear()
         ch_open()
     }).fail(err=>{
 
     })
-
     console.log(replyMemberId)
 }

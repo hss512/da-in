@@ -19,8 +19,17 @@
 
             client.connect({}, function (frame){
                 console.log("소켓 연결 성공!", frame);
-                client.subscribe('/topic/alarm/user/' + userId, function (count){
-                    $(".alarm_btn")[0].innerText = count.body;
+                client.subscribe('/topic/alarm/user/' + userId, function (result){
+
+                    console.log(result.body)
+
+                    let split = result.body.split('/');
+
+                    if(split[0] === "chat"){
+                        $("#badge")[0].innerText = split[1];
+                    }else{
+                        $(".alarm_btn")[0].innerText = split[1];
+                    }
                 })
             })
         }
@@ -75,7 +84,7 @@
 			</div>
 		</div>
 	</div>
-
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 	<script type="text/javascript" th:src="@{/js/header.js}"></script>
 </th:block>
 </html>

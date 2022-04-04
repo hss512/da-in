@@ -61,19 +61,43 @@ public class ChatService {
             chatMemberRepository.save(createChatMember);
         }
 
+        log.info("roomTitle={}",room.getTitle());
+
         return room.toDTO();
     }
 
+    @Transactional(readOnly = true)
     public List<RoomDTO> getRoomList(Long memberId) {
 
         List<Room> roomList = chatMemberRepository.getRoomList(memberId);
 
         List<RoomDTO> result = roomList.stream().map(Room::toDTO).collect(Collectors.toList());
 
+        List<ChatMember> byMemberId = chatMemberRepository.findByMemberId(memberId);
+
+        for (ChatMember chatMember : byMemberId) {
+            Long roomId = chatMember.getRoom().getId();
+            List<ChatMember> byRoomId = chatMemberRepository.findByRoomId(roomId);
+            List<ChatMember> resultList = byRoomId.stream().filter(cm -> cm.getMember().getId() != memberId).collect(Collectors.toList());
+            /*for (ChatMember member : resultList) {
+                chatRepository.countByRoomIdAndMemberIdAndChatCheckIsFalse(member.getRoom().getId(), member.getMember().getId());
+            }*/
+            log.info("result.size()={}",result.size());
+            log.info("resultList.size()={}",resultList.size());
+            for (int i = 0; i < result.size(); i++) {
+                Long count = chatRepository.countByRoomIdAndMemberIdAndChatCheckIsFalse(resultList.get(i).getRoom().getId(), resultList.get(i).getMember().getId());
+                result.get(i).setCount(Integer.parseInt(count.toString()));
+            }
+        }
+
+
         return result;
     }
 
     public int checkChatRoom(Long replyMemberId, Long memberId) {
+
+        log.info("checkChatRoom_replyMemberId={}", replyMemberId);
+        log.info("checkChatRoom_memberId={}", memberId);
 
         StringBuilder sb = new StringBuilder();
 
@@ -98,6 +122,7 @@ public class ChatService {
         chatMemberRepository.deleteByRoomIdAndMemberId(Long.parseLong(roomId), memberId);
     }
 
+    @Transactional(readOnly = true)
     public RoomDTO getRoom(Long roomId, Long memberId) {
         RoomDTO roomDTO = roomRepository.findById(roomId).get().toDTO();
         Member member = memberRepository.findById(memberId).get();
@@ -118,6 +143,7 @@ public class ChatService {
         return chatRepository.save(chat).toDTO();
     }
 
+    @Transactional(readOnly = true)
     public List<ChatDTO> getChatList(Long roomId) {
 
         List<Chat> chatList = chatRepository.findByRoomId(roomId);
@@ -169,5 +195,46 @@ public class ChatService {
         }else{
             return 1;
         }
+    }
+
+    @Transactional(readOnly = true)
+    public int getMemberChatList(String username, String roomId) {
+        Long count = 0L;
+        List<ChatMember> byRoomId = chatMemberRepository.findByRoomId(Long.parseLong(roomId));
+        List<ChatMember> result = byRoomId.stream().filter(chatMember -> chatMember.getMember().getUsername() != username).collect(Collectors.toList());
+        Long memberId = result.get(0).getMember().getId();
+        List<ChatMember> byMemberId = chatMemberRepository.findByMemberId(memberId);
+        for (ChatMember chatMember : byMemberId) {
+            Long anotherMemberRoomId = chatMember.getRoom().getId();
+            List<ChatMember> resultChatMember = chatMemberRepository.findByRoomId(anotherMemberRoomId);
+            List<ChatMember> resultList = resultChatMember.stream().filter(cm -> cm.getMember().getId() != memberId).collect(Collectors.toList());
+            for (ChatMember member : resultList) {
+                count += chatRepository.countByRoomIdAndMemberIdAndChatCheckIsFalse(member.getRoom().getId(), member.getMember().getId());
+            }
+        }
+
+        return Integer.parseInt(count.toString());
+    }
+
+    public Long anotherMember(String username, String roomId) {
+        List<ChatMember> byRoomId = chatMemberRepository.findByRoomId(Long.parseLong(roomId));
+        List<ChatMember> result = byRoomId.stream().filter(chatMember -> chatMember.getMember().getUsername() != username).collect(Collectors.toList());
+
+        return result.get(0).getMember().getId();
+    }
+
+    public int chatAllAlarm(Long memberId) {
+        Long count = 0L;
+        List<ChatMember> byMemberId = chatMemberRepository.findByMemberId(memberId);
+        for (ChatMember chatMember : byMemberId) {
+            Long anotherMemberRoomId = chatMember.getRoom().getId();
+            List<ChatMember> resultChatMember = chatMemberRepository.findByRoomId(anotherMemberRoomId);
+            List<ChatMember> resultList = resultChatMember.stream().filter(cm -> cm.getMember().getId() != memberId).collect(Collectors.toList());
+            for (ChatMember member : resultList) {
+                count += chatRepository.countByRoomIdAndMemberIdAndChatCheckIsFalse(member.getRoom().getId(), member.getMember().getId());
+            }
+        }
+
+        return Integer.parseInt(count.toString());
     }
 }

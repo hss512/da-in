@@ -2,7 +2,6 @@ package com.dain.controller.api;
 
 import com.dain.domain.dto.ChatDTO;
 import com.dain.domain.dto.RoomDTO;
-import com.dain.domain.entity.Room;
 import com.dain.exception.ValidateDTO;
 import com.dain.principal.UserDetailsImpl;
 import com.dain.service.ChatService;
@@ -27,8 +26,13 @@ public class ChatApiController {
     public ResponseEntity<?> createChatRoom(@PathVariable String replyMemberId,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails){
 
+        log.info("Chatting created");
+
+        log.info("내가 만든 채팅방={}",userDetails.returnProfile().getNickname());
+
         int check = chatService.checkChatRoom(Long.parseLong(replyMemberId), userDetails.returnProfile().getId());
 
+        log.info("check={}", check);
         if(check == 0) {
             RoomDTO roomDTO = chatService.createChatRoom(Long.parseLong(replyMemberId), userDetails.returnProfile().getId());
 
@@ -88,5 +92,12 @@ public class ChatApiController {
     public ResponseEntity<?> readRealTime(@PathVariable String chatId){
         chatService.readRealTime(Long.parseLong(chatId));
         return new ResponseEntity<>("readRealTime", HttpStatus.OK);
+    }
+
+    @GetMapping("/chat/all/alarm")
+    public ResponseEntity<?> chatAllAlarm(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        int count = chatService.chatAllAlarm(userDetails.returnProfile().getId());
+        log.info("ChatApiController/count={}", count);
+        return new ResponseEntity<>(new ValidateDTO<>(1, "count", count), HttpStatus.OK);
     }
 }

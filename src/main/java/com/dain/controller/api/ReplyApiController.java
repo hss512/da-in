@@ -46,6 +46,13 @@ public class ReplyApiController {
 
         Page<ReplyDTO> replyList = replyService.getReply(boardId, pageable);
 
+        if(userDetails == null){
+            for (ReplyDTO replyDTO : replyList) {
+                replyDTO.setEqual(2);
+            }
+            return new ResponseEntity<>(new ValidateDTO<>(1, "replyList", replyList), HttpStatus.OK);
+        }
+
         for (ReplyDTO replyDTO : replyList) {
             if(replyDTO.getMemberDTO().getId().equals(userDetails.returnProfile().getId())){
                 replyDTO.setEqual(1);

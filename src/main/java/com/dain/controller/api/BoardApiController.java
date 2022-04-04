@@ -73,4 +73,17 @@ public class BoardApiController {
 
         return sb.toString();
     }
+
+    @GetMapping("/board/error/login")
+    public String boardErrorLogin(){
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("<script>");
+        sb.append("alert('").append("로그인이 필요합니다").append("');");
+        sb.append("history.back();");
+        sb.append("</script>");
+
+        return sb.toString();
+    }
 }

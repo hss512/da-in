@@ -50,6 +50,10 @@ public class BoardController {
     public String createBoard(@PathVariable("category") String category, @AuthenticationPrincipal UserDetailsImpl userDetails,
                                          Model model){
 
+        if(userDetails == null){
+            return "redirect:/api/board/error/login";
+        }
+
         model.addAttribute("userDetails", userDetails.returnProfile().toBoardMemberDTO());
         model.addAttribute("category", categoryService.getCategoryId(category));
         List<ResponseAlarmDTO> alarmList = alarmService.getAlarmList(userDetails.returnProfile().getId());
@@ -63,17 +67,26 @@ public class BoardController {
                            Model model){
 
         log.info("Get/getBoard");
+        ReadBoardDTO getBoard = boardService.getBoard(boardId);
+
+        if(userDetails==null) {
+            model.addAttribute("board", getBoard);
+            model.addAttribute("user", getBoard.getMember().getNickname());
+            model.addAttribute("userDetails", null);
+
+            return "/board/post";
+        }
+
         List<ResponseAlarmDTO> alarmList = alarmService.getAlarmList(userDetails.returnProfile().getId());
         model.addAttribute("alarmCount", (int) alarmList.stream().filter(a -> a.getCheck() == 0).count());
-        ReadBoardDTO getBoard = boardService.getBoard(boardId);
         Member member = userDetails.returnProfile();
 
         if(getBoard.getGender() == null || getBoard.getGender().equals(member.getGender())){
             if(getBoard.getAgeLt() == 0 || (getBoard.getAgeLt() <= member.getAge() && getBoard.getAgeRt() >= member.getAge())){
                 if(getBoard.getLocal() == null || getBoard.getLocal().equals(member.getLocal())){
                     model.addAttribute("board", getBoard);
+                    model.addAttribute("user", getBoard.getMember().getNickname());
                     model.addAttribute("userDetails", userDetails.returnProfile());
-
                     return "/board/post";
                 }
             }
