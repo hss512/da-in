@@ -149,8 +149,7 @@ function ch_open(){
                 }
             })
 
-            $(".ch-main-container-body").append(
-                "<ul class='chat_rooms'>" +
+            $(".chat_rooms").append(
                 "<div class='chat_room_'>" +
                 "<div class='chat_room_count'>" +
                 data.count +
@@ -162,8 +161,7 @@ function ch_open(){
                 "<div class='chat_room_exit'>" +
                 "<button class='room_exit_btn' onclick='room_exit("+ data.id + ", " + data.title + ")'>x</button>" +
                 "</div>" +
-                "</div>" +
-                "</ul>"
+                "</div>"
             )
         })
     }).fail(err=>{
@@ -235,7 +233,9 @@ function connectChat(roomId){
                         "</div>" +
                         "<div class='message_content'>" +
                         "<div class='message_msg'>" +
+                        "<span class='message_msg_content'>" +
                         data.message +
+                        "</span>"+
                         "</div>" +
                         "</div>" +
                         "</div>"
@@ -315,7 +315,9 @@ function room_enter(roomId){
                         data.chatCheck +
                         "</div>" +
                         "<div class='message_msg my_message_msg'>" +
+                        "<span class='message_msg_content'>" +
                         data.message +
+                        "</span>"+
                         "</div>" +
                         "</div>" +
                         "</div>"
@@ -327,7 +329,9 @@ function room_enter(roomId){
                         "<div class='message_check my_message_check'>" +
                         "</div>" +
                         "<div class='message_msg my_message_msg'>" +
+                        "<span class='message_msg_content'>" +
                         data.message +
+                        "</span>" +
                         "</div>" +
                         "</div>" +
                         "</div>"
@@ -341,7 +345,9 @@ function room_enter(roomId){
                     "</div>" +
                     "<div class='message_content'>" +
                     "<div class='message_msg'>" +
+                    "<span class='message_msg_content'>" +
                     data.message +
+                    "</span>"+
                     "</div>" +
                     "</div>"+
                     "</div>"
@@ -361,11 +367,12 @@ function room_enter(roomId){
 }
 
 function ch_close(){
+    getChatAlarm();
     $('#chat_main').css("display", "none")
 }
 
 function ch_clear(){
-    $(".chat_rooms").remove();
+    $(".chat_room_").remove();
 }
 
 function room_exit(roomId, nickname){
@@ -380,6 +387,8 @@ function room_exit(roomId, nickname){
 }
 
 function chat_room_close(roomId){
+    ch_clear();
+    ch_open();
     $('#chat_room_main').remove();
     disconnectChat(roomId);
 }
@@ -399,7 +408,9 @@ function sendMessage(roomId){
         1+
         "</div>" +
         "<div class='message_msg my_message_msg'>" +
+        "<span class='message_msg_content'>" +
         message +
+        "</span>"+
         "</div>" +
         "</div>" +
         "</div>"
@@ -411,7 +422,6 @@ function sendMessage(roomId){
 }
 
 function disconnectChat(roomId){
-    console.log(roomId)
     chatSocket.disconnect();
 }
 

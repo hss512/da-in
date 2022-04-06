@@ -10,5 +10,4 @@ public interface ChatMemberCustomRepository {
     List<Room> getRoomList(Long memberId);
 
     List<ChatMember> findAllByMemberId(Long replyMemberId, Long memberId);
-
 }

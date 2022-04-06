@@ -26,13 +26,8 @@ public class ChatApiController {
     public ResponseEntity<?> createChatRoom(@PathVariable String replyMemberId,
                                             @AuthenticationPrincipal UserDetailsImpl userDetails){
 
-        log.info("Chatting created");
-
-        log.info("내가 만든 채팅방={}",userDetails.returnProfile().getNickname());
-
         int check = chatService.checkChatRoom(Long.parseLong(replyMemberId), userDetails.returnProfile().getId());
 
-        log.info("check={}", check);
         if(check == 0) {
             RoomDTO roomDTO = chatService.createChatRoom(Long.parseLong(replyMemberId), userDetails.returnProfile().getId());
 

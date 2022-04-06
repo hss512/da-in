@@ -15,11 +15,10 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static java.lang.Long.parseLong;
 
 @Service
 @RequiredArgsConstructor
@@ -71,55 +70,57 @@ public class ChatService {
 
         List<Room> roomList = chatMemberRepository.getRoomList(memberId);
 
-        List<RoomDTO> result = roomList.stream().map(Room::toDTO).collect(Collectors.toList());
+        List<RoomDTO> result = roomList.stream().map(Room::toDTO).sorted(Comparator.comparing(RoomDTO::getId)).collect(Collectors.toList());
 
-        List<ChatMember> byMemberId = chatMemberRepository.findByMemberId(memberId);
+        List<ChatMember> chatMemberList = new ArrayList<>();
 
-        for (ChatMember chatMember : byMemberId) {
-            Long roomId = chatMember.getRoom().getId();
-            List<ChatMember> byRoomId = chatMemberRepository.findByRoomId(roomId);
-            List<ChatMember> resultList = byRoomId.stream().filter(cm -> cm.getMember().getId() != memberId).collect(Collectors.toList());
-            /*for (ChatMember member : resultList) {
-                chatRepository.countByRoomIdAndMemberIdAndChatCheckIsFalse(member.getRoom().getId(), member.getMember().getId());
-            }*/
-            log.info("result.size()={}",result.size());
-            log.info("resultList.size()={}",resultList.size());
-            for (int i = 0; i < result.size(); i++) {
-                Long count = chatRepository.countByRoomIdAndMemberIdAndChatCheckIsFalse(resultList.get(i).getRoom().getId(), resultList.get(i).getMember().getId());
-                result.get(i).setCount(Integer.parseInt(count.toString()));
-            }
+        for (RoomDTO roomDTO : result) {
+            List<ChatMember> byRoomId = chatMemberRepository.findByRoomId(roomDTO.getId());
+            List<ChatMember> collect = byRoomId.stream().filter(chatMember -> chatMember.getMember().getId() != memberId).collect(Collectors.toList());
+            chatMemberList.add(collect.get(0));
         }
 
+        for (int i = 0; i < result.size(); i++) {
+            int count = Integer.parseInt(chatRepository.countByRoomIdAndMemberIdAndChatCheckIsFalse(chatMemberList.get(i).getRoom().getId(), chatMemberList.get(i).getMember().getId()).toString());
+            result.get(i).setCount(count);
+        }
 
         return result;
     }
 
     public int checkChatRoom(Long replyMemberId, Long memberId) {
 
+        int count = 0;
+
         log.info("checkChatRoom_replyMemberId={}", replyMemberId);
         log.info("checkChatRoom_memberId={}", memberId);
 
-        StringBuilder sb = new StringBuilder();
+        Member replyMember = memberRepository.findById(replyMemberId).get();
+        Member member = memberRepository.findById(memberId).get();
 
-        List<ChatMember> memberList = chatMemberRepository.findAllByMemberId(replyMemberId, memberId);
+        StringBuilder sb1 = new StringBuilder();
+        sb1.append(replyMember.getNickname()).append("-").append(member.getNickname()).append("-");
+        StringBuilder sb2 = new StringBuilder();
+        sb2.append(member.getNickname()).append("-").append(replyMember.getNickname()).append("-");
 
-        for (ChatMember chatMember : memberList) {
-            sb.append(chatMember.getRoom().getId());
+        if(roomRepository.findByTitle(sb1.toString()) != null || roomRepository.findByTitle(sb2.toString()) != null){
+            count++;
         }
 
-        String s = sb.toString();
-
-        for (ChatMember chatMember : memberList) {
-            if(s.contains(String.valueOf(chatMember.getRoom().getId()))){
-                return 1;
-            }
+        if(count == 1){
+            return 1;
+        }else {
+            return 0;
         }
-
-        return 0;
     }
 
     public void exitRoom(String roomId, Long memberId) {
-        chatMemberRepository.deleteByRoomIdAndMemberId(Long.parseLong(roomId), memberId);
+        List<ChatMember> byRoomId = chatMemberRepository.findByRoomId(parseLong(roomId));
+        chatMemberRepository.deleteByRoomIdAndMemberId(parseLong(roomId), memberId);
+        if(byRoomId.size() == 1){
+            chatRepository.deleteAllByRoomId(parseLong(roomId));
+            roomRepository.deleteById(parseLong(roomId));
+        }
     }
 
     @Transactional(readOnly = true)
@@ -200,14 +201,18 @@ public class ChatService {
     @Transactional(readOnly = true)
     public int getMemberChatList(String username, String roomId) {
         Long count = 0L;
-        List<ChatMember> byRoomId = chatMemberRepository.findByRoomId(Long.parseLong(roomId));
-        List<ChatMember> result = byRoomId.stream().filter(chatMember -> chatMember.getMember().getUsername() != username).collect(Collectors.toList());
+        List<ChatMember> byRoomId = chatMemberRepository.findByRoomId(parseLong(roomId));
+        List<ChatMember> result = byRoomId.stream().filter(chatMember -> !chatMember.getMember().getUsername().equals(username)).collect(Collectors.toList());
         Long memberId = result.get(0).getMember().getId();
+        return chatMember_findByMemberId(count, memberId);
+    }
+
+    private int chatMember_findByMemberId(Long count, Long memberId) {
         List<ChatMember> byMemberId = chatMemberRepository.findByMemberId(memberId);
         for (ChatMember chatMember : byMemberId) {
             Long anotherMemberRoomId = chatMember.getRoom().getId();
             List<ChatMember> resultChatMember = chatMemberRepository.findByRoomId(anotherMemberRoomId);
-            List<ChatMember> resultList = resultChatMember.stream().filter(cm -> cm.getMember().getId() != memberId).collect(Collectors.toList());
+            List<ChatMember> resultList = resultChatMember.stream().filter(cm -> !cm.getMember().getId().equals(memberId)).collect(Collectors.toList());
             for (ChatMember member : resultList) {
                 count += chatRepository.countByRoomIdAndMemberIdAndChatCheckIsFalse(member.getRoom().getId(), member.getMember().getId());
             }
@@ -217,24 +222,14 @@ public class ChatService {
     }
 
     public Long anotherMember(String username, String roomId) {
-        List<ChatMember> byRoomId = chatMemberRepository.findByRoomId(Long.parseLong(roomId));
-        List<ChatMember> result = byRoomId.stream().filter(chatMember -> chatMember.getMember().getUsername() != username).collect(Collectors.toList());
+        List<ChatMember> byRoomId = chatMemberRepository.findByRoomId(parseLong(roomId));
+        List<ChatMember> result = byRoomId.stream().filter(chatMember -> !chatMember.getMember().getUsername().equals(username)).collect(Collectors.toList());
 
         return result.get(0).getMember().getId();
     }
 
     public int chatAllAlarm(Long memberId) {
         Long count = 0L;
-        List<ChatMember> byMemberId = chatMemberRepository.findByMemberId(memberId);
-        for (ChatMember chatMember : byMemberId) {
-            Long anotherMemberRoomId = chatMember.getRoom().getId();
-            List<ChatMember> resultChatMember = chatMemberRepository.findByRoomId(anotherMemberRoomId);
-            List<ChatMember> resultList = resultChatMember.stream().filter(cm -> cm.getMember().getId() != memberId).collect(Collectors.toList());
-            for (ChatMember member : resultList) {
-                count += chatRepository.countByRoomIdAndMemberIdAndChatCheckIsFalse(member.getRoom().getId(), member.getMember().getId());
-            }
-        }
-
-        return Integer.parseInt(count.toString());
+        return chatMember_findByMemberId(count, memberId);
     }
 }
