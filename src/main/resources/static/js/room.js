@@ -24,8 +24,8 @@ let stomp = Stomp.over(sockJs);
 function connectChat(id){
     console.log("This is connectChat이 열린것입니다!!!!!!!!!!ㅈ1");
     console.log("connectChat id 들어오나요?",id);
-
     console.log(roomName + ", " + roomId + ", " + username);
+
     stomp.connect({}, function (frame){
         console.log("STOMP Connection")
         //4. subscribe(path, callback)으로 메세지를 받을 수 있음
@@ -50,24 +50,17 @@ function connectChat(id){
                     console.log("개같이멸망");
                 })
             }else {
+                console.log(frame.headers);
+                console.log(content);
                 let chatRoom = content.chatRoomUserCount;
                 let userCount = parseInt(chatRoom);
 
                 var writer = content.writer;
                 console.log(content);
                 var message = content.message;
-                let chatTime = content.chatTime;
+                let chatTime2 = content.chatTime;
                 let messageType = content.messageType;
-
-                var chatTime2 = '';
-                chatTime2 += chatTime.substring(6, 7);
-                chatTime2 += "월 "
-                chatTime2 += chatTime.substring(8, 10);
-                chatTime2 += "일 "
-                chatTime2 += chatTime.substring(11, 13);
-                chatTime2 += "시 "
-                chatTime2 += chatTime.substring(14, 16);
-                chatTime2 += "분"
+                stomp.send('/pub/chat/read/'+roomId,{},JSON.stringify({"messageId":content.id,"userId":chatUserId,"roomCode":roomId}))
                 var str = '';
 
                 if (writer === username) {
@@ -87,24 +80,45 @@ function connectChat(id){
                 }
             }
         });
+        stomp.subscribe("/sub/chat/enter/" + roomId, function (chat) {
+            // 입장, 채팅
+            let content = JSON.parse(chat.body);
+            console.log(content);
+            let chatRoom = content.chatRoomUserCount;
+            let userCount = parseInt(chatRoom);
+
+            var writer = content.writer;
+            console.log(content);
+            var message = content.message;
+            let chatTime2 = content.chatTime;
+            let messageType = content.messageType;
+            var str = '';
+
+            if (writer === username) {
+                str = "<div>";
+                str += "<div id='writeByMe' style='color: blue'>";
+                str += "<b>" + "<span style='font-size:10px;'>" + chatTime2 + "</span>" + " " + userCount + " " + writer + " : " + message + "</b>";
+                str += "</div></div>";
+                $("#msgArea").append(str);
+            } else {
+                if (messageType != "KICK") {
+                    str = "<div>";
+                    str += "<div id='writeByYou' style='color: red'>";
+                    str += "<b>" + "<span style='font-size:12px;'>" + chatTime2 + "</span>" + " " + userCount + " " + writer + " : " + message + "</b>";
+                    str += "</div></div>";
+                    $("#msgArea").append(str);
+                }
+            }
+
+        });
         stomp.subscribe('/sub/chat/leave/room/' + roomId, function (chat) {
             // 나감
             let content = JSON.parse(chat.body);
             var writer = content.writer;
             console.log(content);
             var message = content.message;
-            let chatTime = content.chatTime;
-            var chatTime2 = '';
-            chatTime2 += chatTime.substring(6, 7);
-            chatTime2 += "월 "
-            chatTime2 += chatTime.substring(8, 10);
-            chatTime2 += "일 "
-            chatTime2 += chatTime.substring(11, 13);
-            chatTime2 += "시 "
-            chatTime2 += chatTime.substring(14, 16);
-            chatTime2 += "분"
+            let chatTime2 = content.chatTime;
             var str = '';
-
 
             str = "<div>";
             str += "<div style='color: black'>";
@@ -118,16 +132,7 @@ function connectChat(id){
             var writer = content.writer;
             console.log(content);
             var message = content.message;
-            let chatTime = content.chatTime;
-            var chatTime2 = '';
-            chatTime2 += chatTime.substring(6, 7);
-            chatTime2 += "월 "
-            chatTime2 += chatTime.substring(8, 10);
-            chatTime2 += "일 "
-            chatTime2 += chatTime.substring(11, 13);
-            chatTime2 += "시 "
-            chatTime2 += chatTime.substring(14, 16);
-            chatTime2 += "분"
+            let chatTime2 = content.chatTime;
             var str = '';
 
 
@@ -137,6 +142,7 @@ function connectChat(id){
             str += "</div></div>";
             $("#msgArea").append(str);
         })
+
         stomp.send('/pub/chat/enter/'+roomId, {}, JSON.stringify({roomId: roomId, writer: username}))
     });
 };
@@ -173,6 +179,5 @@ function disconnectChat() {
         console.error(err);
     })
     location.href='/chat/rooms';
-
 }
 connectChat();

@@ -9,6 +9,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,7 +22,7 @@ public class ChatMessage {
     private Long id;
 
 
-    private LocalDateTime chatTime;
+    private String chatTime;
 
     @ManyToOne
     @JoinColumn(name = "room_id")
@@ -32,6 +34,9 @@ public class ChatMessage {
 
     private String message;
 
+    @OneToMany(mappedBy = "chatMessage")
+    private List<Member> readMember=new ArrayList<>();
+
     @Column(name = "messageType")
     @Enumerated(EnumType.STRING)
     private MessageType messageType;
@@ -39,7 +44,7 @@ public class ChatMessage {
     private int chatRoomUserCount;
 
     @Builder
-    public ChatMessage(Long id, LocalDateTime chatTime, ChatRoom chatRoom, String  writer, String message,int chatRoomUserCount) {
+    public ChatMessage(Long id, String chatTime, ChatRoom chatRoom, String  writer, String message,int chatRoomUserCount) {
         this.id = id;
         this.chatTime = chatTime;
         this.chatRoom = chatRoom;
@@ -50,11 +55,16 @@ public class ChatMessage {
 
     public ChatMessageDto toDto(){
         return ChatMessageDto.builder()
+                .id(id)
                 .writer(writer)
                 .message(message)
                 .chatTime(chatTime)
                 .messageType(messageType)
                 .chatRoomUserCount(chatRoomUserCount)
                 .build();
+    }
+
+    public void toUpdateReadMember(Member member){
+        this.readMember.add(member);
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
@@ -28,30 +29,26 @@ public class StompChatController {
 
     @MessageMapping("/chat/enter/{roomId}")
     public void enter(@DestinationVariable String roomId, ChatMessage message) {
-        message.setMessage(message.getWriter() + "님이 채팅방에 참여하였습니다.");
         ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomId).get();
-        System.out.println("message.getWriter() = " + message.getWriter());
-        System.out.println("chatRoom = " + chatRoom);
+        message.setMessage(message.getWriter() + "님이 채팅방에 참여하였습니다.");
         message.setChatRoom(chatRoom);
-        message.setChatTime(LocalDateTime.now());
+        message.setChatTime(returnTime(LocalDateTime.now()));
         message.setMessageType(MessageType.CHAT);
         message.setChatRoomUserCount(chatRoom.getCountUser());
-        /*List<ChatRoomJoin> findCRJoin = chatService.findChatRoomJoinByChatRoom(chatRoom);
-        System.out.println("findCRJoin = " + findCRJoin.get(0).getId());
-        */
-        if(message.getMessage()==message.getWriter()+"님이 채팅방에 참여하였습니다."){
-            if (chatService.ifExistSaveEnter(message.getWriter(),chatRoom)){
-                chatService.saveChat(message);
-            }
+        System.out.println("message = " + message.getMessage());
+        if (chatService.ifExistSaveEnter(message.getWriter(),chatRoom, message.getMessage())){
+            chatService.saveChat(message);
         }
-        template.convertAndSend("/sub/chat/room/" + roomId,message.toDto());
+
+
+        template.convertAndSend("/sub/chat/enter/" + roomId,message.toDto());
     }
 
     @MessageMapping("/chat/message/{roomId}")
     public void message(@DestinationVariable String roomId, ChatMessage chatMessage){
         ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomId).get();
         chatMessage.setChatRoom(chatRoom);
-        chatMessage.setChatTime(LocalDateTime.now());
+        chatMessage.setChatTime(returnTime(LocalDateTime.now()));
         chatMessage.setMessageType(MessageType.CHAT);
         chatMessage.setChatRoomUserCount(chatRoom.getCountUser());
         chatService.saveChat(chatMessage);
@@ -62,9 +59,8 @@ public class StompChatController {
     public void userOut(@DestinationVariable String roomId,ChatMessage chatMessage){
         ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomId).get();
         chatMessage.setChatRoom(chatRoom);
-        chatMessage.setChatTime(LocalDateTime.now());
+        chatMessage.setChatTime(returnTime(LocalDateTime.now()));
         chatMessage.setMessageType(MessageType.NOCHAT);
-        log.info("please={}",chatRoom.getCountUser());
         chatMessage.setChatRoomUserCount(chatRoom.getCountUser());
         chatService.saveChat(chatMessage);
         template.convertAndSend("/sub/chat/room/" + roomId, chatMessage.toDto());
@@ -76,7 +72,7 @@ public class StompChatController {
         ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomId).get();
         chatMessage.setMessage(chatMessage.getWriter()+"님이 채팅방을 떠나셨습니다.");
         chatMessage.setChatRoom(chatRoom);
-        chatMessage.setChatTime(LocalDateTime.now());
+        chatMessage.setChatTime(returnTime(LocalDateTime.now()));
         log.info(chatMessage);
         chatMessage.setChatRoomUserCount(chatRoom.getCountUser());
         chatMessage.setMessageType(MessageType.NOCHAT);
@@ -93,7 +89,7 @@ public class StompChatController {
 
         dto.setMessageType(MessageType.KICK);
         dto.setMessage(member.getUsername());
-        dto.setChatTime(LocalDateTime.now());
+        dto.setChatTime(returnTime(LocalDateTime.now()));
         template.convertAndSend("/sub/chat/room/" + roomId, dto);
     }
     @MessageMapping("/chat/kick/user/{id}/{roomId}")
@@ -104,14 +100,41 @@ public class StompChatController {
 
         Member member = memberRepository.findById(Long.parseLong(id)).get();
         dto.setMessage(member.getUsername()+"님이 강퇴되셨습니다.");
-        dto.setChatTime(LocalDateTime.now());
+        dto.setChatTime(returnTime(LocalDateTime.now()));
         template.convertAndSend("/sub/chat/kick/room/" + roomId, dto);
     }
+
 
     @MessageMapping("/chat/nochat/{roomId}")
     public void noChat(@DestinationVariable String roomId){
         ChatMessageDto dto =new ChatMessageDto();
         dto.setMessageType(MessageType.NOCHAT);
         template.convertAndSend("/sub/chat/room/"+roomId,dto);
+    }
+
+    @MessageMapping("/chat/read/{roomId}")
+    public void readChat(@DestinationVariable("roomId") String roomId,ReadDto readDto){
+        System.out.println("readDto222 = " + readDto.getMessageId());
+        List<Member> members = chatService.readUserCount(Long.parseLong(readDto.getMessageId()),Long.parseLong(readDto.getUserId()));
+        ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomId).get();
+        System.out.println("members.size() = " + members.size());
+        readDto.setChatUserCount(chatRoom.getCountUser()-members.size()-1);
+        System.out.println("readDto = " + readDto.getChatUserCount());
+        template.convertAndSend("/sub/chat/room/"+roomId,readDto);
+    }
+
+
+    public String returnTime(LocalDateTime localDateTime){
+        String chatTime = localDateTime.toString();
+        String chatTime2="";
+        chatTime2 += chatTime.substring(6, 7);
+        chatTime2 += "월 ";
+        chatTime2 += chatTime.substring(8, 10);
+        chatTime2 += "일 ";
+        chatTime2 += chatTime.substring(11, 13);
+        chatTime2 += "시 ";
+        chatTime2 += chatTime.substring(14, 16);
+        chatTime2 += "분";
+        return chatTime2;
     }
 }

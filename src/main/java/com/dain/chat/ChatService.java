@@ -4,6 +4,7 @@ import com.dain.domain.entity.Member;
 import com.dain.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -96,13 +97,14 @@ public class ChatService {
         }
     }
 
-    public boolean ifExistSaveEnter(String writer,ChatRoom chatRoom){
-        Optional<ChatMessage> findChatMessage = chatRepository.findByWriterAndChatRoom(writer, chatRoom);
-        if(findChatMessage.isEmpty()){
+    public boolean ifExistSaveEnter(String writer,ChatRoom chatRoom,String message){
+        Optional<ChatMessage> findChatMessage = chatRepository.findByWriterAndChatRoomAndMessage(writer, chatRoom,message);
+        if (findChatMessage.isEmpty()) {
             return true;
-        }else {
+        } else {
             return false;
         }
+
     }
 
     @Transactional
@@ -168,6 +170,26 @@ public class ChatService {
             }
         }
         return allMessage;
+    }
+
+    @Transactional
+    public List<Member> readUserCount(Long messageId,Long userId){
+        ChatMessage chatMessage = chatRepository.findById(messageId).get();
+        Member member = memberRepository.findById(userId).get();
+        log.info("service Message={}",chatMessage.getMessage());
+        log.info("service Nickname={}",member.getNickname());
+        log.info("please Insert={}",chatMessage.getReadMember());
+        List<Member> readMember = chatMessage.getReadMember();
+        readMember.add(member);
+        log.info("please Insert22={}",chatMessage.getReadMember());
+        List<Member> returnReadMember = chatMessage.getReadMember();
+        log.info("please Insert33={}",returnReadMember);
+        return returnReadMember;
+    }
+
+    public ChatRoom findByRoomCode(String roomCode){
+        ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomCode).get();
+        return chatRoom;
     }
 }
 

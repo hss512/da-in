@@ -13,7 +13,7 @@ public class ChatMessageDto {
 
     private Long id;
 
-    private LocalDateTime chatTime;
+    private String chatTime;
 
     private ChatRoom chatRoom;
 
@@ -26,7 +26,8 @@ public class ChatMessageDto {
     private int chatRoomUserCount;
 
     @Builder
-    public ChatMessageDto(String writer, String message, LocalDateTime chatTime,ChatRoom chatRoom,MessageType messageType,int chatRoomUserCount){
+    public ChatMessageDto(Long id,String writer, String message, String chatTime,ChatRoom chatRoom,MessageType messageType,int chatRoomUserCount){
+        this.id=id;
         this.writer=writer;
         this.message=message;
         this.chatTime=chatTime;

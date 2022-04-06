@@ -1,12 +1,15 @@
 package com.dain.domain.entity;
 
+import com.dain.chat.ChatMessage;
 import com.dain.domain.dto.BoardMemberDTO;
 import com.dain.domain.dto.MemberDto;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Pattern;
 
 @Entity
 @Getter
@@ -18,7 +21,7 @@ public class Member extends BaseEntity{
     @Column(name = "member_id")
     private Long id;
 
-    @Column(name = "user_email",nullable = false)
+    @Column(name = "user_username",nullable = false,unique = true)
     private String username;
 
     @Column(name = "user_nickname",nullable = false,unique = true)
@@ -40,10 +43,11 @@ public class Member extends BaseEntity{
     @Column(name = "user_email",unique = true)
     private String email;
 
-    //커밋용 주석//커밋용주석
+    @ManyToOne
+    private ChatMessage chatMessage;
 
     @Builder
-    public Member(Long id, String username, String nickname, String password, String local, int age, String gender,  String imagePath, String role,String email){
+    public Member(Long id, String username, String nickname, String password, String local, int age, String gender,  String imagePath, String role,String email,ChatMessage chatMessage){
         this.id=id;
         this.username=username;
         this.nickname=nickname;
@@ -54,6 +58,7 @@ public class Member extends BaseEntity{
         this.imagePath=imagePath;
         this.role=role;
         this.email=email;
+        this.chatMessage=chatMessage;
     }
 
     public MemberDto toDto(){
@@ -78,5 +83,10 @@ public class Member extends BaseEntity{
                 .username(this.getUsername())
                 .nickname(this.getNickname())
                 .build();
+    }
+
+    public void toUpdateMember(String nickname,String local){
+        this.nickname=nickname;
+        this.local=local;
     }
 }

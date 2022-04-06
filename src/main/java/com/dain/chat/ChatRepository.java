@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface ChatRepository extends JpaRepository<ChatMessage,Long> {
 
-    Optional<ChatMessage> findByWriterAndChatRoom(String writer,ChatRoom chatRoom);
+    Optional<ChatMessage> findByWriterAndChatRoomAndMessage(String writer,ChatRoom chatRoom,String message);
 }
