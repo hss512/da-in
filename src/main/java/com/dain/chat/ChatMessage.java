@@ -34,7 +34,7 @@ public class ChatMessage {
 
     private String message;
 
-    @OneToMany(mappedBy = "chatMessage")
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Member> readMember=new ArrayList<>();
 
     @Column(name = "messageType")

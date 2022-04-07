@@ -42,18 +42,25 @@
                 </div>
             </th:block>
         </div>
-    <div id="msgArea" class="col"></div>
-    <div class="col-6">
-      <div class="input-group mb-3">
-        <input type="text" id="msg" class="form-control">
-        <div class="input-group-append">
-          <button class="btn btn-outline-secondary" type="button" onclick="sendMessage()" id="button-send">전송</button>
-          <button class="btn btn-outline-secondary" type="button" onclick="disconnectChat()" id="button-leave">퇴장</button>
+        <div id="chatUser">
+            <div id="msgArea" class="col"></div>
+            <div class="col-6">
+                <div class="input-group mb-3">
+                    <input type="text" id="msg" class="form-control">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button" onclick="sendMessage()"
+                                id="button-send">전송
+                        </button>
+                        <button class="btn btn-outline-secondary" type="button" onclick="disconnectChat()"
+                                id="button-leave">
+                            퇴장
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-  <div class="col-6"></div>
+    <div class="col-6"></div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>

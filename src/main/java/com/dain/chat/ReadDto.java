@@ -11,5 +11,6 @@ public class ReadDto {
     private String messageId;
     private String userId;
     private String roomCode;
+    private String writer;
     private int chatUserCount;
 }

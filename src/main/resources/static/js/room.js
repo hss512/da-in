@@ -21,14 +21,22 @@ console.log(typeof(username));
 var sockJs = new SockJS("/stomp/chat", null, {transports: ["websocket", "xhr-streaming", "xhr-polling"]});
 let stomp = Stomp.over(sockJs);
 
-function connectChat(id){
+function connectChat(chatUserCount){
     console.log("This is connectChat이 열린것입니다!!!!!!!!!!ㅈ1");
-    console.log("connectChat id 들어오나요?",id);
     console.log(roomName + ", " + roomId + ", " + username);
 
     stomp.connect({}, function (frame){
         console.log("STOMP Connection")
-        //4. subscribe(path, callback)으로 메세지를 받을 수 있음
+        stomp.subscribe('/sub/chat/read/' + roomId, function (readDto) {
+            let content = JSON.parse(readDto.body);
+            let chatUserCount = content.chatUserCount;
+            console.log("------------------------------------");
+            console.log("chatUserCount=",chatUserCount);
+            console.log("------------------------------------");
+            var str='';
+            str+="<span>"+chatUserCount+"</span>"
+            $("#chatUser").append(str);
+        });
         stomp.subscribe("/sub/chat/room/" + roomId, function (chat) {
             // 입장, 채팅
             let content = JSON.parse(chat.body);
@@ -52,28 +60,28 @@ function connectChat(id){
             }else {
                 console.log(frame.headers);
                 console.log(content);
-                let chatRoom = content.chatRoomUserCount;
-                let userCount = parseInt(chatRoom);
+                console.log(chatUserCount)
 
                 var writer = content.writer;
-                console.log(content);
                 var message = content.message;
                 let chatTime2 = content.chatTime;
                 let messageType = content.messageType;
-                stomp.send('/pub/chat/read/'+roomId,{},JSON.stringify({"messageId":content.id,"userId":chatUserId,"roomCode":roomId}))
+
+                stomp.send('/pub/chat/read/'+roomId+'/'+content.id,{},JSON.stringify({"messageId":content.id,"userId":chatUserId,"roomCode":roomId,"writer":content.writer}))
+
                 var str = '';
 
                 if (writer === username) {
                     str = "<div>";
                     str += "<div id='writeByMe' style='color: blue'>";
-                    str += "<b>" + "<span style='font-size:10px;'>" + chatTime2 + "</span>" + " " + userCount + " " + writer + " : " + message + "</b>";
+                    str += "<b>" + "<span style='font-size:10px;'>" + chatTime2 + "</span>" +  " " + writer + " : " + message + "</b>";
                     str += "</div></div>";
                     $("#msgArea").append(str);
                 } else {
                     if (messageType != "KICK") {
                         str = "<div>";
                         str += "<div id='writeByYou' style='color: red'>";
-                        str += "<b>" + "<span style='font-size:12px;'>" + chatTime2 + "</span>" + " "+userCount+ " " + writer + " : " + message + "</b>";
+                        str += "<b>" + "<span style='font-size:12px;'>" + chatTime2 + "</span>" + " " + writer + " : " + message + "</b>";
                         str += "</div></div>";
                         $("#msgArea").append(str);
                     }
@@ -81,7 +89,16 @@ function connectChat(id){
             }
         });
         stomp.subscribe("/sub/chat/enter/" + roomId, function (chat) {
-            // 입장, 채팅
+            $.ajax({
+                url:"/api/chat/room/allmsg/"+roomId,
+                type:"get",
+                dataType:"json",
+                data:{
+                    "userId":chatUserId
+                }
+            }).done(res => {
+
+            })
             let content = JSON.parse(chat.body);
             console.log(content);
             let chatRoom = content.chatRoomUserCount;
@@ -97,19 +114,18 @@ function connectChat(id){
             if (writer === username) {
                 str = "<div>";
                 str += "<div id='writeByMe' style='color: blue'>";
-                str += "<b>" + "<span style='font-size:10px;'>" + chatTime2 + "</span>" + " " + userCount + " " + writer + " : " + message + "</b>";
+                str += "<b>" + "<span style='font-size:10px;'>" + chatTime2 + "</span>" + " " + writer + " : " + message + "</b>";
                 str += "</div></div>";
                 $("#msgArea").append(str);
             } else {
                 if (messageType != "KICK") {
                     str = "<div>";
                     str += "<div id='writeByYou' style='color: red'>";
-                    str += "<b>" + "<span style='font-size:12px;'>" + chatTime2 + "</span>" + " " + userCount + " " + writer + " : " + message + "</b>";
+                    str += "<b>" + "<span style='font-size:12px;'>" + chatTime2 + "</span>" + " " + writer + " : " + message + "</b>";
                     str += "</div></div>";
                     $("#msgArea").append(str);
                 }
             }
-
         });
         stomp.subscribe('/sub/chat/leave/room/' + roomId, function (chat) {
             // 나감
@@ -159,7 +175,6 @@ document.addEventListener("keypress", function(e){
 });
 
 function disconnectChat() {
-    stomp.send('/pub/chat/nochat/'+roomId);
     stomp.send('/pub/chat/leave/'+roomId,{},JSON.stringify({roomId:roomId,writer:username}));
     // unsubscribeStomp(content);
     $.ajax({

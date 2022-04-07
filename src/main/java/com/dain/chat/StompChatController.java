@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class StompChatController {
 
     private final ChatRoomRepository chatRoomRepository;
     private final MemberRepository memberRepository;
-
+    private final ChatRoomJoinRepository chatRoomJoinRepository;
     @MessageMapping("/chat/enter/{roomId}")
     public void enter(@DestinationVariable String roomId, ChatMessage message) {
         ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomId).get();
@@ -35,6 +36,8 @@ public class StompChatController {
         message.setChatTime(returnTime(LocalDateTime.now()));
         message.setMessageType(MessageType.CHAT);
         message.setChatRoomUserCount(chatRoom.getCountUser());
+        Member member = memberRepository.findByNickname(message.getWriter()).get();
+        chatService.chatState(chatRoom,member,MessageType.CHAT);
         System.out.println("message = " + message.getMessage());
         if (chatService.ifExistSaveEnter(message.getWriter(),chatRoom, message.getMessage())){
             chatService.saveChat(message);
@@ -76,6 +79,8 @@ public class StompChatController {
         log.info(chatMessage);
         chatMessage.setChatRoomUserCount(chatRoom.getCountUser());
         chatMessage.setMessageType(MessageType.NOCHAT);
+        Member member = memberRepository.findByNickname(chatMessage.getWriter()).get();
+        chatService.chatState(chatRoom,member,MessageType.NOCHAT);
         template.convertAndSend("/sub/chat/leave/room/"+roomId,chatMessage.toDto());
     }
 
@@ -105,22 +110,24 @@ public class StompChatController {
     }
 
 
-    @MessageMapping("/chat/nochat/{roomId}")
-    public void noChat(@DestinationVariable String roomId){
-        ChatMessageDto dto =new ChatMessageDto();
-        dto.setMessageType(MessageType.NOCHAT);
-        template.convertAndSend("/sub/chat/room/"+roomId,dto);
-    }
-
-    @MessageMapping("/chat/read/{roomId}")
-    public void readChat(@DestinationVariable("roomId") String roomId,ReadDto readDto){
-        System.out.println("readDto222 = " + readDto.getMessageId());
-        List<Member> members = chatService.readUserCount(Long.parseLong(readDto.getMessageId()),Long.parseLong(readDto.getUserId()));
+    @MessageMapping("/chat/read/{roomId}/{messageId}")
+    public void readChat(@DestinationVariable("roomId") String roomId, @DestinationVariable("messageId") String messageId,
+                         ReadDto readDto){
         ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomId).get();
+        System.out.println("readDto222 = " + readDto.getMessageId());
+        System.out.println("messageId = " + messageId);
+        System.out.println("readDto.getWriter() = " + readDto.getWriter());
+        List<Member> members = chatService.readUserCount(Long.parseLong(readDto.getMessageId()),Long.parseLong(readDto.getUserId()),readDto.getWriter());
+        if (members.size()==0){
+            readDto.setChatUserCount(chatRoom.getCountUser()-members.size()-1);
+            template.convertAndSend("/sub/chat/read/" +roomId,readDto);
+        }else {
+            readDto.setChatUserCount(chatRoom.getCountUser()-members.size()-1);
+            template.convertAndSend("/sub/chat/read/"+roomId,readDto);
+        }
         System.out.println("members.size() = " + members.size());
-        readDto.setChatUserCount(chatRoom.getCountUser()-members.size()-1);
+
         System.out.println("readDto = " + readDto.getChatUserCount());
-        template.convertAndSend("/sub/chat/room/"+roomId,readDto);
     }
 
 

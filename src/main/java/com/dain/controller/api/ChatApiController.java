@@ -17,12 +17,13 @@ public class ChatApiController {
     private final ChatService chatService;
 
     @GetMapping("/{id}/userCountCheck")
-    public ResponseEntity<?> UserCountCheck(String countUser,String userLimit,@PathVariable("id") Long id){
+    public ResponseEntity<?> UserCountCheck(String countUser,String userLimit,@PathVariable("id") Long id,@AuthenticationPrincipal UserDetailsImpl userDetails){
         log.info("ChatApiController 호출");
         log.info("countUser={}", countUser);
         log.info("userLimit={}", userLimit);
         log.info("id={}", id);
-        ResponseEntity<?> check = chatService.userCountCheck(Integer.parseInt(countUser), Integer.parseInt(userLimit), id);
+        Long userId = userDetails.getId();
+        ResponseEntity<?> check = chatService.userCountCheck(Integer.parseInt(countUser), Integer.parseInt(userLimit), id,userId);
         log.info("이게중요햐={}",check.getBody());
         return check;
     }
@@ -35,7 +36,10 @@ public class ChatApiController {
     @GetMapping("/kick/{roomId}/{chatUserId}/exit")
     public ResponseEntity<?> UserCountRefresh(@PathVariable("roomId") String roomCode,@PathVariable("chatUserId") String userId){
         return chatService.userCountRefresh(roomCode,userId);
-    }/*
-    @GetMapping("/return/userCount")
-    public ResponseEntity<?> readUserCount()*/
+    }
+
+    @GetMapping("/allmsg/{roomId}")
+    public void loadChatRead(@PathVariable("roomId") String roomCode,Long userId){
+        chatService.loadAllChat(roomCode,userId);
+    }
 }

@@ -51,14 +51,19 @@ public class ChatService {
     }
 
     @Transactional
-    public ResponseEntity<?> userCountCheck(int countUser,int userLimit,Long id){
+    public ResponseEntity<?> userCountCheck(int countUser,int userLimit,Long id,Long userId){
         ChatRoom findRoom = chatRoomRepository.findById(id).get();
+        Member member = memberRepository.findById(userId).get();
+        ChatRoomJoin chatRoomJoin = chatRoomJoinRepository.findByChatRoomAndMember(findRoom, member).get();
+        MessageType messageType = chatRoomJoin.getMessageType();
         log.info("roomid={}",id);
         log.info("roomCU={}",countUser);
         log.info("roomUL={}",userLimit);
         if (findRoom.getId()==id){
             if (findRoom.getUserLimit()>0&& countUser<findRoom.getUserLimit()){
-                findRoom.setCountUser(countUser+1);
+                if (messageType==null || messageType==MessageType.NOCHAT){
+                    findRoom.setCountUser(countUser + 1);
+                }
                 return new ResponseEntity<>(0,HttpStatus.OK);
             }else if(findRoom.getCountUser()== findRoom.getUserLimit()){
                 return new ResponseEntity<>(1,HttpStatus.OK);
@@ -173,23 +178,51 @@ public class ChatService {
     }
 
     @Transactional
-    public List<Member> readUserCount(Long messageId,Long userId){
+    public List<Member> readUserCount(Long messageId,Long userId,String writer){
+        System.out.println("userIIIIIId = " + userId);
         ChatMessage chatMessage = chatRepository.findById(messageId).get();
         Member member = memberRepository.findById(userId).get();
-        log.info("service Message={}",chatMessage.getMessage());
-        log.info("service Nickname={}",member.getNickname());
-        log.info("please Insert={}",chatMessage.getReadMember());
-        List<Member> readMember = chatMessage.getReadMember();
-        readMember.add(member);
-        log.info("please Insert22={}",chatMessage.getReadMember());
-        List<Member> returnReadMember = chatMessage.getReadMember();
-        log.info("please Insert33={}",returnReadMember);
-        return returnReadMember;
+        if(!member.getNickname().equals(writer)) {
+            List<Member> readMember = chatMessage.getReadMember();
+            System.out.println("First readMember = " + readMember);
+            if (readMember.contains(member)) {
+                System.out.println("readMember = " + readMember);
+            } else {
+                chatMessage.toUpdateReadMember(member);
+            }
+            List<Member> returnReadMember = chatMessage.getReadMember();
+            for (Member member1:returnReadMember){
+                System.out.println("member1.getId() = " + member1.getId());
+            }
+            return returnReadMember;
+        }else {
+            System.out.println("readMEmber2222="+chatMessage.getReadMember());
+            List<Member> readMember = chatMessage.getReadMember();
+            return readMember;
+        }
     }
 
-    public ChatRoom findByRoomCode(String roomCode){
-        ChatRoom chatRoom = chatRoomRepository.findByRoomCode(roomCode).get();
-        return chatRoom;
+    @Transactional
+    public void chatState(ChatRoom chatRoom,Member member,MessageType messageType){
+        ChatRoomJoin chatRoomJoin = chatRoomJoinRepository.findByChatRoomAndMember(chatRoom, member).get();
+        chatRoomJoin.toUpdateChatStateChat(messageType);
+    }
+
+    public void loadAllChat(String roomCode,Long userId){
+        List<ChatMessage> allMessage = chatRepository.findAll();
+        List<ChatMessage> roomAllMessage = allMessage.stream().filter(r ->
+                r.getChatRoom().getRoomCode() == roomCode).collect(Collectors.toList());
+        Member member = memberRepository.findById(userId).get();
+        for (ChatMessage chatMessage: roomAllMessage){
+            List<Member> readMember = chatMessage.getReadMember();
+            if (readMember.contains(member)){
+                System.out.println("readMember = " + readMember);
+            }else {
+                chatMessage.toUpdateReadMember(member);
+            }
+            List<Member> returnReadMemeber = chatMessage.getReadMember();
+            System.out.println("returnReadMemeber = " + returnReadMemeber);
+        }
     }
 }
 

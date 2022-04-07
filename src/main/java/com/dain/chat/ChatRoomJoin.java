@@ -34,4 +34,8 @@ public class ChatRoomJoin {
     public void toUpdateDropUserRoom(int dropUserRoom){
         this.dropUserRoom=dropUserRoom;
     }
+
+    public void toUpdateChatStateChat(MessageType messageType){
+        this.messageType=messageType;
+    }
 }
