@@ -208,21 +208,33 @@ public class ChatService {
         chatRoomJoin.toUpdateChatStateChat(messageType);
     }
 
-    public void loadAllChat(String roomCode,Long userId){
+    public List<Integer> loadAllChat(String roomCode,Long userId){
+        ArrayList<Integer> size=new ArrayList<>();
         List<ChatMessage> allMessage = chatRepository.findAll();
+        /*System.out.println("allMessage = " + allMessage);
+        System.out.println("allMessage.get(0).getChatRoom().getRoomCode() = " + allMessage.get(71).getChatRoom().getRoomCode());
+        System.out.println("allMessage.get(0).getChatRoom().getRoomCode() = " + allMessage.get(71).getMessage());
+        System.out.println("roomCode = " + roomCode);
+        */
         List<ChatMessage> roomAllMessage = allMessage.stream().filter(r ->
-                r.getChatRoom().getRoomCode() == roomCode).collect(Collectors.toList());
+                r.getChatRoom().getRoomCode().equals(roomCode)).collect(Collectors.toList());
+        System.out.println("roomAllMessage = " + roomAllMessage);
         Member member = memberRepository.findById(userId).get();
+        System.out.println("memberPlease = " + member.getId());
         for (ChatMessage chatMessage: roomAllMessage){
             List<Member> readMember = chatMessage.getReadMember();
+            System.out.println("12345 = " + readMember.contains(member));
             if (readMember.contains(member)){
                 System.out.println("readMember = " + readMember);
             }else {
                 chatMessage.toUpdateReadMember(member);
+                System.out.println("member.getNickname() = " + member.getNickname());
             }
             List<Member> returnReadMemeber = chatMessage.getReadMember();
-            System.out.println("returnReadMemeber = " + returnReadMemeber);
+            size.add(returnReadMemeber.size());
         }
+        System.out.println("size = " + size);
+        return size;
     }
 }
 

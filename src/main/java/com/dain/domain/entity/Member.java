@@ -43,11 +43,9 @@ public class Member extends BaseEntity{
     @Column(name = "user_email",unique = true)
     private String email;
 
-    @ManyToOne
-    private ChatMessage chatMessage;
 
     @Builder
-    public Member(Long id, String username, String nickname, String password, String local, int age, String gender,  String imagePath, String role,String email,ChatMessage chatMessage){
+    public Member(Long id, String username, String nickname, String password, String local, int age, String gender,  String imagePath, String role,String email){
         this.id=id;
         this.username=username;
         this.nickname=nickname;
@@ -58,7 +56,6 @@ public class Member extends BaseEntity{
         this.imagePath=imagePath;
         this.role=role;
         this.email=email;
-        this.chatMessage=chatMessage;
     }
 
     public MemberDto toDto(){

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <!--
+    <script type="text/javascript" th:src="@{/js/sonicWave.js}"></script>
+-->
+</head>
+<body>
+    <h1>센서값 조회하기</h1>
+    <h3>버튼을 누를때 마다 최신화된다.</h3>
+    <button onclick="ajax()">조회</button>
+    <div id="result">
+        <div>
+            <span style="color:red">id</span>
+            <span style="color:blue">distance</span>
+            <span style="color:green">username</span>
+        </div>
+    </div>
+    <script>
+    function ajax(){
+        $.ajax({
+            type:"post",
+            url:"/api/sensor/allValueList",
+            dataType:"json"
+        }).done(res=>{
+            var data='';
+            var br="\n";
+            console.log(res);
+            for (let i in res){
+                var $id=res[i].id;
+                var $d=res[i].distance;
+                var $user=res[i].sensor_user;
+                data+=$id +" "
+                data+=$d +" ";
+                data+=$user +" ";
+                data+="<br>";
+            }
+            document.getElementById("result").append(data);
+        }).fail(err=>{
+            console.log("api안됨");
+        })
+    }
+</script>
+</body>
+</html>

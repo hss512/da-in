@@ -68,7 +68,6 @@ function connectChat(chatUserCount){
                 let messageType = content.messageType;
 
                 stomp.send('/pub/chat/read/'+roomId+'/'+content.id,{},JSON.stringify({"messageId":content.id,"userId":chatUserId,"roomCode":roomId,"writer":content.writer}))
-
                 var str = '';
 
                 if (writer === username) {

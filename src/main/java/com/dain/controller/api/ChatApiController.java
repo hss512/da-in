@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Log4j2
@@ -40,6 +42,7 @@ public class ChatApiController {
 
     @GetMapping("/allmsg/{roomId}")
     public void loadChatRead(@PathVariable("roomId") String roomCode,Long userId){
-        chatService.loadAllChat(roomCode,userId);
+        List<Integer> integers = chatService.loadAllChat(roomCode, userId);
+        System.out.println("Controller integers = " + integers);
     }
 }

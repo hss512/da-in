@@ -22,5 +22,9 @@ public class MainController {
 
         return "/chat/chat";
     }
+    @GetMapping("/view")
+    public String viewHtml(){
+        return "sensor/view";
+    }
 }
 

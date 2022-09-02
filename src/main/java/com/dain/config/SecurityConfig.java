@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutUrl("/doLogout");
 
         http.authorizeRequests()
-                .antMatchers("/")
+                .antMatchers("/","/view")
                 .authenticated()
                 .anyRequest()
                 .permitAll()
